@@ -1,0 +1,217 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link href="prism/prism.css" rel="stylesheet" />
+    <script src="prism/prism.js"></script>
+
+    <title>Outlook integration to Regtime</title>
+
+    <style>
+        @media print {
+            .panel-heading, .panel-footer, pre {
+                background-color: #e6e6e6 !important;
+            }
+
+            pre>code {
+                 white-space: pre-line !important;
+            }
+            
+            pre {
+              page-break-inside: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container panel panel-default">
+        <div class="row panel-heading">
+            <div class="col-xs-12 col-md-12">
+                <h1>MPE Regtime Outlook</h1>
+            </div>
+        </div>
+        <div class="row panel-body">
+            <div class="col-xs-12 col-md-12">
+                <h1 id="outlook-integration-to-regtime">Outlook integration to Regtime</h1>
+<p>This document contains a description for the small program that makes it possible to synch you time registrations from a calendar in Outlook 365 to Regtime</p>
+<h2 id="motivation">Motivation</h2>
+<p>All the people I have talked to regarding regtime says the same thing, that it is not nice to work with and does not support their work flow or need for visualizing time as slots in a table. I have been one of thoose that needed a visual overview of how i spend my time during a day or week. This have not been something Regtime could give me and because of that Regtime was basically useless. I seaked to Outlook because we use it all the time and it could support my need for visualizing the hours spend. But there were still a problem - we still had to transfer the hours to regtime. So what I needed was a integration from my favorit time tracking tool (Outlook) to Regtime.</p>
+<h2 id="regtime-analysis">Regtime analysis</h2>
+<p>The piece of data displayed below is a print of all the data sent to regtime when you hit enter or the &quot;Save&quot; button. By looking at this we can split it up into different POST requests, one for A, O, F, and S registrations. To avoid regtime throughing a Null reference exception that polutes its log, I have added the &quot;Referer&quot; header with a value of. That way it shouldnt log a null reference exception when posting data to it only producing a 403 error which should not be logged.</p>
+<pre><code>    AFBCaseId: A1234
+    AFromFB: false 
+    Acustomer: 
+    Aid: 
+    Anote: A note
+    Aproject: Andet
+    Astatus: default
+    Atime: 2
+    FFromFB: false
+    Fid: 
+    Fnote: F note
+    Fstatus: default
+    Ftime: 2
+    OFBCaseId: B1234
+    OFromFB: false
+    Ocustomer: 
+    Oid: 
+    Onote: B note
+    Oproject: Andet
+    Ostatus: default
+    Otime: 2
+    SFromFB: false
+    Sid: 
+    Snote: S note
+    Sstatus: default
+    Stime: 2
+    entryDate: 10-12-2017
+    regdateA: 10-12-2017
+    regdateF: 10-12-2017
+    regdateO: 10-12-2017
+    regdateS: 10-12-2017
+
+POST 
+    Origin: 
+    Upgrade-Insecure-Requests: 1
+    Content-Type: application/x-www-form-urlencoded
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36
+    Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+    Referer: 
+    Accept-Encoding: gzip, deflate, br
+    Accept-Language: en-US,en;q=0.9,da;q=0.8
+    Cookie: XXX
+</code></pre>
+<p>We know that we have to login through the use of Windows authentication, that way we know how we should parse the authentication. This can be tested through the use of Postman. Calling the regtime..dk domain will give a 403 - not permitted. But if you add the credentials as Windows Authentication, it is possible to get a valid 200 - OK response back. So Regtime actually have a API :-O. This is something our HTTP request library supports :-D easy!!!</p>
+<h2 id="walkthrough">Walkthrough</h2>
+<p>The way the application is structured is fairly simple. You setup a configuration file describing all your favorite projects (it tends to be the only ones i need to use anyway), your username, the calendar in outlook, and optional your password in clear text (yes its a sin and god will smight me for it). If you dont define your password the program will prompt you for it when you use the application.</p>
+<p>Example of a configuration file could be like the one displayed here:</p>
+<pre><code class="language-json">{
+  &quot;Username&quot;: &quot;&quot;,
+  &quot;Password&quot;: &quot;&quot;, 
+  &quot;FbPassword&quot;: &quot;&quot;, 
+  &quot;Calendar&quot;:  &quot;&quot;, 
+  &quot;Mobile&quot;: &quot;&quot;,
+  &quot;TextMessageApiKey&quot;: &quot;&quot;, 
+  &quot;Customers&quot;: [
+    {
+      &quot;Alias&quot;: &quot;&quot;,
+      &quot;Name&quot;: &quot;&quot;,
+      &quot;Projects&quot;: [
+        {
+          &quot;Alias&quot;: &quot;&quot;,
+          &quot;Name&quot;: &quot;&quot;
+        },
+        {
+          &quot;Alias&quot;: &quot;&quot;,
+          &quot;Name&quot;: &quot;&quot;
+        },
+        {
+          &quot;Alias&quot;: &quot;&quot;,
+          &quot;Name&quot;: &quot;&quot;,
+          &quot;FbProject&quot;: &quot;&quot;
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+<p>Here we have a customer called  with the alias NC. It have three projects, each with a name and an alias. These alias for both customer and project are used when you create an event in you calendar defined in the configuration file.</p>
+<p><strong>Important:</strong> When you create a registration in the Outlook calender you have to use one of the following format:</p>
+<pre><code>[Alias of customer] - [Alias of project] - [Case number] - [Note]
+SICK - [Note]
+FLEX - [Note]
+IGN - ...
+</code></pre>
+<p>The important part is that you include the correct number of dashes for each of the formats. When you have a FLEX entry but no note, you have to put a dash.</p>
+<p>When you want to register time for the day, whenever that suits you, you should just execute the application that will prompt you for the password if not configured.</p>
+<p>If you have specified a FbPassword and you use the first format, it will query FogBugz for the project associated with the case, and find the customer and project based on the mapping in the FbProject field for each project in the configuration.</p>
+<p>Likewise if you have to add an entry that should be ignored, please feel free to use the IGN format. As long as there is a dash after IGN it will ignore it in the conversion process.</p>
+<p>The application have these commands:</p>
+<ul>
+<li>config =&gt; displays the customers and their project configurations</li>
+<li>clear =&gt; clears the console</li>
+<li>single =&gt; takes you to a flow where you can register a single entry</li>
+<li>validate =&gt; validates the entries in the calendar on a specific date</li>
+<li>register =&gt; registers the entries from the calendar on a specific date (performs validation first)</li>
+</ul>
+<p>When doing a register, the program output will look loke this:</p>
+<pre><code>&gt; register
+2017-12-07
+CONGRATS - You are now ready for the registration of time...
+
+Hours Case   Customer             Project              Note
+3,5   141134 XX                   YY                   ZZ
+1     141143 XX                   YY                   ZZ
+2,25  143034 XX                   YY                   ZZ
+0,25         XX                   YY                   ZZ
+
+Request sent for: 3,5   141134      XX      YY        ZZ
+Request sent for: 1     141143      XX      YY        ZZ
+Request sent for: 2,25  143034      XX      YY        ZZ
+Request sent for: 0,25              XX      YY        ZZ
+DONE...
+&gt;
+</code></pre>
+<p>This first validates all the outlook entries, and later on sends them to regtime.</p>
+<h2 id="avoiding-dual-registrations">Avoiding dual registrations</h2>
+<p>To make sure that it doesnt go on a rampage and just keeps adding registrations to Regtime that it already have synched, there have been added a security layer. This consist of a file where all the outlook entries are added to with their IDs. Each time, just before requesting regtime, it will check the collection of prior registrations to see if it have already added the record. If not in the collection it will request regtime. The file used for this is called &quot;Registrations.json&quot;.</p>
+<h2 id="scheduled-configuration">Scheduled configuration</h2>
+<p>One of the bullets in the &quot;Further development&quot; section was to make it execute an automated synchronization at a given time during the day. This is also possible for the sync program. The only thing you need to do is to setup a scheduled task that executes a powershell script each day at 09.00.</p>
+<p>The powershell script it should execute is:</p>
+<pre><code class="language-powershell">Set-Location $PSScriptRoot
+
+.\MPE.Regtime.Outlook.App.exe --Command &quot;register&quot; --Date ((Get-Date).AddDays(-1).ToString('yyyy-MM-dd'))
+</code></pre>
+<p>What it does is to execute the console using some arguments instead of applying them as normal. Here it will register all the outlook entries from the prior day.</p>
+<p>In case it does not validate a day, you will get a text message (number configured in Regtime.json config file) saying that:</p>
+<pre><code>Entries at yyyy-MM-dd is not valid - execute manually
+</code></pre>
+<p>The you can just execute a manual validation of the specific, find out what is wrong, edit it and do a manual synchronization. Just make sure that the scheduled task is dependant on the same Registrations.json file so the same outlook entries arent synched twice.</p>
+<p>To register it as a scheduled task you should set it to trigger the following command as an action:</p>
+<pre><code>powershell -File &quot;[Path to the file]&quot;
+</code></pre>
+<p>The application have the following flags that can be used:</p>
+<pre><code>--Command
+    Defines the command that needs to be executed
+--Date 
+    Defines the date that the command should be executed on (normally all commands requires a date)
+--ConfigurationFilePath
+    Defines the path to the configuration file used
+</code></pre>
+<h2 id="screen-dumps">Screen dumps</h2>
+<h3 id="setup-in-scheduled-task-runner">Setup in scheduled task runner</h3>
+<p><img src="./dumps/2017-12-12_0959.png" alt="2017-12-12_0959.png" /></p>
+<p><img src="./dumps/2017-12-12_0949.png" alt="2017-12-12_0949.png" /></p>
+<h2 id="known-issues">Known issues</h2>
+<ul>
+<li>Make sure its your email defined as your username and it is the same that you uses for your email account as well as your Regtime credentials</li>
+<li>If your entries is not created in Regtime - please check your password</li>
+<li>It wont remove entries if already synched for that day - it can add new registrations from a synched day after the synched have happend</li>
+</ul>
+<h2 id="further-development">Further development</h2>
+<ul>
+<li>Register O hours  - currently not interesting for me, because of my arrangement with my boss</li>
+<li>Make it a centralized service located on a server. At nine o'clock every day it will send a text message with a link where you can type in you password and execute the synchronization.
+<ul>
+<li>It should have a simple way of defining the config - one for each user</li>
+</ul>
+</li>
+<li>Make a field in the configuration where it stores when it last ran a synchronization. If the computer is not on the internet for multiple days it should synch all the days since the last synch.</li>
+</ul>
+
+            </div>
+        </div>
+        <div class="row panel-footer">
+            <div class="col-xs-4 col-md-4">
+                <a href="https://novicell.fogbugz.com" target="_blank">Fogbugz</a>
+            </div>
+            <div class="col-xs-12 col-md-12">
+                <a href="https://novicell.kilnhg.com" target="_blank">Kiln</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

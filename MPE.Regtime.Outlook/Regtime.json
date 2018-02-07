@@ -1,0 +1,19 @@
+﻿{
+  "Username": "",
+  "Password": "",
+  "Calendar": "",
+  "Mobile": "", 
+  "TextMessageApiKey":  "", 
+  "Customers": [
+    {
+      "Alias": "",
+      "Name": "",
+      "Projects": [
+        {
+          "Alias": "",
+          "Name": ""
+        }
+      ]
+    }
+  ]
+}
