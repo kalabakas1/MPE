@@ -4,7 +4,6 @@ namespace MPE.Regtime.Outlook.App.Models
 {
     internal class RegtimeRegistration
     {
-        private const string DefaultFogbugz = "";
         public string Id { get; set; }
         public DateTime Date { get; set; }
         public string CaseNumber { get; set; }
@@ -14,12 +13,7 @@ namespace MPE.Regtime.Outlook.App.Models
         public string Note { get; set; }
         public RegistrationType Type { get; set; }
 
-        private string _fogbugz;
-        public string Fogbugz
-        {
-            get { return string.IsNullOrEmpty(_fogbugz) ? DefaultFogbugz : _fogbugz; }
-            set { _fogbugz = value; }
-        }
+        public string Fogbugz { get; set; }
 
         public override string ToString()
         {

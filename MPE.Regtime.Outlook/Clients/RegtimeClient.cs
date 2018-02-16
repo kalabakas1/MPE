@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MPE.Regtime.Outlook.App.Models;
@@ -11,7 +12,7 @@ namespace MPE.Regtime.Outlook.App.Clients
 {
     internal class RegtimeClient
     {
-        private const string UrlEndpoint = @"xxx.zzz.yy";
+        private string _urlEndpoint;
         private const string PriorRegistrationFileName = "Registrations.json";
 
         private readonly ConfigurationService _configurationService;
@@ -25,7 +26,9 @@ namespace MPE.Regtime.Outlook.App.Clients
         {
             _configurationService = configurationService;
 
-            _client = new RestClient(UrlEndpoint);
+            _urlEndpoint = _configurationService.Configuration.RegtimeEndpoint;
+
+            _client = new RestClient(_urlEndpoint);
             _client.Authenticator = new NtlmAuthenticator(_configurationService.Configuration.Username, _configurationService.Configuration.Password);
 
             ReadPriorRegistrations();
@@ -46,7 +49,7 @@ namespace MPE.Regtime.Outlook.App.Clients
 
             var request = new RestRequest("/TimeEntry/UpdateTimeSheet", Method.POST);
             request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddHeader("Referer", "https://www..dk");
+            request.AddHeader("Referer", "https://www.google.dk");
 
             var date = registration.Date.ToString("dd-MM-yyyy");
             request.AddParameter("entryDate", date, ParameterType.GetOrPost);
@@ -84,6 +87,11 @@ namespace MPE.Regtime.Outlook.App.Clients
 
             _priorRegistrations.Add(registration);
             PersistPriorRegistrations();
+        }
+
+        public DateTime GetLatestRegistrationDate()
+        {
+            return _priorRegistrations.Max(x => x.Date);
         }
 
         private void ReadPriorRegistrations()

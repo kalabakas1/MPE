@@ -6,3 +6,5 @@ Just a small list containing the areas I really want to write some sort of "arti
 * MongoDb - its use and how to use it 101
 * ElasticSearch - how to implement search across different object types
 * Avoiding to install components on dev machines
+* Coding guidelines and why they should be there (Stylecop)
+* Focusing and tricks to achieve it

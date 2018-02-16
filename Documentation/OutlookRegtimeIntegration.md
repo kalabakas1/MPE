@@ -145,7 +145,7 @@ One of the bullets in the "Further development" section was to make it execute a
 
 The powershell script it should execute is:
 
-```powershell
+```powershell 
 Set-Location $PSScriptRoot
 
 .\MPE.Regtime.Outlook.App.exe --Command "register" --Date ((Get-Date).AddDays(-1).ToString('yyyy-MM-dd'))

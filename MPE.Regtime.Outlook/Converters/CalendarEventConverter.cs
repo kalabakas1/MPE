@@ -99,7 +99,7 @@ namespace MPE.Regtime.Outlook.App.Converters
                     CaseNumber = caseNumberString,
                     Customer = customer.Name,
                     Project = project.Name,
-                    Fogbugz = customer.Fogbugz,
+                    Fogbugz = string.IsNullOrEmpty(customer.Fogbugz) ? _configuration.DefaultFogbugz : customer.Fogbugz,
                     Hours = calendarEvent.Duration,
                     Note = dataFields[3]
                 };

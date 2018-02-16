@@ -5,6 +5,10 @@ namespace MPE.Regtime.Outlook.App.Models.Configurations
 {
     internal class Configuration
     {
+        [JsonProperty("RegtimeEndpoint")]
+        public string RegtimeEndpoint { get; set; }
+        [JsonProperty("DefaultFogbugz")]
+        public string DefaultFogbugz { get; set; }
         [JsonProperty("Username")]
         public string Username { get; set; }
         [JsonProperty("Password")]

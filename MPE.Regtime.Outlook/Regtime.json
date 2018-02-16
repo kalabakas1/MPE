@@ -1,9 +1,11 @@
 ﻿{
+  "RegtimeEndpoint": "",
+  "DefaultFogbugz":  "",
   "Username": "",
   "Password": "",
   "Calendar": "",
-  "Mobile": "", 
-  "TextMessageApiKey":  "", 
+  "Mobile": "",
+  "TextMessageApiKey": "",
   "Customers": [
     {
       "Alias": "",

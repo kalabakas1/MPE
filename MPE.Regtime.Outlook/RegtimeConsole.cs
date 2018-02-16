@@ -37,7 +37,7 @@ namespace MPE.Regtime.Outlook.App
             {
                 _client.SetPassword(_configurationService.Configuration.Password);
             }
-            
+
             StartConsole(cmd, date);
         }
 
@@ -67,6 +67,9 @@ namespace MPE.Regtime.Outlook.App
                             break;
                         case "register":
                             ExecuteRegistrationOfDate(date);
+                            break;
+                        case "register-all":
+                            ExecuteRangeRegistration();
                             break;
                         default:
                             Console.WriteLine("No command named: " + cmd);
@@ -108,13 +111,28 @@ namespace MPE.Regtime.Outlook.App
 
                 Console.WriteLine("DONE...");
 
-                _textMessageService.Send(_configurationService.Configuration.Mobile,
-                    $"B-) Regtime synch done... B-) {DateTime.Now:yyyy-MM-dd HH:mm}");
+                if (validations.Any())
+                {
+                    _textMessageService.Send(_configurationService.Configuration.Mobile,
+                        $"B-) Regtime synch done... B-) {DateTime.Now:yyyy-MM-dd HH:mm}");
+                }
             }
             else
             {
                 _textMessageService.Send(_configurationService.Configuration.Mobile,
                     $"Entries at {date:yyyy-MM-dd} is not valid - execute manually");
+            }
+        }
+
+        private void ExecuteRangeRegistration()
+        {
+            var startDate = _client.GetLatestRegistrationDate().AddDays(1);
+            var endDate = DateTime.Now;
+
+            while (startDate <= endDate)
+            {
+                ExecuteRegistrationOfDate(startDate);
+                startDate = startDate.AddDays(1);
             }
         }
 
@@ -133,7 +151,7 @@ namespace MPE.Regtime.Outlook.App
 
             if (validations.Any(x => !x.IsValid))
             {
-                Console.WriteLine("Some entries are not valid:");
+                Console.WriteLine($"Some entries are not valid {date.ToShortDateString()}:");
                 foreach (var validationResult in validations.Where(x => !x.IsValid).ToList())
                 {
                     Console.WriteLine(validationResult.Message);
@@ -141,7 +159,7 @@ namespace MPE.Regtime.Outlook.App
             }
             else
             {
-                Console.WriteLine("CONGRATS - You are now ready for the registration of time...");
+                Console.WriteLine("CONGRATS - You are now ready for the registration of time... " + date.ToShortDateString());
                 PrintRegistrations(validations.Select(x => x.Object).ToList());
             }
             return validations;
