@@ -129,7 +129,7 @@ namespace MPE.Regtime.Outlook.App
             var startDate = _client.GetLatestRegistrationDate().AddDays(1);
             var endDate = DateTime.Now;
 
-            while (startDate <= endDate)
+            while (startDate < endDate)
             {
                 ExecuteRegistrationOfDate(startDate);
                 startDate = startDate.AddDays(1);
