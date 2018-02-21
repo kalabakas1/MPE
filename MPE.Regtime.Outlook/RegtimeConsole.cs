@@ -127,7 +127,8 @@ namespace MPE.Regtime.Outlook.App
         private void ExecuteRangeRegistration()
         {
             var startDate = _client.GetLatestRegistrationDate().AddDays(1);
-            var endDate = DateTime.Now;
+            startDate = new DateTime(startDate.Year,startDate.Month, startDate.Day);
+            var endDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
             while (startDate < endDate)
             {
