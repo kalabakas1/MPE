@@ -20,12 +20,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Personal ish", "Personal is
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{6DA8D16D-97A5-4BF0-B54A-38DE708D50BC}"
 	ProjectSection(SolutionItems) = preProject
+		Documentation\Controllable API.md = Documentation\Controllable API.md
 		Documentation\OutlookRegtimeIntegration.md = Documentation\OutlookRegtimeIntegration.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPE.Regtime.Outlook.App", "MPE.Regtime.Outlook\MPE.Regtime.Outlook.App.csproj", "{A12F9D44-4565-43B1-BAA8-AFC2A0BF84AC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPE.Library", "MPE.Library\MPE.Library.csproj", "{C223A208-B33A-4062-A845-2AB0D7A8B17A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPE.Api", "MPE.Api\MPE.Api.csproj", "{604C76F0-C565-4CC3-9505-3125F06683EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPE.Web.Api", "MPE.Web.Api\MPE.Web.Api.csproj", "{5D8ACD41-74A6-4D1E-AA12-67AA5287DA80}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +58,14 @@ Global
 		{C223A208-B33A-4062-A845-2AB0D7A8B17A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C223A208-B33A-4062-A845-2AB0D7A8B17A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C223A208-B33A-4062-A845-2AB0D7A8B17A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{604C76F0-C565-4CC3-9505-3125F06683EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{604C76F0-C565-4CC3-9505-3125F06683EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{604C76F0-C565-4CC3-9505-3125F06683EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{604C76F0-C565-4CC3-9505-3125F06683EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D8ACD41-74A6-4D1E-AA12-67AA5287DA80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D8ACD41-74A6-4D1E-AA12-67AA5287DA80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D8ACD41-74A6-4D1E-AA12-67AA5287DA80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D8ACD41-74A6-4D1E-AA12-67AA5287DA80}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
