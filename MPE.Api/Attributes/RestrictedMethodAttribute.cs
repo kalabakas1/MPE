@@ -9,13 +9,13 @@ using System.Web.Http;
 using MPE.Api.Repositories;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using MPE.Api.Logic;
 
 namespace MPE.Api.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class RestrictedMethodAttribute : AuthorizationFilterAttribute
     {
-        private const string AuthorizationHeaderName = "Authorization";
         public string Method { get; set; }
         public RestrictedMethodAttribute(string method)
         {
@@ -25,10 +25,10 @@ namespace MPE.Api.Attributes
         {
             var apiKeyRepository = new ApiKeyRepository();
 
-            var header = actionContext.Request.Headers.FirstOrDefault(x => x.Key == AuthorizationHeaderName);
+            var header = actionContext.Request.Headers.FirstOrDefault(x => x.Key == ApiConstants.AuthorizationHeaderName);
             if (header.Value == null || !header.Value.Any())
             {
-                throw new HttpResponseException(new HttpResponseMessage {StatusCode = HttpStatusCode.BadRequest, ReasonPhrase = $"Missing header {AuthorizationHeaderName}"});
+                throw new HttpResponseException(new HttpResponseMessage {StatusCode = HttpStatusCode.BadRequest, ReasonPhrase = $"Missing header {ApiConstants.AuthorizationHeaderName}"});
             }
 
             var maybeApiKey = apiKeyRepository.Get(header.Value.FirstOrDefault());

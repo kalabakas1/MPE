@@ -51,6 +51,7 @@
     </Reference>
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Http, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.4\lib\net45\System.Web.Http.dll</HintPath>
       <Private>True</Private>
@@ -70,12 +71,15 @@
     <Compile Include="ApiConstants.cs" />
     <Compile Include="Attributes\RestrictedMethodAttribute.cs" />
     <Compile Include="Attributes\RestrictSerializationAttribute.cs" />
+    <Compile Include="Attributes\RestrictSerializationControllerAttribute.cs" />
     <Compile Include="Interfaces\IApiKeyRepository.cs" />
+    <Compile Include="Logic\ApiLimitedFieldContractResolver.cs" />
     <Compile Include="Models\ApiKeyField.cs" />
     <Compile Include="Models\ApiKeyMethod.cs" />
     <Compile Include="Models\EntityAbstract.cs" />
     <Compile Include="Models\ApiKey.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\ApiKeyCache.cs" />
     <Compile Include="Repositories\ApiKeyRepository.cs" />
   </ItemGroup>
   <ItemGroup>

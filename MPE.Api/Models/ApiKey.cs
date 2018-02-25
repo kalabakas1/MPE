@@ -17,9 +17,11 @@ namespace MPE.Api.Models
         public string Key { get; set; }
         [Column("Name")]
         public string Name { get; set; }
+        [Column("Admin")]
+        public bool Admin { get; set; }
         [Ignore]
         public List<ApiKeyMethod> Methods { get; set; }
         [Ignore]
-        public List<ApiKeyField> Fields { get; set; }
+        public HashSet<ApiKeyField> Fields { get; set; }
     }
 }

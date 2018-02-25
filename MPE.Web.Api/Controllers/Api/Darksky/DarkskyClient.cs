@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using MPE.Web.Api.Controllers.Api.Models;
 using RestSharp;
 
 namespace MPE.Web.Api.Controllers.Api.Darksky

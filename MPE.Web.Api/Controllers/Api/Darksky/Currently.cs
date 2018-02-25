@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using MPE.Api.Attributes;
+using Newtonsoft.Json;
 
-namespace MPE.Web.Api.Controllers.Api.Models
+namespace MPE.Web.Api.Controllers.Api.Darksky
 {
+    [RestrictSerialization]
     public class Currently
     {
         [JsonProperty("time")]

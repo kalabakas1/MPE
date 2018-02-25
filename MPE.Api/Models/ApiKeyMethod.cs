@@ -17,5 +17,7 @@ namespace MPE.Api.Models
         public int KeyId { get; set; }
         [Column("Method")]
         public string Method { get; set; }
+        [Column("DisplayAll")]
+        public bool DisplayAll { get; set; }
     }
 }

@@ -5,11 +5,11 @@ using System.Web;
 using System.Web.Http;
 using MPE.Api.Attributes;
 using MPE.Web.Api.Controllers.Api.Darksky;
-using MPE.Web.Api.Controllers.Api.Models;
 using RestSharp;
 
 namespace MPE.Web.Api.Controllers.Api
 {
+    [RestrictSerializationController]
     [RoutePrefix("api/darksky")]
     public class DarkskyWeatherApiController : ApiController
     {

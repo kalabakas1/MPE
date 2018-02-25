@@ -4,7 +4,7 @@
 	[Deleted] [bit] NOT NULL,
 	[KeyID] [int] NOT NULL,
 	[TypePath] [nvarchar](1024) NOT NULL,
-	[FieldName] [nvarchar](128) NOT NULL,
+	[FieldName] [nvarchar](128) NULL,
  CONSTRAINT [PK_Api_KeyField] PRIMARY KEY CLUSTERED 
 (
 	[KeyFieldID] ASC

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
 using Functional.Maybe;
@@ -13,6 +14,12 @@ namespace MPE.Api.Repositories
 {
     internal class ApiKeyRepository : IApiKeyRepository
     {
+        private readonly ApiKeyCache _apiKeyCache;
+        public ApiKeyRepository()
+        {
+            _apiKeyCache = new ApiKeyCache();
+        }
+
         private Database GetClient()
         {
             return new Database(ApiConstants.ConnectionStringName);
@@ -20,6 +27,12 @@ namespace MPE.Api.Repositories
 
         public Maybe<ApiKey> Get(string key)
         {
+            var fromCache = _apiKeyCache.Get(key);
+            if (fromCache.HasValue)
+            {
+                return fromCache;
+            }
+
             using (var client = GetClient())
             {
                 var apiKey =
@@ -30,8 +43,10 @@ namespace MPE.Api.Repositories
                         client.Fetch<ApiKeyMethod>(@"SELECT * FROM Api_KeyMethod WHERE Deleted = 0 AND KeyID = @0",
                             apiKey.Id);
                     apiKey.Fields =
-                        client.Fetch<ApiKeyField>(@"SELECT * FROM Api_KeyField WHERE Deleted = 0 AND KeyID = @0",
-                            apiKey.Id);
+                        new HashSet<ApiKeyField>(client.Fetch<ApiKeyField>(@"SELECT * FROM Api_KeyField WHERE Deleted = 0 AND KeyID = @0",
+                            apiKey.Id));
+
+                    _apiKeyCache.Add(apiKey);
                 }
 
                 return apiKey.ToMaybe();

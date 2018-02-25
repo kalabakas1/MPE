@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace MPE.Web.Api.Controllers.Api.Models
+namespace MPE.Web.Api.Controllers.Api.Darksky
 {
     public class Weather
     {
