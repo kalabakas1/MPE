@@ -38,7 +38,7 @@ namespace MPE.Api.Attributes
             }
 
             var apiKey = maybeApiKey.Value;
-            if (!apiKey.Methods.Select(x => x.Method).Contains(Method))
+            if (!apiKey.Methods.Select(x => x.Method).Contains(Method) && !apiKey.Admin)
             {
                 throw new HttpResponseException(new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest, ReasonPhrase = $"API key {apiKey.Key} not allowed to execute method {Method}" });
             }

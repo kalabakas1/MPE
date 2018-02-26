@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace MPE.Web.Api.Controllers.Api.Darksky
 {
-    [RestrictSerialization("DarkSky:Currently")]
+    [RestrictSerialization("DarkSky-Currently")]
     public class Currently
     {
         [JsonProperty("time")]
