@@ -14,7 +14,7 @@ namespace MPE.Api.Models
         [Column("KeyFieldID")]
         public override int Id { get; set; }
         [Column("TypePath")]
-        public string TypePath { get; set; }
+        public string TypeAlias { get; set; }
         [Column("FieldName")]
         public string FieldName { get; set; }
     }

@@ -6,6 +6,7 @@ using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
 using Functional.Maybe;
+using MPE.Api.Helpers;
 using MPE.Api.Interfaces;
 using MPE.Api.Models;
 using NPoco;
@@ -14,12 +15,6 @@ namespace MPE.Api.Repositories
 {
     internal class ApiKeyRepository : IApiKeyRepository
     {
-        private readonly ApiKeyCache _apiKeyCache;
-        public ApiKeyRepository()
-        {
-            _apiKeyCache = new ApiKeyCache();
-        }
-
         private Database GetClient()
         {
             return new Database(ApiConstants.ConnectionStringName);
@@ -27,7 +22,7 @@ namespace MPE.Api.Repositories
 
         public Maybe<ApiKey> Get(string key)
         {
-            var fromCache = _apiKeyCache.Get(key);
+            var fromCache = CacheHelper<ApiKey>.Get(key);
             if (fromCache.HasValue)
             {
                 return fromCache;
@@ -46,7 +41,7 @@ namespace MPE.Api.Repositories
                         new HashSet<ApiKeyField>(client.Fetch<ApiKeyField>(@"SELECT * FROM Api_KeyField WHERE Deleted = 0 AND KeyID = @0",
                             apiKey.Id));
 
-                    _apiKeyCache.Add(apiKey);
+                    CacheHelper<ApiKey>.Add(apiKey.Key, apiKey);
                 }
 
                 return apiKey.ToMaybe();

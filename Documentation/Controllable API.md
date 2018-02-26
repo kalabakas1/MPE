@@ -37,6 +37,15 @@ A table to capture all the valid requests and their responses including codes an
 * ResponseTimestamp
 
 ## Implementation
+This section describes a bit about the implementation. This is not production ready at all and is not intended to be, but rather be a project to proof a concept.
+
+### Decorating through attributes
+This small setup is using attributes to controll the functionality. 
+
+#### RestrictMethod
+This is intended to decorate API methods in the controller. When it is executed it will do a lookup in the database to check if the API key defined in Authorization header is allowed to call the method. The method name is defined in the attribute initialization.
+
+#### RestrictSerialization
 
 Define a attribute for the API method declarations
 * Check the if there exists a Authorized header against the API_Key table + the API_Method table

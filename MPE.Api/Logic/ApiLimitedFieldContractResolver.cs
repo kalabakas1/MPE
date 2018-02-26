@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Functional.Maybe;
 using MPE.Api.Attributes;
+using MPE.Api.Helpers;
 using MPE.Api.Interfaces;
 using MPE.Api.Models;
 using MPE.Api.Repositories;
@@ -19,7 +20,7 @@ namespace MPE.Api.Logic
     {
         private readonly HashSet<Type> _types;
         private object _lock = new object();
-        private IApiKeyRepository _apiKeyRepository;
+        private readonly IApiAuthorizationService _authorizationService;
 
         public ApiLimitedFieldContractResolver()
         {
@@ -27,11 +28,11 @@ namespace MPE.Api.Logic
             {
                 if (_types == null)
                 {
-                    _types = GetMarkedTypes();
+                    _types = ReflectionHelper.GetTypesDecoratedByAttribute(typeof(RestrictSerializationAttribute));
                 }
             }
 
-            _apiKeyRepository = new ApiKeyRepository();
+            _authorizationService = new ApiAuthorizationService();
         }
 
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
@@ -42,54 +43,12 @@ namespace MPE.Api.Logic
             {
                 property.ShouldSerialize = s =>
                 {
-                    var maybeApiKey = GetApiKey();
-                    if (maybeApiKey.HasValue)
-                    {
-                        var key = maybeApiKey.Value;
-                        var field = key.Fields.FirstOrDefault(x =>
-                            x.FieldName != null && x.FieldName.Equals(member.Name, StringComparison.InvariantCultureIgnoreCase)
-                            && x.TypePath.Equals(declaringType.FullName, StringComparison.InvariantCultureIgnoreCase));
-
-                        if (field != null)
-                        {
-                            return true;
-                        }
-
-                        return key.Fields.Any(x =>
-                            x.TypePath.Equals(declaringType.FullName, StringComparison.InvariantCultureIgnoreCase)
-                            && string.IsNullOrEmpty(x.FieldName))
-                            || key.Admin;
-                    }
-                    return true;
+                    var header = HttpContext.Current.Request.Headers.Get(ApiConstants.AuthorizationHeaderName);
+                    return _authorizationService.ShouldFieldBeSerialized(header, member.DeclaringType, member.Name);
                 };
             }
 
             return property;
-        }
-
-        private Maybe<ApiKey> GetApiKey()
-        {
-            var header = HttpContext.Current.Request.Headers.Get(ApiConstants.AuthorizationHeaderName);
-            var maybeKey = _apiKeyRepository.Get(header);
-            return maybeKey;
-        }
-
-        private HashSet<Type> GetMarkedTypes()
-        {
-            var types = new HashSet<Type>();
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                foreach (var type in assembly.GetTypes())
-                {
-                    var attribute = type.GetCustomAttribute<RestrictSerializationAttribute>();
-                    if (attribute != null)
-                    {
-                        types.Add(type);
-                    }
-                }
-            }
-
-            return types;
         }
     }
 }
