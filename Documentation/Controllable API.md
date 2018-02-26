@@ -2,6 +2,8 @@
 This document describes an idea that makes it possible to define a API-key that can be limited in a way so each key can only call a limited amount of API methods.
 Likewise, due to the GDPR, I wanted to make it possible to limit the amount of fields returned to each of the API keys for a specific type of object. That way one can document what kind of data is returned to each of the keys.
 
+Original brainstorm can be found [here](./dumps/MPE.Api.pdf)
+
 The implementation is executed through the MPE.Web.Api project that contains a integration to the DarkSky weather API.
 
 ## Implementation
