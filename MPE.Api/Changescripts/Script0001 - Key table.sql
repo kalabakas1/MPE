@@ -20,3 +20,6 @@ GO
 
 ALTER TABLE [dbo].[Api_Key] ADD  CONSTRAINT [DF_Api_Key_Key]  DEFAULT (newid()) FOR [Key]
 GO
+
+ALTER TABLE [dbo].[Api_Key] ADD  CONSTRAINT [DF_Api_Key_Admin]  DEFAULT ((0)) FOR [Admin]
+GO
