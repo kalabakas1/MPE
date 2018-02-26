@@ -2,6 +2,8 @@
 This document describes an idea that makes it possible to define a API-key that can be limited in a way so each key can only call a limited amount of API methods.
 Likewise, due to the GDPR, I wanted to make it possible to limit the amount of fields returned to each of the API keys for a specific type of object. That way one can document what kind of data is returned to each of the keys.
 
+The implementation is executed through the MPE.Web.Api project that contains a integration to the DarkSky weather API.
+
 ## Implementation
 This section describes a bit about the implementation. This is not production ready at all and is not intended to be, but rather be a project to proof a concept.
 
@@ -26,7 +28,7 @@ This defines that a specific class is under the limitation during return of the 
 #### RestrictSerializationController
 To enable the limited serialization you have to decorate the controller with this attribute. This takes the controller configuration and sets the contract resolver to use the ApiLimitedFieldContractResolver implementation that only serializes what have been configured in the database.
 
-## Data model
+### Data model
 The following are the different models with fields that is the foundation of the API setup.
 
 Common for all the tables would be the following fields:
@@ -61,10 +63,14 @@ A table to capture all the valid requests and their responses including codes an
 * ResponseTimestamp
 
 
-## Whats missing to write about
+### ApiControllers
+One of the things that can be problematic are if you limit a clients access to an object without them knowing what the entire object contains. If they know that it contains extra fields that could be important for them, but they didnt have access to it, then they could make a direct inquery for access.
 
-API for generating JSON schema for given type - with all fields
+To do this the project contains a small API Controller that contains two methods. One for returning the names of the types marked with the RestrictedSerialization attribute, and another to generate a specific type by its type alias defined in the same attribute.
 
+That way the user can get an idea of the total structure of the object and see if they need to get access to more fields.
+
+## Whats missing
 Implement a DelegatingHandler to plugin into the pipeline and log API calls
 
 Handle personal sensitive issues in the HTTP request log on the server?
