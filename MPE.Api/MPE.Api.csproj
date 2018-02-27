@@ -73,14 +73,19 @@
     <Compile Include="Attributes\RestrictSerializationAttribute.cs" />
     <Compile Include="Attributes\RestrictSerializationControllerAttribute.cs" />
     <Compile Include="Controllers\SchemaApiController.cs" />
+    <Compile Include="Extensions\HttpRequestMessageExtensions.cs" />
     <Compile Include="Helpers\CacheHelper.cs" />
     <Compile Include="Helpers\ReflectionHelper.cs" />
     <Compile Include="Interfaces\IApiAuthorizationService.cs" />
     <Compile Include="Interfaces\IApiKeyRepository.cs" />
+    <Compile Include="Interfaces\IApiLogService.cs" />
     <Compile Include="Logic\ApiLimitedFieldContractResolver.cs" />
     <Compile Include="Logic\ApiAuthorizationService.cs" />
+    <Compile Include="Logic\ApiLogDelegatingHandler.cs" />
+    <Compile Include="Logic\ApiLogService.cs" />
     <Compile Include="Models\ApiKeyField.cs" />
     <Compile Include="Models\ApiKeyMethod.cs" />
+    <Compile Include="Models\ApiLog.cs" />
     <Compile Include="Models\EntityAbstract.cs" />
     <Compile Include="Models\ApiKey.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -93,6 +98,7 @@
     <Content Include="Changescripts\Script0003 - KeyField table.sql" />
     <Content Include="Changescripts\Script0002 - KeyMethod table.sql" />
     <Content Include="Changescripts\Script0001 - Key table.sql" />
+    <Content Include="Changescripts\Script0004 - Log table.sql" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
