@@ -73,6 +73,4 @@ To do this the project contains a small API Controller that contains two methods
 That way the user can get an idea of the total structure of the object and see if they need to get access to more fields.
 
 ## Whats missing
-Implement a DelegatingHandler to plugin into the pipeline and log API calls
-
 Handle personal sensitive issues in the HTTP request log on the server?

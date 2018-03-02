@@ -97,12 +97,15 @@ namespace MPE.Regtime.Outlook.App
             {
                 foreach (var registration in validations.Select(x => x.Object).ToList())
                 {
-                    var fogbugzClient = new FogbugzClient(_configurationService.Configuration.Username, _configurationService.Configuration.FogbugzPassword, registration.Fogbugz);
-                    if (!string.IsNullOrEmpty(registration.CaseNumber))
+                    if (!string.IsNullOrEmpty(registration.Fogbugz))
                     {
-                        fogbugzClient.SetEstimateIfNone(int.Parse(registration.CaseNumber)
-                            , validations.Where(x => x.Object.CaseNumber == registration.CaseNumber)
-                                .Sum(x => x.Object.Hours));
+                        var fogbugzClient = new FogbugzClient(_configurationService.Configuration.Username, _configurationService.Configuration.FogbugzPassword, registration.Fogbugz);
+                        if (!string.IsNullOrEmpty(registration.CaseNumber))
+                        {
+                            fogbugzClient.SetEstimateIfNone(int.Parse(registration.CaseNumber)
+                                , validations.Where(x => x.Object.CaseNumber == registration.CaseNumber)
+                                    .Sum(x => x.Object.Hours));
+                        }
                     }
 
                     _client.RegisterHours(registration);
@@ -225,59 +228,6 @@ namespace MPE.Regtime.Outlook.App
                 Console.WriteLine(registration.ToString());
             }
             Console.WriteLine();
-        }
-
-        private Customer GetCustomerFromConsole()
-        {
-            var customerAlias = "";
-            Customer customer;
-            do
-            {
-                Print("Customer: ");
-                customerAlias = Console.ReadLine();
-                customer = _configurationService.Configuration.GetByAlias(customerAlias);
-
-                if (customer == null)
-                {
-                    Console.WriteLine("Not valid customer - try again");
-                }
-            } while (customer == null);
-
-            return customer;
-        }
-
-        private Project GetProjectFromConsole(Customer customer)
-        {
-            Project project;
-            do
-            {
-                Print("Project: ");
-                var projectAlias = Console.ReadLine();
-                project = customer.GetProject(projectAlias);
-
-                if (project == null)
-                {
-                    project = customer.Projects.FirstOrDefault();
-                    Console.WriteLine("Defaults => " + (project != null ? project.Name : "N/A"));
-                }
-            } while (project == null && customer.Projects.Any());
-
-            return project;
-        }
-
-        private decimal GetHoursFromConsole()
-        {
-            decimal hours = 0;
-            do
-            {
-                Print("Hours: ");
-                if (!decimal.TryParse(Console.ReadLine(), out hours))
-                {
-                    Console.WriteLine("Not valid hours - try again");
-                }
-            } while (hours == 0);
-
-            return hours;
         }
 
         private DateTime GetDateFromInput()
