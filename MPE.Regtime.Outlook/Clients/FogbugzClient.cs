@@ -47,7 +47,8 @@ namespace MPE.Regtime.Outlook.App.Clients
                 Token = token
             });
 
-            var response = JsonConvert.DeserializeObject<SearchResponse>(_client.Execute(request).Content);
+            var rawData = _client.Execute(request).Content;
+            var response = JsonConvert.DeserializeObject<SearchResponse>(rawData);
 
             if (response.Data != null
                 && response.Data != null

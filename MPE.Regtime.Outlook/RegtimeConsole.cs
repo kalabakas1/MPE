@@ -128,13 +128,13 @@ namespace MPE.Regtime.Outlook.App
                 if (validations.Any())
                 {
                     var syncSuccessfullMessage = $"B-) Regtime synch done... B-) {DateTime.Now:yyyy-MM-dd HH:mm}";
-                    _textMessageService.Send(_configurationService.Configuration.Mobile, syncSuccessfullMessage);
+                    //_textMessageService.Send(_configurationService.Configuration.Mobile, syncSuccessfullMessage);
                     _slackService.SendMessage(syncSuccessfullMessage);
 
                     if (!string.IsNullOrEmpty(logService.ToString()))
                     {
                         var caseUpdatesMessage = $"Case updates: \n {logService}";
-                        _textMessageService.Send(_configurationService.Configuration.Mobile, caseUpdatesMessage);
+                        //_textMessageService.Send(_configurationService.Configuration.Mobile, caseUpdatesMessage);
                         _slackService.SendMessage(caseUpdatesMessage);
                     }
                 }
@@ -142,7 +142,7 @@ namespace MPE.Regtime.Outlook.App
             else
             {
                 var failureRegistrations = $"Entries at {date:yyyy-MM-dd} is not valid - execute manually";
-                _textMessageService.Send(_configurationService.Configuration.Mobile, failureRegistrations);
+                //_textMessageService.Send(_configurationService.Configuration.Mobile, failureRegistrations);
                 _slackService.SendMessage(failureRegistrations);
             }
         }
