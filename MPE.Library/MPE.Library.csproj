@@ -45,7 +45,9 @@
     <Compile Include="RSS\RssConfiguration.cs" />
     <Compile Include="RSS\RssItem.cs" />
     <Compile Include="RSS\RssService.cs" />
+    <Compile Include="Slack\SlackService.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

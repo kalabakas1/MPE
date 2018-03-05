@@ -1,11 +1,17 @@
 ﻿{
   "RegtimeEndpoint": "",
-  "DefaultFogbugz":  "",
+  "DefaultFogbugz": "",
   "Username": "",
   "Password": "",
   "Calendar": "",
   "Mobile": "",
   "TextMessageApiKey": "",
+  "Slack": {
+    "Token": "",
+    "Username": "",
+    "Channel": "",
+    "Account": ""
+  },
   "Customers": [
     {
       "Alias": "",

@@ -72,11 +72,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clients\FogbugzClient.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Models\CalendarEvent.cs" />
     <Compile Include="Converters\CalendarEventConverter.cs" />
     <Compile Include="Clients\OutlookClient.cs" />
     <Compile Include="Models\Configurations\Customer.cs" />
+    <Compile Include="Models\Configurations\Slack.cs" />
     <Compile Include="Models\FogBugz\Case.cs" />
     <Compile Include="Models\FogBugz\Clientversionallowed.cs" />
     <Compile Include="Models\FogBugz\CmdRequest.cs" />
@@ -99,6 +101,7 @@
     <Compile Include="Models\ConsoleOptions.cs" />
     <Compile Include="Models\RegtimeRegistration.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
+    <Compile Include="Services\LogService.cs" />
     <Compile Include="Services\TextMessageService.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +116,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="face.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MPE.Library\MPE.Library.csproj">
+      <Project>{C223A208-B33A-4062-A845-2AB0D7A8B17A}</Project>
+      <Name>MPE.Library</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

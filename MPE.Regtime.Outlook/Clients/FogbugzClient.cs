@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using MPE.Regtime.Outlook.App.Models.FogBugz;
+using MPE.Regtime.Outlook.App.Services;
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Serializers;
@@ -19,15 +20,18 @@ namespace MPE.Regtime.Outlook.App.Clients
         private readonly string _username;
         private readonly string _password;
         private readonly RestClient _client;
+        private readonly LogService _logService;
 
         public FogbugzClient(
-            string username, 
+            string username,
             string password,
-            string fogbugz)
+            string fogbugz,
+            LogService logService)
         {
             _username = username;
             _password = password;
             _client = new RestClient(string.Format(Endpoint, fogbugz));
+            _logService = logService;
         }
 
         public Case GetCase(int caseNumber)
@@ -45,8 +49,8 @@ namespace MPE.Regtime.Outlook.App.Clients
 
             var response = JsonConvert.DeserializeObject<SearchResponse>(_client.Execute(request).Content);
 
-            if (response.Data != null 
-                && response.Data != null 
+            if (response.Data != null
+                && response.Data != null
                 && response.Data.Cases != null
                 && response.Data.Cases.Any())
             {
@@ -59,7 +63,7 @@ namespace MPE.Regtime.Outlook.App.Clients
         public void SetEstimateIfNone(int caseNumber, decimal estimate)
         {
             var fbCase = GetCase(caseNumber);
-            if (fbCase != null && fbCase.CurrentEstimate == 0)
+            if (fbCase != null)
             {
                 var token = GetToken();
                 var request = SetupRequest();
@@ -68,10 +72,19 @@ namespace MPE.Regtime.Outlook.App.Clients
                     cmd = "edit",
                     token = token,
                     ixBug = caseNumber,
-                    hrsCurrEst = estimate
+                    hrsCurrEst = fbCase.CurrentEstimate + estimate
                 });
 
                 _client.Execute(request);
+
+                if (fbCase.CurrentEstimate == 0)
+                {
+                    _logService.Log(Constants.EstimatSetMessage, caseNumber, estimate);
+                }
+                else if (fbCase.CurrentEstimate < fbCase.HoursElapsed + estimate)
+                {
+                    _logService.Log(Constants.EstimatChangeMessage, caseNumber, fbCase.CurrentEstimate, fbCase.HoursElapsed + estimate);
+                }
             }
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using MPE.Library.Slack;
 using MPE.Regtime.Outlook.App.Clients;
 using MPE.Regtime.Outlook.App.Converters;
 using MPE.Regtime.Outlook.App.Extensions;
@@ -17,12 +18,16 @@ namespace MPE.Regtime.Outlook.App
         private RegtimeClient _client;
         private readonly ConfigurationService _configurationService;
         private readonly TextMessageService _textMessageService;
+        private readonly SlackService _slackService;
 
         public RegtimeConsole(
             string configurationPath)
         {
             _configurationService = new ConfigurationService(configurationPath);
             _textMessageService = new TextMessageService(_configurationService);
+
+            var slackConfiguration = _configurationService.Configuration.Slack;
+            _slackService = new SlackService(slackConfiguration.Token, slackConfiguration.Username, slackConfiguration.Channel, slackConfiguration.Account);
         }
 
         public void Run(string cmd = null, DateTime date = default(DateTime))
@@ -95,11 +100,12 @@ namespace MPE.Regtime.Outlook.App
             var validations = ExecuteValidateDate(date);
             if (validations.All(x => x.IsValid))
             {
+                var logService = new LogService();
                 foreach (var registration in validations.Select(x => x.Object).ToList())
                 {
                     if (!string.IsNullOrEmpty(registration.Fogbugz))
                     {
-                        var fogbugzClient = new FogbugzClient(_configurationService.Configuration.Username, _configurationService.Configuration.FogbugzPassword, registration.Fogbugz);
+                        var fogbugzClient = new FogbugzClient(_configurationService.Configuration.Username, _configurationService.Configuration.FogbugzPassword, registration.Fogbugz, logService);
                         if (!string.IsNullOrEmpty(registration.CaseNumber))
                         {
                             fogbugzClient.SetEstimateIfNone(int.Parse(registration.CaseNumber)
@@ -109,28 +115,37 @@ namespace MPE.Regtime.Outlook.App
                     }
 
                     _client.RegisterHours(registration);
-                    Console.WriteLine("Request sent for: " + registration.ToString());
+                    Console.WriteLine("Request sent for: " + registration);
                 }
 
                 Console.WriteLine("DONE...");
 
                 if (validations.Any())
                 {
-                    _textMessageService.Send(_configurationService.Configuration.Mobile,
-                        $"B-) Regtime synch done... B-) {DateTime.Now:yyyy-MM-dd HH:mm}");
+                    var syncSuccessfullMessage = $"B-) Regtime synch done... B-) {DateTime.Now:yyyy-MM-dd HH:mm}";
+                    _textMessageService.Send(_configurationService.Configuration.Mobile, syncSuccessfullMessage);
+                    _slackService.SendMessage(syncSuccessfullMessage);
+
+                    if (!string.IsNullOrEmpty(logService.ToString()))
+                    {
+                        var caseUpdatesMessage = $"Case updates: \n {logService}";
+                        _textMessageService.Send(_configurationService.Configuration.Mobile, caseUpdatesMessage);
+                        _slackService.SendMessage(caseUpdatesMessage);
+                    }
                 }
             }
             else
             {
-                _textMessageService.Send(_configurationService.Configuration.Mobile,
-                    $"Entries at {date:yyyy-MM-dd} is not valid - execute manually");
+                var failureRegistrations = $"Entries at {date:yyyy-MM-dd} is not valid - execute manually";
+                _textMessageService.Send(_configurationService.Configuration.Mobile, failureRegistrations);
+                _slackService.SendMessage(failureRegistrations);
             }
         }
 
         private void ExecuteRangeRegistration()
         {
             var startDate = _client.GetLatestRegistrationDate().AddDays(1);
-            startDate = new DateTime(startDate.Year,startDate.Month, startDate.Day);
+            startDate = new DateTime(startDate.Year, startDate.Month, startDate.Day);
             var endDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
             while (startDate < endDate)

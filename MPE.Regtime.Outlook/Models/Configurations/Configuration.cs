@@ -21,6 +21,8 @@ namespace MPE.Regtime.Outlook.App.Models.Configurations
         public string TextMessageApiKey { get; set; }
         [JsonProperty("Mobile")]
         public string Mobile { get; set; }
+        [JsonProperty("Slack")]
+        public Slack Slack { get; set; }
         [JsonProperty("Customers")]
         public Customer[] Customers { get; set; }
 
