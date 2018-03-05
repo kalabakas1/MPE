@@ -63,7 +63,7 @@ namespace MPE.Regtime.Outlook.App.Clients
         public void SetEstimateIfNone(int caseNumber, decimal estimate)
         {
             var fbCase = GetCase(caseNumber);
-            if (fbCase != null)
+            if (fbCase != null && fbCase.CurrentEstimate == 0)
             {
                 var token = GetToken();
                 var request = SetupRequest();

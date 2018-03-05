@@ -103,13 +103,18 @@ namespace MPE.Regtime.Outlook.App
                 var logService = new LogService();
                 foreach (var registration in validations.Select(x => x.Object).ToList())
                 {
+                    if (_client.HaveRegistration(registration))
+                    {
+                        continue;
+                    }
+
                     if (!string.IsNullOrEmpty(registration.Fogbugz))
                     {
                         var fogbugzClient = new FogbugzClient(_configurationService.Configuration.Username, _configurationService.Configuration.FogbugzPassword, registration.Fogbugz, logService);
                         if (!string.IsNullOrEmpty(registration.CaseNumber))
                         {
                             fogbugzClient.SetEstimateIfNone(int.Parse(registration.CaseNumber)
-                                , validations.Where(x => x.Object.CaseNumber == registration.CaseNumber)
+                                , validations.Where(x => x.Object.CaseNumber == registration.CaseNumber && !_client.HaveRegistration(x.Object))
                                     .Sum(x => x.Object.Hours));
                         }
                     }

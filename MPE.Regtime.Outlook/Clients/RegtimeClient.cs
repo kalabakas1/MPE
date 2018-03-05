@@ -40,6 +40,11 @@ namespace MPE.Regtime.Outlook.App.Clients
             _client.Authenticator = new NtlmAuthenticator(_configurationService.Configuration.Username, _configurationService.Configuration.Password);
         }
 
+        public bool HaveRegistration(RegtimeRegistration registration)
+        {
+            return _priorRegistrations.Any(x => x.Id == registration.Id);
+        }
+
         public void RegisterHours(RegtimeRegistration registration)
         {
             if (_priorRegistrations.Any(x => x.Id == registration.Id))
