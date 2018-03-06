@@ -116,6 +116,16 @@ namespace MPE.Regtime.Outlook.App
                             fogbugzClient.SetEstimateIfNone(int.Parse(registration.CaseNumber)
                                 , validations.Where(x => x.Object.CaseNumber == registration.CaseNumber && !_client.HaveRegistration(x.Object))
                                     .Sum(x => x.Object.Hours));
+
+                            int caseNumber = 0;
+                            if (int.TryParse(registration.CaseNumber, out caseNumber))
+                            {
+                                var fbcase = fogbugzClient.GetCase(caseNumber);
+                                if (fbcase != null)
+                                {
+                                    registration.Note = fbcase.Title + ": " + registration.Note;
+                                }
+                            }
                         }
                     }
 

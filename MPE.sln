@@ -32,6 +32,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPE.Api", "MPE.Api\MPE.Api.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPE.Web.Api", "MPE.Web.Api\MPE.Web.Api.csproj", "{5D8ACD41-74A6-4D1E-AA12-67AA5287DA80}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Powershell", "Powershell", "{95FE9DC9-6FE2-4F16-8396-D2492BACC4C2}"
+	ProjectSection(SolutionItems) = preProject
+		Powershell\Clean-Bin-Obj-Folders.ps1 = Powershell\Clean-Bin-Obj-Folders.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,5 +79,6 @@ Global
 		{5B3AC3CA-89F2-4743-B0A3-E6C62439BE32} = {B1273552-B229-4919-9D7C-ED515A558330}
 		{F75462B6-0658-4014-A568-B4CBD2BB0C14} = {B1273552-B229-4919-9D7C-ED515A558330}
 		{6DA8D16D-97A5-4BF0-B54A-38DE708D50BC} = {B1273552-B229-4919-9D7C-ED515A558330}
+		{95FE9DC9-6FE2-4F16-8396-D2492BACC4C2} = {B1273552-B229-4919-9D7C-ED515A558330}
 	EndGlobalSection
 EndGlobal
