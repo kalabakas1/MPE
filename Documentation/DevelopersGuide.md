@@ -7,7 +7,7 @@ At one point I got tired of correcting stuff just to make the solution I worked 
 ## The List!!!
 It is gonna be a small list that sums up the different things along with an argument that sort of legalizes it. Not gonna be religious about it, but it's something I have gotten frustrated over, which could be avoided.
 
-### Remember to add configuration transformation items - you create, you trasnform
+### Remember to add configuration transformation items - you create, you transform
 When dealing with web applications or normal executables you might need to add something like appSettings in the .config files to differentiate between development, staging and the release environment. I spend around two hours trying to make all the configurations have the correct values, just because the developer that created didn't choose the correct values for the different environments.  You might not know the values, but you should know if it something that is gonna be transformed when building a specific environment.
 
 ### Develope in branches - master should always be production ready
