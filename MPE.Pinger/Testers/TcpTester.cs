@@ -18,9 +18,13 @@ namespace MPE.Pinger.Testers
         {
             try
             {
-                using (var client = new TcpClient())
+                var addresses = Dns.GetHostAddresses(connection.Target);
+                foreach (var ipAddress in addresses)
                 {
-                    client.Connect(IPAddress.Parse(connection.Target), connection.Port);
+                    using (var client = new TcpClient())
+                    {
+                        client.Connect(ipAddress, connection.Port);
+                    }
                 }
             }
             catch (Exception e)

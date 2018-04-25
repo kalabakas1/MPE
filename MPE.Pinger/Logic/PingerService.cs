@@ -26,9 +26,9 @@ namespace MPE.Pinger.Logic
                 .WaitAndRetry(
                     new[]
                     {
-                        TimeSpan.FromSeconds(5),
-                        TimeSpan.FromSeconds(60),
-                        TimeSpan.FromSeconds(180),
+                        TimeSpan.FromSeconds(GetFailWaitInSec(1)),
+                        TimeSpan.FromSeconds(GetFailWaitInSec(2)),
+                        TimeSpan.FromSeconds(GetFailWaitInSec(3)),
                     });
 
         public PingerService(
@@ -75,6 +75,11 @@ namespace MPE.Pinger.Logic
         {
             var fileData = File.ReadAllText(ConfigurationManager.AppSettings["MPE.Pinger.Configuration.Path"]);
             return JsonConvert.DeserializeObject<List<Connection>>(fileData);
+        }
+
+        private int GetFailWaitInSec(int failNumber)
+        {
+            return int.Parse(ConfigurationManager.AppSettings[$"MPE.Pinger.Fail{failNumber}.Pause.Secs"]);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,8 +16,13 @@ namespace MPE.Pinger.Logic
 
         public TimedPingerService()
         {
-            _timer = new Timer(5 * 60 * 1000);
-            _timer.Elapsed += (sender, args) => new PingerService(new List<IConnectionTester>
+            _timer = new Timer(int.Parse(ConfigurationManager.AppSettings["MPE.Pinger.WaitBetweenTest.Secs"]) * 1000);
+            _timer.Elapsed += (sender, args) => Execute();
+        }
+
+        private void Execute()
+        {
+            new PingerService(new List<IConnectionTester>
             {
                 new TcpTester(),
                 new WebTester()
@@ -25,6 +31,7 @@ namespace MPE.Pinger.Logic
 
         public void Start()
         {
+            Execute();
             _timer.Start();
         }
 
