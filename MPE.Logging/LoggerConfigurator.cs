@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MPE.Logging.Interfaces;
+using MPE.Logging.Repository;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Core;
@@ -18,10 +20,9 @@ namespace MPE.Logging
 
         private readonly IAppSettingRepository _appSettingRepository;
 
-        public LoggerConfigurator(
-            IAppSettingRepository appSettingRepository)
+        public LoggerConfigurator()
         {
-            _appSettingRepository = appSettingRepository;
+            _appSettingRepository = new AppSettingRepository();
         }
 
         public Logger Generate()
@@ -44,6 +45,13 @@ namespace MPE.Logging
                 configuration.WriteTo.Elasticsearch(elasticUrl,
                     restrictedToMinimumLevel: Get(Constants.Elastic_MinimumLevel, LogEventLevel.Debug), 
                     indexFormat: Get(Constants.Elastic_IndexFormat, "log_{0:yyyy.MM}"));
+            }
+
+            var sentryDsn = Get(Constants.Sentry_Dsn, string.Empty);
+            if (!string.IsNullOrEmpty(sentryDsn))
+            {
+                configuration.WriteTo.Sentry(sentryDsn, Assembly.GetExecutingAssembly().GetName().Version.ToString())
+                    .Enrich.FromLogContext();
             }
 
             return configuration.CreateLogger();

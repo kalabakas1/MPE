@@ -14,8 +14,7 @@ namespace MPE.Logging
     {
         static void Main(string[] args)
         {
-            var appSettingRepository = new AppSettingRepository();
-            var configurator = new LoggerConfigurator(appSettingRepository);
+            var configurator = new LoggerConfigurator();
 
             var logger = configurator.Generate();
 

@@ -5,7 +5,7 @@ using MPE.Logging.Interfaces;
 
 namespace MPE.Logging.Repository
 {
-    internal class AppSettingRepository : IAppSettingRepository
+    public class AppSettingRepository : IAppSettingRepository
     {
         public T Get<T>(string key)
         {

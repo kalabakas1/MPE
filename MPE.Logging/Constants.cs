@@ -21,5 +21,7 @@ namespace MPE.Logging
         public const string Elastic_Url = "Logging.Elastic.Url";
         public const string Elastic_MinimumLevel = "Logging.Elastic.MinimumLevel";
         public const string Elastic_IndexFormat = "Logging.Elastic.IndexFormat";
+
+        public const string Sentry_Dsn = "Logging.Sentry.Dsn";
     }
 }
