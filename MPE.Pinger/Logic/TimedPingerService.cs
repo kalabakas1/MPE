@@ -28,11 +28,11 @@ namespace MPE.Pinger.Logic
             var now = DateTime.Now.TimeOfDay;
             if (fromTime <= now && toTime >= now)
             {
-                new PingerService(new List<IConnectionTester>
+                Task.Run(() => new PingerService(new List<IConnectionTester>
                 {
                     new TcpTester(),
                     new WebTester()
-                }).Run();
+                }).Run());
             }
         }
 

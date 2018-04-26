@@ -13,6 +13,8 @@ namespace MPE.Pinger
     {
         static void Main(string[] args)
         {
+            System.IO.Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+
             var rc = HostFactory.Run(x =>
             {
                 x.Service<TimedPingerService>(s =>
