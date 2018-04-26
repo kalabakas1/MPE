@@ -59,6 +59,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\Configuration.cs" />
     <Compile Include="Logic\TimedPingerService.cs" />
     <Compile Include="Models\Connection.cs" />
     <Compile Include="Enums\ConnectionType.cs" />

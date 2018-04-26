@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Testers;
+using Configuration = MPE.Pinger.Helpers.Configuration;
 
 namespace MPE.Pinger.Logic
 {
@@ -16,17 +17,23 @@ namespace MPE.Pinger.Logic
 
         public TimedPingerService()
         {
-            _timer = new Timer(int.Parse(ConfigurationManager.AppSettings["MPE.Pinger.WaitBetweenTest.Secs"]) * 1000);
+            _timer = new Timer(Configuration.Get<int>("MPE.Pinger.WaitBetweenTest.Secs") * 1000);
             _timer.Elapsed += (sender, args) => Execute();
         }
 
         private void Execute()
         {
-            new PingerService(new List<IConnectionTester>
+            var fromTime = TimeSpan.Parse(Configuration.Get<string>("MPE.Pinger.TimeSpan.From"));
+            var toTime = TimeSpan.Parse(Configuration.Get<string>("MPE.Pinger.TimeSpan.To"));
+            var now = DateTime.Now.TimeOfDay;
+            if (fromTime <= now && toTime >= now)
             {
-                new TcpTester(),
-                new WebTester()
-            }).Run();
+                new PingerService(new List<IConnectionTester>
+                {
+                    new TcpTester(),
+                    new WebTester()
+                }).Run();
+            }
         }
 
         public void Start()

@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Polly;
 using Polly.Retry;
 using Serilog;
+using Configuration = MPE.Pinger.Helpers.Configuration;
 
 namespace MPE.Pinger.Logic
 {
@@ -18,7 +19,7 @@ namespace MPE.Pinger.Logic
     {
         private List<Task> _tasks;
         private readonly IEnumerable<IConnectionTester> _testers;
-        private ILogger _logger = new LoggerConfigurator().Generate();
+        private ILogger _logger = new LoggerFactory().Generate();
 
         private RetryPolicy RetryPolicy =>
             Policy
@@ -73,13 +74,13 @@ namespace MPE.Pinger.Logic
 
         private List<Connection> ReadFromFile()
         {
-            var fileData = File.ReadAllText(ConfigurationManager.AppSettings["MPE.Pinger.Configuration.Path"]);
+            var fileData = File.ReadAllText(Configuration.Get<string>("MPE.Pinger.Configuration.Path"));
             return JsonConvert.DeserializeObject<List<Connection>>(fileData);
         }
 
         private int GetFailWaitInSec(int failNumber)
         {
-            return int.Parse(ConfigurationManager.AppSettings[$"MPE.Pinger.Fail{failNumber}.Pause.Secs"]);
+            return int.Parse(Configuration.Get<string>($"MPE.Pinger.Fail{failNumber}.Pause.Secs"));
         }
     }
 }

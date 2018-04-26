@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MPE.Logging.Interfaces;
 using MPE.Logging.Repository;
+using MPE.Logging.Sinks;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Core;
@@ -14,15 +15,15 @@ using Serilog.Sinks.Slack;
 
 namespace MPE.Logging
 {
-    public class LoggerConfigurator
+    public class LoggerFactory
     {
         private const string FilePathDefault = "../Logs/log-{Date}.txt";
 
         private readonly IAppSettingRepository _appSettingRepository;
 
-        public LoggerConfigurator()
+        public LoggerFactory()
         {
-            _appSettingRepository = new AppSettingRepository();
+            _appSettingRepository = new SettingsRepository();
         }
 
         public Logger Generate()
@@ -52,6 +53,15 @@ namespace MPE.Logging
             {
                 configuration.WriteTo.Sentry(sentryDsn, Assembly.GetExecutingAssembly().GetName().Version.ToString())
                     .Enrich.FromLogContext();
+            }
+
+            var coolSmsApiKey = Get(Constants.CoolSms_Key, string.Empty);
+            var coolSmsFromName = Get(Constants.CoolSms_FromName, string.Empty);
+            var coolSmsPhonenumbers = Get(Constants.CoolSms_PhoneNumbers, string.Empty);
+            if (!string.IsNullOrEmpty(coolSmsApiKey) && !string.IsNullOrEmpty(coolSmsFromName) &&
+                !string.IsNullOrEmpty(coolSmsPhonenumbers))
+            {
+                configuration.WriteTo.CoolSmsSink(coolSmsApiKey, coolSmsFromName, coolSmsPhonenumbers.Split(','));
             }
 
             return configuration.CreateLogger();

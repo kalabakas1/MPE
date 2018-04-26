@@ -23,5 +23,9 @@ namespace MPE.Logging
         public const string Elastic_IndexFormat = "Logging.Elastic.IndexFormat";
 
         public const string Sentry_Dsn = "Logging.Sentry.Dsn";
+
+        public const string CoolSms_Key = "Logging.CoolSms.Key";
+        public const string CoolSms_FromName = "Logging.CoolSms.FromName";
+        public const string CoolSms_PhoneNumbers = "Logging.CoolSms.Phonenumbers";
     }
 }
