@@ -31,7 +31,8 @@ namespace MPE.Pinger.Logic
                 Task.Run(() => new PingerService(new List<IConnectionTester>
                 {
                     new TcpTester(),
-                    new WebTester()
+                    new WebTester(),
+                    new ServiceTester()
                 }).Run());
             }
         }

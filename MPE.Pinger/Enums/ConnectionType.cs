@@ -3,6 +3,7 @@
     internal enum ConnectionType
     {
         Tcp,
-        Web
+        Web,
+        Service
     }
 }
