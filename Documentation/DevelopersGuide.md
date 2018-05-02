@@ -23,5 +23,52 @@ __Commit before you stop working__
 ### Don't let your pride use the hours from a case
 So we are all human beings, and we all have some sort of pride in what we do. But when it comes to deadlines, and tasks that already have a estimate associated with it, there just ain't room for pride. What pride does to a developer is pretty simple. Imagine that you have gotten a fairly technical task that contains a lot of new stuff for you to learn. But your dog is sick, your parents are mad because you married a farmers daughter etc. That combined with pride results in a big use of the estimated hours, without you asking for help. Wasted hours that could be spend on solving the problem. My experience is that if you get stuck doing a task, just ask someone in your team for help, and get on with it. 
 
+### Don't comment out code, remove it or change the architecture
+This is nothing new - well not something new for the most of us. But instead of commenting out a big hunk of code, please consider to change the architecture surrounding the code, or just plainly delete the code. If it is commented out, then it is not part of the running program, ergo remove it.
+
+### Have unique exception messages
+```csharp
+if (String.IsNullOrEmpty(viewModel.VoucherCode))
+    throw new Exception("Voucher is invalid");
+
+if (viewModel.BasketId == Guid.Empty)
+    throw new Exception("Basket is invalid");
+
+var basket = _basketRepository.GetBasket(viewModel.BasketId.ToString());
+if (basket == null)
+    throw new Exception("Basket is invalid");
+
+if (basket.VoucherCodes.Any(c => c.Code == viewModel.VoucherCode))
+    throw new Exception("Voucher code is already used on this basket");
+
+var voucher = VoucherCode.GetByCode(viewModel.VoucherCode);
+
+if (voucher == null ||
+    voucher.Deleted ||
+    voucher.IsUsed ||
+    voucher.TotalUsages >= voucher.MaxUsages ||
+    voucher.Voucher == null ||
+    voucher.Voucher.SiteId != basket.LanguageId ||
+    voucher.Voucher.Deleted ||
+    !(voucher.Voucher.ValidFrom <= DateTime.Now && voucher.Voucher.ValidTo > DateTime.Now))
+        throw new Exception("Voucher is invalid");
+```
+
+So during the last few weeks I have seen and debug my fare share of code. Every day not under 10 hours of intensive work. During this period, a small part of the team tried to figure out why we couldn't add vouchers to our system. We constantly got "Voucher is invalid". So we found the code, started to read from the top down, found the place where the exception were thrown. But it didn't make any sense. We added logging to see if the data model were invalid or null - it contained all the data needed for the code to execute without exceptions. After a short break, we instead started to read from the bottom up, realizing that we were looking at the wrong exception message. 
+
+The lesson here is: Don't have duplicate exception messages within the same method. Easier to locate the exact exception if the messages are unique within a specific context.
+
+### You cant work on a case if that case does not contain a description of the task at hand
+PUT TEXT HERE (customers get more than paied for)
+
+### You cant replace functionality if you don't know what it does
+PUT TEXT HERE
+
+### Keep your customer bussy with testing
+PUT TEXT HERE (13 deployments on QA, 10 deployments on production)
+
+### Read the documentation
+PUT TEXT HERE
+
 ## Conclusion
 All teams are different and this small list of stuff can't fit all teams or projects. But the essence of it is the same. Identify the irritating repetitive errors that occurs, find a solution to them, and implement the solution as a concrete deployment rule, or a culture in the team. You can even game-ify it by having a cake/beer rule - for each time a certain error occurs, the developer should bring it for the next team meeting.
