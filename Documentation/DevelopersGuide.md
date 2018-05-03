@@ -54,7 +54,7 @@ if (voucher == null ||
         throw new Exception("Voucher is invalid");
 ```
 
-So during the last few weeks I have seen and debug my fare share of code. Every day not under 10 hours of intensive work. During this period, a small part of the team tried to figure out why we couldn't add vouchers to our system. We constantly got "Voucher is invalid". So we found the code, started to read from the top down, found the place where the exception were thrown. But it didn't make any sense. We added logging to see if the data model were invalid or null - it contained all the data needed for the code to execute without exceptions. After a short break, we instead started to read from the bottom up, realizing that we were looking at the wrong exception message. 
+So during the last few weeks I have seen and debuged my fare share of code. Every day not under 10 hours of intensive work. During this period, a small part of the team tried to figure out why we couldn't add vouchers to our system. We constantly got "Voucher is invalid". So we found the code, started to read from the top down, found the place where the exception were thrown. But it didn't make any sense. We added logging to see if the data model were invalid or null - it contained all the data needed for the code to execute without exceptions. After a short break, we instead started to read from the bottom up, realizing that we were looking at the wrong exception message. 
 
 The lesson here is: Don't have duplicate exception messages within the same method. Easier to locate the exact exception if the messages are unique within a specific context.
 
@@ -73,7 +73,7 @@ First of all, do never guarantee that! And never ever do it if you do not have a
 > Do map the functionality you should replace and describe the functionality and flows. Then make the customer sign off on it. You now have a consensus regarding what is gonna be the end result after replacing the functionality.
 
 ### Keep your customer bussy with testing
-PUT TEXT HERE (13 deployments on QA, 10 deployments on production)
+When doing larger projects it is always important that you get the customers to verify that it is implemented in an acceptable way. But instead of having a large chunk of features deployed to staging at once, it is better to have a constant flow of features and changes that the customers can tests. That way the time from that the feature is developed to the response from the customer is shortened and the developer still have the implementation in mind if there should be any changes to it.
 
 ### Read the documentation
 "How do I do this?", "Where do I find this?", "How does this work?". It is fine to ask questions, but sometime it gets a bit too much. I really admire the university that had a support-teddy-bear as a first line of support. If the people needed help they were required to tell the problem to the bear before they got to talk to a real person. It actually forced the people to reflect on a solution, and normally they didn't needed to talk to an actual support-person, they solved their own problems. Documentation is the same thing, it contains answers already given to the questions you are asking. Read it instead of asking, and try to keep up every time the documentation is updated. If you ask too much, you generally just end up with a answer in the form of:
