@@ -24,7 +24,7 @@ __Commit before you stop working__
 So we are all human beings, and we all have some sort of pride in what we do. But when it comes to deadlines, and tasks that already have a estimate associated with it, there just ain't room for pride. What pride does to a developer is pretty simple. Imagine that you have gotten a fairly technical task that contains a lot of new stuff for you to learn. But your dog is sick, your parents are mad because you married a farmers daughter etc. That combined with pride results in a big use of the estimated hours, without you asking for help. Wasted hours that could be spend on solving the problem. My experience is that if you get stuck doing a task, just ask someone in your team for help, and get on with it. 
 
 ### Don't comment out code, remove it or change the architecture
-This is nothing new - well not something new for the most of us. But instead of commenting out a big hunk of code, please consider to change the architecture surrounding the code, or just plainly delete the code. If it is commented out, then it is not part of the running program, ergo remove it.
+So why does people comment out code? I have asked my self that over and over again, and got to a lot of good answers. But basically the only one person that knows the reason why some code is commented out, is the developer himself - and thats why you should never remove code by comment, just simply delete it. Comments should be in a normal text form, explaining some critical or complex code, never to remove code. It just brings doubt and confusion to the project.
 
 ### Have unique exception messages
 ```csharp
@@ -58,17 +58,27 @@ So during the last few weeks I have seen and debug my fare share of code. Every 
 
 The lesson here is: Don't have duplicate exception messages within the same method. Easier to locate the exact exception if the messages are unique within a specific context.
 
-### You cant work on a case if that case does not contain a description of the task at hand
-PUT TEXT HERE (customers get more than paied for)
+### You can't work on a case if that case does not contain a description of the task at hand
+Imagine that you get a case with a headline limited to about 200 characters - and that's it! How would you solve that it you knew by the header that this is gonna be a huge complex task? After the last couple of weeks, I have concluded that I'm never ever gonna touch that case at all. It is extremely difficult to solve a case if you don't know what the customer expects, and what the criteria of success really are. So please do take the time to describe what a case is about - what it should change, where to do the change, what the customer expects, and how to validate that the case is done.
+
+> Don't create cases that only contain a headline - it only bring frustrations with it.
 
 ### You cant replace functionality if you don't know what it does
-PUT TEXT HERE
+For about a month ago I was told to replace a basket functionality in a e-commerce platform with some copy of a existing implementation. The agreement with the customer was:
+
+> It just have to work exactly as before
+
+First of all, do never guarantee that! And never ever do it if you do not have a complete overview of the existing functionality you are about to replace. If a system is neatly implemented and you have documentation that visualizes what is gonna happen when you save a entity, e.g. five events will fire, then it might be fine to guarantee this. But if your system is not documented at all, then the developer goes from a small area of focus that only takes a short time to get a understanding of, to having to understand almost the entire system.
+
+> Do map the functionality you should replace and describe the functionality and flows. Then make the customer sign off on it. You now have a consensus regarding what is gonna be the end result after replacing the functionality.
 
 ### Keep your customer bussy with testing
 PUT TEXT HERE (13 deployments on QA, 10 deployments on production)
 
 ### Read the documentation
-PUT TEXT HERE
+"How do I do this?", "Where do I find this?", "How does this work?". It is fine to ask questions, but sometime it gets a bit too much. I really admire the university that had a support-teddy-bear as a first line of support. If the people needed help they were required to tell the problem to the bear before they got to talk to a real person. It actually forced the people to reflect on a solution, and normally they didn't needed to talk to an actual support-person, they solved their own problems. Documentation is the same thing, it contains answers already given to the questions you are asking. Read it instead of asking, and try to keep up every time the documentation is updated. If you ask too much, you generally just end up with a answer in the form of:
+
+> Read the documentation!!!
 
 ## Conclusion
 All teams are different and this small list of stuff can't fit all teams or projects. But the essence of it is the same. Identify the irritating repetitive errors that occurs, find a solution to them, and implement the solution as a concrete deployment rule, or a culture in the team. You can even game-ify it by having a cake/beer rule - for each time a certain error occurs, the developer should bring it for the next team meeting.
