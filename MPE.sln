@@ -46,6 +46,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPE.Logging", "MPE.Logging\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPE.Pinger", "MPE.Pinger\MPE.Pinger.csproj", "{2A53E71C-A9FA-4DAC-B4DD-DC74059730A6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{623A245E-1B8B-4895-A357-36A341A78A0C}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\Files\PerformanceCounters.txt = Documentation\Files\PerformanceCounters.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,5 +102,6 @@ Global
 		{F75462B6-0658-4014-A568-B4CBD2BB0C14} = {B1273552-B229-4919-9D7C-ED515A558330}
 		{6DA8D16D-97A5-4BF0-B54A-38DE708D50BC} = {B1273552-B229-4919-9D7C-ED515A558330}
 		{95FE9DC9-6FE2-4F16-8396-D2492BACC4C2} = {B1273552-B229-4919-9D7C-ED515A558330}
+		{623A245E-1B8B-4895-A357-36A341A78A0C} = {B1273552-B229-4919-9D7C-ED515A558330}
 	EndGlobalSection
 EndGlobal
