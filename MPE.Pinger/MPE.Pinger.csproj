@@ -61,11 +61,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\Configuration.cs" />
-    <Compile Include="Logic\TimedPingerService.cs" />
+    <Compile Include="Logic\MetricConductor.cs" />
+    <Compile Include="Models\MetricCollected.cs" />
+    <Compile Include="Startup.cs" />
+    <Compile Include="Logic\TimedTestExecutor.cs" />
+    <Compile Include="Models\ConfigurationFile.cs" />
     <Compile Include="Models\Connection.cs" />
     <Compile Include="Enums\ConnectionType.cs" />
     <Compile Include="Interfaces\IConnectionTester.cs" />
-    <Compile Include="Logic\PingerService.cs" />
+    <Compile Include="Logic\TestConductor.cs" />
+    <Compile Include="Models\Metric.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Testers\TcpTester.cs" />

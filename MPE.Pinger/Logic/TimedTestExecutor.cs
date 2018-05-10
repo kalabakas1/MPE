@@ -11,11 +11,11 @@ using Configuration = MPE.Pinger.Helpers.Configuration;
 
 namespace MPE.Pinger.Logic
 {
-    internal class TimedPingerService
+    internal class TimedTestExecutor
     {
         private Timer _timer;
 
-        public TimedPingerService()
+        public TimedTestExecutor()
         {
             _timer = new Timer(Configuration.Get<int>("MPE.Pinger.WaitBetweenTest.Secs") * 1000);
             _timer.Elapsed += (sender, args) => Execute();
@@ -28,7 +28,7 @@ namespace MPE.Pinger.Logic
             var now = DateTime.Now.TimeOfDay;
             if (fromTime <= now && toTime >= now)
             {
-                Task.Run(() => new PingerService(new List<IConnectionTester>
+                Task.Run(() => new TestConductor(new List<IConnectionTester>
                 {
                     new TcpTester(),
                     new WebTester(),

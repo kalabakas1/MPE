@@ -15,7 +15,7 @@ using Configuration = MPE.Pinger.Helpers.Configuration;
 
 namespace MPE.Pinger.Logic
 {
-    internal class PingerService
+    internal class TestConductor
     {
         private List<Task> _tasks;
         private readonly IEnumerable<IConnectionTester> _testers;
@@ -32,7 +32,7 @@ namespace MPE.Pinger.Logic
                         TimeSpan.FromSeconds(GetFailWaitInSec(3)),
                     });
 
-        public PingerService(
+        public TestConductor(
             IEnumerable<IConnectionTester> testers)
         {
             _testers = testers;
@@ -43,7 +43,7 @@ namespace MPE.Pinger.Logic
         {
             _logger.Debug("Starting...");
 
-            var connections = ReadFromFile();
+            var connections = Configuration.ReadConfigurationFile().Connections;
             foreach (var connection in connections)
             {
                 var task = Task.Run(() =>
@@ -70,12 +70,6 @@ namespace MPE.Pinger.Logic
             Task.WaitAll(_tasks.ToArray());
 
             _logger.Debug("Done...");
-        }
-
-        private List<Connection> ReadFromFile()
-        {
-            var fileData = File.ReadAllText(Configuration.Get<string>("MPE.Pinger.Configuration.Path"));
-            return JsonConvert.DeserializeObject<List<Connection>>(fileData);
         }
 
         private int GetFailWaitInSec(int failNumber)

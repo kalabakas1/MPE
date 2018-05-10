@@ -17,34 +17,37 @@ namespace MPE
 
         public static void Run()
         {
-            var data = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(
-                File.ReadAllText(@"C:\Users\mpe\Desktop\data.json"));
-
-            Console.WriteLine("Data read...");
-
-
-            int count = 0;
-            foreach (var d in data)
+            while (true)
             {
-                try
-                {
-                    Send("", d);
-                    Thread.Sleep(50);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"Error: {e.Message}");
-                }
-                count++;
+                var data = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(
+                    File.ReadAllText(@"C:\Users\mpe\Desktop\data.json"));
 
-                if (count % 100 == 0)
+                Console.WriteLine("Data read...");
+
+
+                int count = 0;
+                foreach (var d in data)
                 {
-                    Console.WriteLine(count);
+                    try
+                    {
+                        Send("", d);
+                        Thread.Sleep(50);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Error: {e.Message}");
+                    }
+                    count++;
+
+                    if (count % 100 == 0)
+                    {
+                        Console.WriteLine(count);
+                    }
                 }
+
+                Console.WriteLine("done...");
+                Console.ReadLine();
             }
-
-            Console.WriteLine("done...");
-            Console.ReadLine();
         }
 
         private static async void Send(string url, Dictionary<string, string> data)

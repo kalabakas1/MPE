@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using MPE.Pinger.Logic;
+using Newtonsoft.Json;
 using Topshelf;
 
 namespace MPE.Pinger
@@ -15,11 +16,31 @@ namespace MPE.Pinger
         {
             System.IO.Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
+            var metrics = new MetricConductor();
+            metrics.InitCounters();
+
+            var timer = new Timer(5000);
+            timer.Elapsed += (sender, eventArgs) =>
+            {
+                var collect = metrics.Collect();
+                foreach (var metric in collect)
+                {
+                    Console.WriteLine(JsonConvert.SerializeObject(metric));
+                }
+
+                Console.WriteLine();
+            };
+
+            timer.Start();
+
+
+            Console.ReadLine();
+            return;
             var rc = HostFactory.Run(x =>
             {
-                x.Service<TimedPingerService>(s =>
+                x.Service<Startup>(s =>
                 {
-                    s.ConstructUsing(name => new TimedPingerService());
+                    s.ConstructUsing(name => new Startup());
                     s.WhenStarted(tc => tc.Start());
                     s.WhenStopped(tc => tc.Stop());
                 });

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Timers;
+using Newtonsoft.Json;
 
 namespace MPE
 {
@@ -31,22 +33,26 @@ namespace MPE
             //Console.ReadLine();
 
 
-            PerformanceCounter memoryCounter = new PerformanceCounter("Memory", "% Committed Bytes In Use");
-            PerformanceCounter processorCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+            //PerformanceCounter memoryCounter = new PerformanceCounter("Memory", "% Committed Bytes In Use");
+            //PerformanceCounter processorCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
 
-            var timer = new Timer(5000);
-            timer.Elapsed += (sender, eventArgs) =>
-            {
-                var mem = memoryCounter.NextValue();
-                Console.WriteLine(mem + "% RAM");
+            //var timer = new Timer(5000);
+            //timer.Elapsed += (sender, eventArgs) =>
+            //{
+            //    var mem = memoryCounter.NextValue();
+            //    Console.WriteLine(mem + "% RAM");
 
-                var pro = processorCounter.NextValue();
-                Console.WriteLine(pro + "% CPU");
+            //    var pro = processorCounter.NextValue();
+            //    Console.WriteLine(pro + "% CPU");
 
-                Console.WriteLine();
-            };
-            
-            timer.Start();
+            //    Console.WriteLine();
+            //};
+
+            //timer.Start();
+
+            CallbackTester.Run();
+
+
 
             Console.ReadLine();
         }
