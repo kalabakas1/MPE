@@ -14,7 +14,7 @@ namespace MPE.Pinger.Testers
     {
         public bool CanTest(Connection connection)
         {
-            return connection.Type == ConnectionType.Service.ToString();
+            return connection.Type.Equals(ConnectionType.Service.ToString(), StringComparison.CurrentCultureIgnoreCase);
         }
 
         public void Test(Connection connection)

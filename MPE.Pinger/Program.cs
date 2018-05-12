@@ -2,11 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
+using MPE.Pinger.Interfaces;
 using MPE.Pinger.Logic;
+using MPE.Pinger.Logic.Collectors;
+using MPE.Pinger.Models;
+using MPE.Pinger.Writers;
 using Newtonsoft.Json;
+using RestSharp;
+using RestSharp.Authenticators;
+using StackExchange.Redis;
 using Topshelf;
+using Timer = System.Timers.Timer;
 
 namespace MPE.Pinger
 {
@@ -16,26 +24,6 @@ namespace MPE.Pinger
         {
             System.IO.Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
-            var metrics = new MetricConductor();
-            metrics.InitCounters();
-
-            var timer = new Timer(5000);
-            timer.Elapsed += (sender, eventArgs) =>
-            {
-                var collect = metrics.Collect();
-                foreach (var metric in collect)
-                {
-                    Console.WriteLine(JsonConvert.SerializeObject(metric));
-                }
-
-                Console.WriteLine();
-            };
-
-            timer.Start();
-
-
-            Console.ReadLine();
-            return;
             var rc = HostFactory.Run(x =>
             {
                 x.Service<Startup>(s =>

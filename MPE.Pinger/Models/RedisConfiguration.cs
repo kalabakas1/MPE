@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace MPE.Pinger.Models
 {
-    internal class ConfigurationFile
+    internal class RedisConfiguration
     {
         public string Host { get; set; }
-        public List<Connection> Connections { get; set; }
-        public List<Metric> Metrics { get; set; }
-        public RedisConfiguration Redis { get; set; }
+        public int Port { get; set; }
+        public string[] Metrics { get; set; }
     }
 }

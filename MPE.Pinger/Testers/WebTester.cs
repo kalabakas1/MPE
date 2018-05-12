@@ -23,7 +23,7 @@ namespace MPE.Pinger.Testers
 
         public bool CanTest(Connection connection)
         {
-            return connection.Type == ConnectionType.Web.ToString();
+            return connection.Type.Equals(ConnectionType.Web.ToString(), StringComparison.CurrentCultureIgnoreCase);
         }
 
         public void Test(Connection connection)

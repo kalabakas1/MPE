@@ -2,31 +2,32 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using MPE.Logging;
 using MPE.Pinger.Helpers;
+using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
 using Serilog;
 
-namespace MPE.Pinger.Logic
+namespace MPE.Pinger.Logic.Collectors
 {
-    internal class MetricConductor
+    internal class ServerMetricCollector : ICollector
     {
         private readonly List<Metric> _counters;
         private ILogger _logger = new LoggerFactory().Generate();
+        private ConfigurationFile _configurationFile;
 
-        public MetricConductor()
+        public ServerMetricCollector()
         {
             _counters = new List<Metric>();
+            InitCounters();
         }
 
-        public void InitCounters()
+        private void InitCounters()
         {
-            var configurationFile = Configuration.ReadConfigurationFile();
+            _configurationFile = Configuration.ReadConfigurationFile();
 
-            foreach (var metric in configurationFile.Metrics)
+            foreach (var metric in _configurationFile.Metrics)
             {
                 try
                 {
@@ -49,7 +50,7 @@ namespace MPE.Pinger.Logic
                             metric.Counters.Add(counter);
                         }
 
-                        metric.Alias = configurationFile.Host + "." + metric.Alias;
+                        metric.Alias = metric.Alias;
                         _counters.Add(metric);
                     }
                 }
@@ -60,16 +61,16 @@ namespace MPE.Pinger.Logic
             }
         }
 
-        public List<MetricCollected> Collect()
+        public List<MetricResult> Collect()
         {
-            return _counters.Select(x => new MetricCollected
+            return _counters.Select(x => new MetricResult
             {
+                Path = _configurationFile.Host + "." + x.Alias,
                 Alias = x.Alias,
-                Timestamp = DateTime.Now,
                 Value = x.Counters.Sum(z =>
                 {
                     var cs1 = z.NextSample();
-                    Thread.Sleep(100);
+                    Thread.Sleep(500);
                     var cs2 = z.NextSample();
                     return CounterSample.Calculate(cs1, cs2);
                 })

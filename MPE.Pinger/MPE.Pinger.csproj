@@ -41,12 +41,21 @@
       <HintPath>..\packages\Polly.5.9.0\lib\net45\Polly.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.3\lib\net452\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Serilog">
       <HintPath>..\packages\Serilog.2.6.0\lib\net45\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="StackExchange.Redis, Version=1.2.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\StackExchange.Redis.1.2.6\lib\net45\StackExchange.Redis.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -61,8 +70,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\Configuration.cs" />
-    <Compile Include="Logic\MetricConductor.cs" />
-    <Compile Include="Models\MetricCollected.cs" />
+    <Compile Include="Interfaces\ICollector.cs" />
+    <Compile Include="Interfaces\IMetricWriter.cs" />
+    <Compile Include="Logic\Collectors\RedisMetricCollector.cs" />
+    <Compile Include="Logic\Collectors\ServerMetricCollector.cs" />
+    <Compile Include="Logic\TimedMetricExecutor.cs" />
+    <Compile Include="Models\MetricResult.cs" />
+    <Compile Include="Models\RedisConfiguration.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Logic\TimedTestExecutor.cs" />
     <Compile Include="Models\ConfigurationFile.cs" />
@@ -76,6 +90,7 @@
     <Compile Include="Testers\TcpTester.cs" />
     <Compile Include="Testers\WebTester.cs" />
     <Compile Include="Testers\ServiceTester.cs" />
+    <Compile Include="Writers\ElasticRestWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

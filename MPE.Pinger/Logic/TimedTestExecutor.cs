@@ -13,10 +13,16 @@ namespace MPE.Pinger.Logic
 {
     internal class TimedTestExecutor
     {
+        private readonly List<IConnectionTester> _testers;
+        private readonly IMetricWriter _metricWriter;
         private Timer _timer;
 
-        public TimedTestExecutor()
+        public TimedTestExecutor(
+            IEnumerable<IConnectionTester> testers,
+            IMetricWriter metricWriter)
         {
+            _testers = testers.ToList();
+            _metricWriter = metricWriter;
             _timer = new Timer(Configuration.Get<int>("MPE.Pinger.WaitBetweenTest.Secs") * 1000);
             _timer.Elapsed += (sender, args) => Execute();
         }
@@ -28,12 +34,8 @@ namespace MPE.Pinger.Logic
             var now = DateTime.Now.TimeOfDay;
             if (fromTime <= now && toTime >= now)
             {
-                Task.Run(() => new TestConductor(new List<IConnectionTester>
-                {
-                    new TcpTester(),
-                    new WebTester(),
-                    new ServiceTester()
-                }).Run());
+                var results = new TestConductor(_testers).Run();
+                _metricWriter.Write(results);
             }
         }
 

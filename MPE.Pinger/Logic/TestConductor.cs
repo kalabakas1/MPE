@@ -17,7 +17,7 @@ namespace MPE.Pinger.Logic
 {
     internal class TestConductor
     {
-        private List<Task> _tasks;
+        private List<Task<MetricResult>> _tasks;
         private readonly IEnumerable<IConnectionTester> _testers;
         private ILogger _logger = new LoggerFactory().Generate();
 
@@ -36,18 +36,27 @@ namespace MPE.Pinger.Logic
             IEnumerable<IConnectionTester> testers)
         {
             _testers = testers;
-            _tasks = new List<Task>();
+            _tasks = new List<Task<MetricResult>>();
         }
 
-        public void Run()
+        public List<MetricResult> Run()
         {
             _logger.Debug("Starting...");
 
-            var connections = Configuration.ReadConfigurationFile().Connections;
-            foreach (var connection in connections)
+            var results = new List<MetricResult>();
+
+            var configuration = Configuration.ReadConfigurationFile();
+            foreach (var connection in configuration.Connections)
             {
-                var task = Task.Run(() =>
+                var task = Task<MetricResult>.Factory.StartNew(() =>
                 {
+                    var result = new MetricResult
+                    {
+                        Path = $"{configuration.Host}.Test.{connection.Type}.{connection.Alias}",
+                        Alias = connection.Alias,
+                        Message = "Succeeded"
+                    };
+
                     var testers = _testers.Where(x => x.CanTest(connection))
                         .Select(x => (IConnectionTester)Activator.CreateInstance(x.GetType())).ToList();
 
@@ -60,8 +69,11 @@ namespace MPE.Pinger.Logic
                         catch (Exception e)
                         {
                             _logger.Fatal(e, $"Pinger failed for: {connection.Alias}");
+                            result.Message = "Failed";
                         }
                     }
+
+                    return result;
                 });
 
                 _tasks.Add(task);
@@ -69,7 +81,11 @@ namespace MPE.Pinger.Logic
 
             Task.WaitAll(_tasks.ToArray());
 
+            results.AddRange(_tasks.Select(x => x.Result));
+
             _logger.Debug("Done...");
+
+            return results;
         }
 
         private int GetFailWaitInSec(int failNumber)
