@@ -19,34 +19,12 @@ namespace MPE.Pinger.Logic.Collectors
         public RedisMetricCollector()
         {
             _configurationFile = Configuration.ReadConfigurationFile();
-
-            IsEnabled = _configurationFile.Redis != null && _configurationFile.Redis.Metrics != null;
-
-            if (IsEnabled)
-            {
-                try
-                {
-                    var options = new ConfigurationOptions
-                    {
-                        ConnectTimeout = 120000,
-                        ConnectRetry = Retries,
-                        //ClientName = credentials.ClientName,
-                        EndPoints = {{_configurationFile.Redis.Host, _configurationFile.Redis.Port}},
-                        AllowAdmin = true
-                    };
-
-                    var redis = ConnectionMultiplexer.Connect(options);
-                    _server = redis.GetServer(_configurationFile.Redis.Host, _configurationFile.Redis.Port);
-                }
-                catch
-                {
-                    IsEnabled = false;
-                }
-            }
         }
 
         public List<MetricResult> Collect()
         {
+            InitiateServer();
+
             if (!IsEnabled)
             {
                 return new List<MetricResult>();    
@@ -78,6 +56,35 @@ namespace MPE.Pinger.Logic.Collectors
             }
 
             return metrics;
+        }
+
+        private void InitiateServer()
+        {
+            IsEnabled = _configurationFile.Redis != null && _configurationFile.Redis.Metrics != null;
+
+            if (IsEnabled)
+            {
+                try
+                {
+                    var options = new ConfigurationOptions
+                    {
+                        ConnectTimeout = 120000,
+                        ConnectRetry = Retries,
+                        EndPoints = { { _configurationFile.Redis.Host, _configurationFile.Redis.Port } },
+                        AllowAdmin = true
+                    };
+
+                    if (_server == null || !_server.IsConnected)
+                    {
+                        var redis = ConnectionMultiplexer.Connect(options);
+                        _server = redis.GetServer(_configurationFile.Redis.Host, _configurationFile.Redis.Port);
+                    }
+                }
+                catch(Exception e)
+                {
+                    IsEnabled = false;
+                }
+            }
         }
     }
 }
