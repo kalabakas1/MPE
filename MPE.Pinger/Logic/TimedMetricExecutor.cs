@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using MPE.Pinger.Helpers;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
 
@@ -11,18 +12,18 @@ namespace MPE.Pinger.Logic
 {
     internal class TimedMetricExecutor
     {
-        private readonly IMetricWriter _metricWriter;
+        private readonly IMetricRepository _metricRepository;
         private readonly List<ICollector> _collectors;
         private readonly Timer _timer;
 
 
         public TimedMetricExecutor(
             List<ICollector> collectors,
-            IMetricWriter metricWriter)
+            IMetricRepository metricRepository)
         {
-            _metricWriter = metricWriter;
+            _metricRepository = metricRepository;
             _collectors = collectors;
-            _timer = new Timer(5000);
+            _timer = new Timer(Configuration.Get<int>("MPE.Pinger.Metric.Inteval.Sec") * 1000);
 
             _timer.Elapsed += (sender, args) => Execute();
         }
@@ -43,7 +44,7 @@ namespace MPE.Pinger.Logic
             Task.WaitAll(tasks.ToArray());
 
             var results = tasks.SelectMany(x => x.Result);
-            _metricWriter.Write(results.ToList());
+            _metricRepository.Write(results.ToList());
         }
 
         public void Start()

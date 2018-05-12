@@ -7,9 +7,10 @@ using MPE.Pinger.Models;
 
 namespace MPE.Pinger.Interfaces
 {
-    internal interface IMetricWriter
+    internal interface IMetricRepository
     {
         void Write(List<MetricResult> results);
         void Write(MetricResult result);
+        MetricResult Pop();
     }
 }

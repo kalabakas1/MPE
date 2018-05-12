@@ -10,16 +10,9 @@ using RestSharp.Authenticators;
 
 namespace MPE.Pinger.Writers
 {
-    internal class ElasticRestWriter : IMetricWriter
+    internal class ElasticRestMetricRepository
     {
         private const string Host = "http://localhost:9200/";
-        public void Write(List<MetricResult> results)
-        {
-            foreach (var metricResult in results)
-            {
-                Write(metricResult);
-            }
-        }
 
         public void Write(MetricResult result)
         {

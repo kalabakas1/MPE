@@ -53,6 +53,7 @@ namespace MPE.Pinger.Logic
                     var result = new MetricResult
                     {
                         Path = $"{configuration.Host}.Test.{connection.Type}.{connection.Alias}",
+                        Timestamp = DateTime.Now,
                         Alias = connection.Alias,
                         Message = "Succeeded"
                     };

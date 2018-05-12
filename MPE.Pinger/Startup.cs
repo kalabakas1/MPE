@@ -11,9 +11,10 @@ namespace MPE.Pinger
     {
         private readonly TimedTestExecutor _testExecutor;
         private readonly TimedMetricExecutor _metricCollector;
+        private readonly TimedReporter _reporter;
         public Startup()
         {
-            var writer = new ElasticRestWriter();
+            var writer = new BlockingCollectionMetricRepository();
             _testExecutor = new TimedTestExecutor(new List<IConnectionTester>
             {
                 new TcpTester(),
@@ -26,18 +27,22 @@ namespace MPE.Pinger
                 new ServerMetricCollector(),
                 new RedisMetricCollector()
             }, writer);
+
+            _reporter = new TimedReporter(writer);
         }
 
         public void Start()
         {
             _metricCollector.Start();
             _testExecutor.Start();
+            _reporter.Start();
         }
 
         public void Stop()
         {
             _metricCollector.Stop();
             _testExecutor.Stop();
+            _reporter.Stop();
         }
     }
 }

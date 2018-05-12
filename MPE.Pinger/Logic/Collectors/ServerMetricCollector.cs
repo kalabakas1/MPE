@@ -67,6 +67,7 @@ namespace MPE.Pinger.Logic.Collectors
             {
                 Path = _configurationFile.Host + "." + x.Alias,
                 Alias = x.Alias,
+                Timestamp = DateTime.Now,
                 Value = x.Counters.Sum(z =>
                 {
                     var cs1 = z.NextSample();

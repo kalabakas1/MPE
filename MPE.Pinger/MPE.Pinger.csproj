@@ -71,10 +71,11 @@
   <ItemGroup>
     <Compile Include="Helpers\Configuration.cs" />
     <Compile Include="Interfaces\ICollector.cs" />
-    <Compile Include="Interfaces\IMetricWriter.cs" />
+    <Compile Include="Interfaces\IMetricRepository.cs" />
     <Compile Include="Logic\Collectors\RedisMetricCollector.cs" />
     <Compile Include="Logic\Collectors\ServerMetricCollector.cs" />
     <Compile Include="Logic\TimedMetricExecutor.cs" />
+    <Compile Include="Logic\TimedReporter.cs" />
     <Compile Include="Models\MetricResult.cs" />
     <Compile Include="Models\RedisConfiguration.cs" />
     <Compile Include="Startup.cs" />
@@ -90,7 +91,8 @@
     <Compile Include="Testers\TcpTester.cs" />
     <Compile Include="Testers\WebTester.cs" />
     <Compile Include="Testers\ServiceTester.cs" />
-    <Compile Include="Writers\ElasticRestWriter.cs" />
+    <Compile Include="Writers\BlockingCollectionMetricRepository.cs" />
+    <Compile Include="Writers\ElasticRestMetricRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

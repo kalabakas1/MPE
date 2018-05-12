@@ -42,7 +42,8 @@ namespace MPE.Pinger.Logic.Collectors
                     var result = new MetricResult
                     {
                         Path = $"{_configurationFile.Host}.Redis.{metric}",
-                        Alias = metric
+                        Alias = metric,
+                        Timestamp = DateTime.Now
                     };
 
                     float flValue = 0;
