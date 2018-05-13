@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
 using MPE.Pinger.Enums;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
 
-namespace MPE.Pinger.Testers
+namespace MPE.Pinger.Logic.Testers
 {
     internal class ServiceTester : IConnectionTester
     {

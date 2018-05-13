@@ -2,7 +2,7 @@
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Logic;
 using MPE.Pinger.Logic.Collectors;
-using MPE.Pinger.Testers;
+using MPE.Pinger.Logic.Testers;
 using MPE.Pinger.Writers;
 
 namespace MPE.Pinger
@@ -14,7 +14,7 @@ namespace MPE.Pinger
         private readonly TimedReporter _reporter;
         public Startup()
         {
-            var writer = new BlockingCollectionMetricRepository();
+            var writer = new MetricRepository();
             _testExecutor = new TimedTestExecutor(new List<IConnectionTester>
             {
                 new TcpTester(),

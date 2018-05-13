@@ -9,7 +9,7 @@ using MPE.Pinger.Models;
 
 namespace MPE.Pinger.Writers
 {
-    internal class BlockingCollectionMetricRepository : IMetricRepository
+    internal class MetricRepository : IMetricRepository
     {
         private static ConcurrentQueue<MetricResult> _dataStore = new ConcurrentQueue<MetricResult>();
 

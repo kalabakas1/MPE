@@ -5,7 +5,7 @@ using MPE.Pinger.Enums;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
 
-namespace MPE.Pinger.Testers
+namespace MPE.Pinger.Logic.Testers
 {
     internal class TcpTester : IConnectionTester
     {

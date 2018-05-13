@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using MPE.Pinger.Interfaces;
-using MPE.Pinger.Testers;
 using Configuration = MPE.Pinger.Helpers.Configuration;
 
 namespace MPE.Pinger.Logic

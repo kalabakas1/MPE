@@ -88,11 +88,11 @@
     <Compile Include="Models\Metric.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Testers\TcpTester.cs" />
-    <Compile Include="Testers\WebTester.cs" />
-    <Compile Include="Testers\ServiceTester.cs" />
-    <Compile Include="Writers\BlockingCollectionMetricRepository.cs" />
-    <Compile Include="Writers\ElasticRestMetricRepository.cs" />
+    <Compile Include="Logic\Testers\TcpTester.cs" />
+    <Compile Include="Logic\Testers\WebTester.cs" />
+    <Compile Include="Logic\Testers\ServiceTester.cs" />
+    <Compile Include="Writers\MetricRepository.cs" />
+    <Compile Include="Writers\LocalElasticRestMetricRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

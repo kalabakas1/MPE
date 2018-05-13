@@ -15,14 +15,14 @@ namespace MPE.Pinger.Logic
     {
         private readonly IMetricRepository _metricRepository;
         private Timer _timer;
-        private ElasticRestMetricRepository _elasticRestMetricRepository;
+        private LocalElasticRestMetricRepository _localElasticRestMetricRepository;
         public TimedReporter(
             IMetricRepository metricRepository)
         {
             _metricRepository = metricRepository;
             _timer = new Timer(Configuration.Get<int>("MPE.Pinger.Report.Inteval.Sec") * 1000);
             _timer.Elapsed += (sender, args) => ReportMetrics();
-            _elasticRestMetricRepository = new ElasticRestMetricRepository();
+            _localElasticRestMetricRepository = new LocalElasticRestMetricRepository();
         }
 
         private void ReportMetrics()
@@ -33,7 +33,7 @@ namespace MPE.Pinger.Logic
                 try
                 {
                     var metric = _metricRepository.Pop();
-                    _elasticRestMetricRepository.Write(metric);
+                    _localElasticRestMetricRepository.Write(metric);
                 }
                 catch (Exception e)
                 {

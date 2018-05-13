@@ -10,7 +10,7 @@ using RestSharp.Authenticators;
 
 namespace MPE.Pinger.Writers
 {
-    internal class ElasticRestMetricRepository
+    internal class LocalElasticRestMetricRepository
     {
         private const string Host = "http://localhost:9200/";
 
