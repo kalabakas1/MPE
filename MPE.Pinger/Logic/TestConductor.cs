@@ -54,7 +54,7 @@ namespace MPE.Pinger.Logic
                     {
                         Path = $"{configuration.Host}.Test.{connection.Type}.{connection.Alias}",
                         Timestamp = DateTime.Now,
-                        Alias = connection.Alias,
+                        Alias = $"{connection.Type}.{connection.Alias}" ,
                         Message = "Succeeded"
                     };
 

@@ -21,10 +21,17 @@ namespace MPE.Pinger.Repositories
 
         public void Write(MetricResult result)
         {
-            var client = GetClient();
-            var request = new RestRequest($"metric-{DateTime.Now:yyyy-MM-dd}/metric/{Guid.NewGuid()}", Method.PUT);
-            request.AddJsonBody(result);
-            var response = client.Execute(request);
+            try
+            {
+                var client = GetClient();
+                var request = new RestRequest($"metric-{DateTime.Now:yyyy-MM-dd}/metric/{Guid.NewGuid()}", Method.PUT);
+                request.AddJsonBody(result);
+                var response = client.Execute(request);
+            }
+            catch (Exception e)
+            {
+                
+            }
         }
 
         public MetricResult Pop()
@@ -35,7 +42,6 @@ namespace MPE.Pinger.Repositories
         private RestClient GetClient()
         {
             var client = new RestClient("http://localhost:9200/");
-            client.Authenticator = new HttpBasicAuthenticator("elastic", "hgysi7fg6A09ofLpFnjl");
 
             return client;
         }

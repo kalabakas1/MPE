@@ -41,7 +41,7 @@ namespace MPE.Pinger.Logic
                 var count = 0;
                 while (run)
                 {
-                    while (count < BulkSize)
+                    while (run && count < BulkSize)
                     {
                         try
                         {

@@ -70,10 +70,18 @@ namespace MPE.Pinger.Logic.Collectors
                 Timestamp = DateTime.Now,
                 Value = x.Counters.Sum(z =>
                 {
-                    var cs1 = z.NextSample();
-                    Thread.Sleep(500);
-                    var cs2 = z.NextSample();
-                    return CounterSample.Calculate(cs1, cs2);
+                    try
+                    {
+                        var cs1 = z.NextSample();
+                        Thread.Sleep(500);
+                        var cs2 = z.NextSample();
+                        return CounterSample.Calculate(cs1, cs2);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Debug("Failed to get metric", e);
+                        return 0;
+                    }
                 })
             }).ToList();
         }

@@ -30,7 +30,7 @@ namespace MPE.Pinger.Logic.Collectors
                 return new List<MetricResult>();    
             }
             
-            var info = _server.InfoRaw().Split('\n').Where(x => !string.IsNullOrEmpty(x)).Select(x => x.Split(':')).ToDictionary(x => x[0].ToLowerInvariant(), x => x[1]);
+            var info = _server.InfoRaw().Split('\n').Where(x => x.Contains(":")).Select(x => x.Split(':')).ToDictionary(x => x[0].ToLowerInvariant(), x => x[1]);
 
             var redisMetrics = _configurationFile.Redis.Metrics;
             var metrics = new List<MetricResult>();

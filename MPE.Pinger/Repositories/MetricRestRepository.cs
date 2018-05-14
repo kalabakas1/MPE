@@ -21,20 +21,31 @@ namespace MPE.Pinger.Repositories
 
         public void Write(List<MetricResult> results)
         {
+            if (results == null || !results.Any())
+            {
+                return;
+            }
+
             var request = new RestRequest("/api/MetricResult");
             request.Method = Method.POST;
             request.AddHeader("Authorization", _configurationFile.ApiKey);
-            request.AddBody(JsonConvert.SerializeObject(results));
+            request.AddParameter("application/json", JsonConvert.SerializeObject(results), ParameterType.RequestBody);
+
 
             var response = GetClient().Execute(request);
         }
 
         public void Write(MetricResult result)
         {
+            if (result == null)
+            {
+                return;
+            }
+
             var request = new RestRequest("/api/MetricResult");
             request.Method = Method.POST;
             request.AddHeader("Authorization", _configurationFile.ApiKey);
-            request.AddJsonBody(new List<MetricResult> {result});
+            request.AddParameter("application/json", JsonConvert.SerializeObject(new List<MetricResult> {result}), ParameterType.RequestBody);
 
             var response = GetClient().Execute(request);
         }
