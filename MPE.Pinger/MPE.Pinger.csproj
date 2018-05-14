@@ -87,12 +87,14 @@
     <Compile Include="Interfaces\ICollector.cs" />
     <Compile Include="Interfaces\IMetricRepository.cs" />
     <Compile Include="Interfaces\IProcess.cs" />
+    <Compile Include="Logic\Collectors\RabbitMqCollector.cs" />
     <Compile Include="Logic\Collectors\RedisMetricCollector.cs" />
     <Compile Include="Logic\Collectors\ServerMetricCollector.cs" />
     <Compile Include="Logic\TimedElasticSearchRetentionPolicy.cs" />
     <Compile Include="Logic\TimedMetricExecutor.cs" />
     <Compile Include="Logic\TimedReporter.cs" />
     <Compile Include="Models\MetricResult.cs" />
+    <Compile Include="Models\RabbitMqConfiguration.cs" />
     <Compile Include="Models\RedisConfiguration.cs" />
     <Compile Include="Repositories\ApiKeyRepository.cs" />
     <Compile Include="Repositories\MetricRestRepository.cs" />

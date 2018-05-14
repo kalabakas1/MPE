@@ -22,5 +22,7 @@ namespace MPE.Pinger.Models
         public List<Metric> Metrics { get; set; }
         [JsonProperty("Redis")]
         public RedisConfiguration Redis { get; set; }
+        [JsonProperty("RabbitMQ")]
+        public RabbitMqConfiguration RabbitMq { get; set; }
     }
 }

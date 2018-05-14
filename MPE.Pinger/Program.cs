@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -11,6 +13,7 @@ using MPE.Pinger.Logic.Collectors;
 using MPE.Pinger.Models;
 using MPE.Pinger.Server;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using RestSharp.Authenticators;
 using StackExchange.Redis;
@@ -23,7 +26,7 @@ namespace MPE.Pinger
     {
         static void Main(string[] args)
         {
-            System.IO.Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
             var mode = ConfigurationManager.AppSettings["MPE.Pinger.Mode"]?.ToLowerInvariant();
             TopshelfExitCode rc = TopshelfExitCode.Ok;

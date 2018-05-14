@@ -25,7 +25,8 @@ namespace MPE.Pinger
             _metricCollector = new TimedMetricExecutor(new List<ICollector>
             {
                 new ServerMetricCollector(),
-                new RedisMetricCollector()
+                new RedisMetricCollector(),
+                new RabbitMqCollector()
             }, writer);
 
             _reporter = new TimedReporter(writer, new MetricRestRepository());

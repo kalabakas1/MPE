@@ -3664,7 +3664,7 @@
 \Web Service(*)\Maximum NonAnonymous Users
 \Web Service(*)\Current Connections
 \Web Service(*)\Maximum Connections
-\Web Service(*)\Total Connection Attempts (all instances)
+\Web Service(*)\Total Connection Attempts (all instances)l
 \Web Service(*)\Connection Attempts/sec
 \Web Service(*)\Total Logon Attempts
 \Web Service(*)\Logon Attempts/sec

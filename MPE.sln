@@ -49,6 +49,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{623A245E-1B8B-4895-A357-36A341A78A0C}"
 	ProjectSection(SolutionItems) = preProject
 		Documentation\Files\PerformanceCounters.txt = Documentation\Files\PerformanceCounters.txt
+		Documentation\Files\RabbitMqApiQueuesResult.json = Documentation\Files\RabbitMqApiQueuesResult.json
 	EndProjectSection
 EndProject
 Global
