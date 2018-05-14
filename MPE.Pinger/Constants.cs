@@ -16,5 +16,8 @@ namespace MPE.Pinger
         public const string TestEnableFromTime = "MPE.Pinger.TimeSpan.From";
         public const string TestEnableToTime = "MPE.Pinger.TimeSpan.To";
         public const string ApiKeysPath = "MPE.Pinger.ApiKeys.Path";
+        public const string ServerPort = "MPE.Pinger.Server.Port";
+        public const string ServerHost = "MPE.Pinger.Server.Host";
+        public const string RetentionInDays = "MPE.Pinger.RetentionInDays";
     }
 }

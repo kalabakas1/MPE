@@ -14,7 +14,7 @@ namespace MPE.Pinger
         private readonly TimedReporter _reporter;
         public ClientStartup()
         {
-            var writer = new MetricRepository();
+            var writer = new InMemoryMetricRepository();
             _testExecutor = new TimedTestExecutor(new List<IConnectionTester>
             {
                 new TcpTester(),
@@ -28,7 +28,7 @@ namespace MPE.Pinger
                 new RedisMetricCollector()
             }, writer);
 
-            _reporter = new TimedReporter(writer);
+            _reporter = new TimedReporter(writer, new MetricRestRepository());
         }
 
         public void Start()

@@ -12,10 +12,10 @@ namespace MPE.Pinger.Models
     {
         [JsonProperty("Host")]
         public string Host { get; set; }
-        [JsonProperty("ServerHost")]
-        public string ServerHost { get; set; }
-        [JsonProperty("ServerPort")]
-        public string ServerPort { get; set; }
+        [JsonProperty("RestEndpoint")]
+        public string RestEndpoint { get; set; }
+        [JsonProperty("ApiKey")]
+        public string ApiKey { get; set; }
         [JsonProperty("Connections")]
         public List<Connection> Connections { get; set; }
         [JsonProperty("Metrics")]

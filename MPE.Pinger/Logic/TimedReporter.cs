@@ -14,32 +14,50 @@ namespace MPE.Pinger.Logic
 
     internal class TimedReporter : IProcess
     {
-        private readonly IMetricRepository _metricRepository;
+        private const int BulkSize = 256;
+        private bool IsRunning = false;
+        private readonly IMetricRepository _tempMetricRepository;
+        private readonly IMetricRepository _persitanceRepository;
         private Timer _timer;
-        private LocalElasticRestMetricRepository _localElasticRestMetricRepository;
         public TimedReporter(
-            IMetricRepository metricRepository)
+            IMetricRepository tempMetricRepository,
+            IMetricRepository persitanceRepository)
         {
-            _metricRepository = metricRepository;
+            _tempMetricRepository = tempMetricRepository;
+            _persitanceRepository = persitanceRepository;
             _timer = new Timer(Configuration.Get<int>(Constants.ReportIntevalSec) * 1000);
             _timer.Elapsed += (sender, args) => ReportMetrics();
-            _localElasticRestMetricRepository = new LocalElasticRestMetricRepository();
         }
 
         private void ReportMetrics()
         {
-            var run = true;
-            while (run)
+            if (!IsRunning)
             {
-                try
+                IsRunning = true;
+
+                var run = true;
+                var metrics = new List<MetricResult>();
+
+                var count = 0;
+                while (run)
                 {
-                    var metric = _metricRepository.Pop();
-                    _localElasticRestMetricRepository.Write(metric);
+                    while (count < BulkSize)
+                    {
+                        try
+                        {
+                            metrics.Add(_tempMetricRepository.Pop());
+                        }
+                        catch (Exception e)
+                        {
+                            run = false;
+                        }
+                        count++;
+                    }
+                    _persitanceRepository.Write(metrics);
+                    count = 0;
                 }
-                catch (Exception e)
-                {
-                    run = false;
-                }
+
+                IsRunning = false;
             }
         }
 

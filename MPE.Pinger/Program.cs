@@ -26,7 +26,7 @@ namespace MPE.Pinger
             System.IO.Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
             var mode = ConfigurationManager.AppSettings["MPE.Pinger.Mode"]?.ToLowerInvariant();
-            TopshelfExitCode rc;
+            TopshelfExitCode rc = TopshelfExitCode.Ok;
             switch (mode)
             {
                 case "server":
@@ -44,10 +44,9 @@ namespace MPE.Pinger
                         x.SetDisplayName("MPE_Pinger_Server");
                         x.SetServiceName("MPE_Pinger_Server");
                     });
-
-                    
                     break;
-                default:
+
+                case "client":
                     rc = HostFactory.Run(x =>
                     {
                         x.Service<ClientStartup>(s =>
@@ -64,6 +63,8 @@ namespace MPE.Pinger
                     });
                     break;
             }
+
+            Console.ReadLine();
 
             var exitCode = (int)Convert.ChangeType(rc, rc.GetTypeCode());
             Environment.ExitCode = exitCode;

@@ -89,11 +89,13 @@
     <Compile Include="Interfaces\IProcess.cs" />
     <Compile Include="Logic\Collectors\RedisMetricCollector.cs" />
     <Compile Include="Logic\Collectors\ServerMetricCollector.cs" />
+    <Compile Include="Logic\TimedElasticSearchRetentionPolicy.cs" />
     <Compile Include="Logic\TimedMetricExecutor.cs" />
     <Compile Include="Logic\TimedReporter.cs" />
     <Compile Include="Models\MetricResult.cs" />
     <Compile Include="Models\RedisConfiguration.cs" />
     <Compile Include="Repositories\ApiKeyRepository.cs" />
+    <Compile Include="Repositories\MetricRestRepository.cs" />
     <Compile Include="Server\MetricResultController.cs" />
     <Compile Include="Server\ServerStartup.cs" />
     <Compile Include="ClientStartup.cs" />
@@ -109,8 +111,8 @@
     <Compile Include="Logic\Testers\TcpTester.cs" />
     <Compile Include="Logic\Testers\WebTester.cs" />
     <Compile Include="Logic\Testers\ServiceTester.cs" />
-    <Compile Include="Repositories\MetricRepository.cs" />
-    <Compile Include="Repositories\LocalElasticRestMetricRepository.cs" />
+    <Compile Include="Repositories\InMemoryMetricRepository.cs" />
+    <Compile Include="Repositories\ElasticRestMetricRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
