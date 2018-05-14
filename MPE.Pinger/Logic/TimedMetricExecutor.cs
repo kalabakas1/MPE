@@ -10,12 +10,11 @@ using MPE.Pinger.Models;
 
 namespace MPE.Pinger.Logic
 {
-    internal class TimedMetricExecutor
+    internal class TimedMetricExecutor : IProcess
     {
         private readonly IMetricRepository _metricRepository;
         private readonly List<ICollector> _collectors;
         private readonly Timer _timer;
-
 
         public TimedMetricExecutor(
             List<ICollector> collectors,
@@ -23,7 +22,7 @@ namespace MPE.Pinger.Logic
         {
             _metricRepository = metricRepository;
             _collectors = collectors;
-            _timer = new Timer(Configuration.Get<int>("MPE.Pinger.Metric.Inteval.Sec") * 1000);
+            _timer = new Timer(Configuration.Get<int>(Constants.MetricIntevalSec) * 1000);
 
             _timer.Elapsed += (sender, args) => Execute();
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -8,7 +9,7 @@ using MPE.Pinger.Interfaces;
 using MPE.Pinger.Logic;
 using MPE.Pinger.Logic.Collectors;
 using MPE.Pinger.Models;
-using MPE.Pinger.Writers;
+using MPE.Pinger.Server;
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Authenticators;
@@ -24,20 +25,45 @@ namespace MPE.Pinger
         {
             System.IO.Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
-            var rc = HostFactory.Run(x =>
+            var mode = ConfigurationManager.AppSettings["MPE.Pinger.Mode"]?.ToLowerInvariant();
+            TopshelfExitCode rc;
+            switch (mode)
             {
-                x.Service<Startup>(s =>
-                {
-                    s.ConstructUsing(name => new Startup());
-                    s.WhenStarted(tc => tc.Start());
-                    s.WhenStopped(tc => tc.Stop());
-                });
-                x.RunAsLocalSystem();
+                case "server":
+                    rc = HostFactory.Run(x =>
+                    {
+                        x.Service<ServerStartup>(s =>
+                        {
+                            s.ConstructUsing(name => new ServerStartup());
+                            s.WhenStarted(tc => tc.Start());
+                            s.WhenStopped(tc => tc.Stop());
+                        });
+                        x.RunAsLocalSystem();
 
-                x.SetDescription("Service to call different endpoint to check for life");
-                x.SetDisplayName("MPE_Pinger");
-                x.SetServiceName("MPE_Pinger");
-            });
+                        x.SetDescription("Server to receive metric results");
+                        x.SetDisplayName("MPE_Pinger_Server");
+                        x.SetServiceName("MPE_Pinger_Server");
+                    });
+
+                    
+                    break;
+                default:
+                    rc = HostFactory.Run(x =>
+                    {
+                        x.Service<ClientStartup>(s =>
+                        {
+                            s.ConstructUsing(name => new ClientStartup());
+                            s.WhenStarted(tc => tc.Start());
+                            s.WhenStopped(tc => tc.Stop());
+                        });
+                        x.RunAsLocalSystem();
+
+                        x.SetDescription("Service to call different endpoint to check for life");
+                        x.SetDisplayName("MPE_Pinger");
+                        x.SetServiceName("MPE_Pinger");
+                    });
+                    break;
+            }
 
             var exitCode = (int)Convert.ChangeType(rc, rc.GetTypeCode());
             Environment.ExitCode = exitCode;

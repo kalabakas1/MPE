@@ -56,7 +56,20 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.SelfHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.SelfHost.4.0.20710.0\lib\net40\System.Web.Http.SelfHost.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -69,16 +82,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="Helpers\Configuration.cs" />
     <Compile Include="Interfaces\ICollector.cs" />
     <Compile Include="Interfaces\IMetricRepository.cs" />
+    <Compile Include="Interfaces\IProcess.cs" />
     <Compile Include="Logic\Collectors\RedisMetricCollector.cs" />
     <Compile Include="Logic\Collectors\ServerMetricCollector.cs" />
     <Compile Include="Logic\TimedMetricExecutor.cs" />
     <Compile Include="Logic\TimedReporter.cs" />
     <Compile Include="Models\MetricResult.cs" />
     <Compile Include="Models\RedisConfiguration.cs" />
-    <Compile Include="Startup.cs" />
+    <Compile Include="Repositories\ApiKeyRepository.cs" />
+    <Compile Include="Server\MetricResultController.cs" />
+    <Compile Include="Server\ServerStartup.cs" />
+    <Compile Include="ClientStartup.cs" />
     <Compile Include="Logic\TimedTestExecutor.cs" />
     <Compile Include="Models\ConfigurationFile.cs" />
     <Compile Include="Models\Connection.cs" />
@@ -91,8 +109,8 @@
     <Compile Include="Logic\Testers\TcpTester.cs" />
     <Compile Include="Logic\Testers\WebTester.cs" />
     <Compile Include="Logic\Testers\ServiceTester.cs" />
-    <Compile Include="Writers\MetricRepository.cs" />
-    <Compile Include="Writers\LocalElasticRestMetricRepository.cs" />
+    <Compile Include="Repositories\MetricRepository.cs" />
+    <Compile Include="Repositories\LocalElasticRestMetricRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

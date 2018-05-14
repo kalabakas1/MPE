@@ -20,7 +20,7 @@ namespace MPE.Pinger.Helpers
 
         public static ConfigurationFile ReadConfigurationFile()
         {
-            var fileData = File.ReadAllText(Get<string>("MPE.Pinger.Configuration.Path"));
+            var fileData = File.ReadAllText(Get<string>(Constants.ConfigurationPath));
             return JsonConvert.DeserializeObject<ConfigurationFile>(fileData);
         }
     }

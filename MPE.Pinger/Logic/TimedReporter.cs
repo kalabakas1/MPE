@@ -7,11 +7,12 @@ using System.Timers;
 using MPE.Pinger.Helpers;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
-using MPE.Pinger.Writers;
+using MPE.Pinger.Repositories;
 
 namespace MPE.Pinger.Logic
 {
-    internal class TimedReporter
+
+    internal class TimedReporter : IProcess
     {
         private readonly IMetricRepository _metricRepository;
         private Timer _timer;
@@ -20,7 +21,7 @@ namespace MPE.Pinger.Logic
             IMetricRepository metricRepository)
         {
             _metricRepository = metricRepository;
-            _timer = new Timer(Configuration.Get<int>("MPE.Pinger.Report.Inteval.Sec") * 1000);
+            _timer = new Timer(Configuration.Get<int>(Constants.ReportIntevalSec) * 1000);
             _timer.Elapsed += (sender, args) => ReportMetrics();
             _localElasticRestMetricRepository = new LocalElasticRestMetricRepository();
         }

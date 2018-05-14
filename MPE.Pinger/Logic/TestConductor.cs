@@ -91,7 +91,7 @@ namespace MPE.Pinger.Logic
 
         private int GetFailWaitInSec(int failNumber)
         {
-            return int.Parse(Configuration.Get<string>($"MPE.Pinger.Fail{failNumber}.Pause.Secs"));
+            return int.Parse(Configuration.Get<string>(string.Format(Constants.FailedPauseTemplate, failNumber)));
         }
     }
 }

@@ -10,7 +10,7 @@ using Configuration = MPE.Pinger.Helpers.Configuration;
 
 namespace MPE.Pinger.Logic
 {
-    internal class TimedTestExecutor
+    internal class TimedTestExecutor : IProcess
     {
         private readonly List<IConnectionTester> _testers;
         private readonly IMetricRepository _metricRepository;
@@ -22,14 +22,14 @@ namespace MPE.Pinger.Logic
         {
             _testers = testers.ToList();
             _metricRepository = metricRepository;
-            _timer = new Timer(Configuration.Get<int>("MPE.Pinger.WaitBetweenTest.Secs") * 1000);
+            _timer = new Timer(Configuration.Get<int>(Constants.WaitBetweenTestsSec) * 1000);
             _timer.Elapsed += (sender, args) => Execute();
         }
 
         private void Execute()
         {
-            var fromTime = TimeSpan.Parse(Configuration.Get<string>("MPE.Pinger.TimeSpan.From"));
-            var toTime = TimeSpan.Parse(Configuration.Get<string>("MPE.Pinger.TimeSpan.To"));
+            var fromTime = TimeSpan.Parse(Configuration.Get<string>(Constants.TestEnableFromTime));
+            var toTime = TimeSpan.Parse(Configuration.Get<string>(Constants.TestEnableToTime));
             var now = DateTime.Now.TimeOfDay;
             if (fromTime <= now && toTime >= now)
             {

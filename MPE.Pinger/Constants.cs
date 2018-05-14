@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MPE.Pinger
+{
+    internal class Constants
+    {
+        public const string ConfigurationPath = "MPE.Pinger.Configuration.Path";
+        public const string FailedPauseTemplate = "MPE.Pinger.Fail{0}.Pause.Secs";
+        public const string MetricIntevalSec = "MPE.Pinger.Metric.Inteval.Sec";
+        public const string ReportIntevalSec = "MPE.Pinger.Report.Inteval.Sec";
+        public const string WaitBetweenTestsSec = "MPE.Pinger.WaitBetweenTest.Secs";
+        public const string TestEnableFromTime = "MPE.Pinger.TimeSpan.From";
+        public const string TestEnableToTime = "MPE.Pinger.TimeSpan.To";
+        public const string ApiKeysPath = "MPE.Pinger.ApiKeys.Path";
+    }
+}

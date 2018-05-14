@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MPE.Pinger.Models
 {
-    internal class MetricResult
+    public class MetricResult
     {
         public DateTime Timestamp { get; set; }
         public string Path { get; set; }

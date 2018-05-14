@@ -3,16 +3,16 @@ using MPE.Pinger.Interfaces;
 using MPE.Pinger.Logic;
 using MPE.Pinger.Logic.Collectors;
 using MPE.Pinger.Logic.Testers;
-using MPE.Pinger.Writers;
+using MPE.Pinger.Repositories;
 
 namespace MPE.Pinger
 {
-    internal class Startup
+    internal class ClientStartup
     {
         private readonly TimedTestExecutor _testExecutor;
         private readonly TimedMetricExecutor _metricCollector;
         private readonly TimedReporter _reporter;
-        public Startup()
+        public ClientStartup()
         {
             var writer = new MetricRepository();
             _testExecutor = new TimedTestExecutor(new List<IConnectionTester>
