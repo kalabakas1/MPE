@@ -54,6 +54,8 @@ namespace MPE.Pinger.Logic
                         count++;
                     }
                     _persitanceRepository.Write(metrics);
+                    metrics = new List<MetricResult>();
+
                     count = 0;
                 }
 
