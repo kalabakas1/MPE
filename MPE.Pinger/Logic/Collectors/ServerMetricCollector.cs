@@ -16,15 +16,20 @@ namespace MPE.Pinger.Logic.Collectors
         private readonly List<Metric> _counters;
         private ILogger _logger = new LoggerFactory().Generate();
         private ConfigurationFile _configurationFile;
+        private bool _isEnabled;
 
         public ServerMetricCollector()
         {
             _counters = new List<Metric>();
-            InitCounters();
         }
 
         private void InitCounters()
         {
+            if (_isEnabled)
+            {
+                return;
+            }
+
             _configurationFile = Configuration.ReadConfigurationFile();
 
             foreach (var metric in _configurationFile.Metrics)
@@ -59,10 +64,14 @@ namespace MPE.Pinger.Logic.Collectors
                     _logger.Debug("Failed to create counter", e);
                 }
             }
+
+            _isEnabled = true;
         }
 
         public List<MetricResult> Collect()
         {
+            InitCounters();
+
             return _counters.Select(x => new MetricResult
             {
                 Path = _configurationFile.Host + "." + x.Alias,

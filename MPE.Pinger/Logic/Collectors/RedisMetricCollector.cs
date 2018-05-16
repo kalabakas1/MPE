@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using MPE.Pinger.Helpers;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
@@ -36,12 +37,13 @@ namespace MPE.Pinger.Logic.Collectors
             var metrics = new List<MetricResult>();
             foreach (var metric in redisMetrics)
             {
-                if (info.ContainsKey(metric.ToLowerInvariant()))
+                var keys = info.Keys.Where(x => Regex.IsMatch(x, metric));
+                foreach (var key in keys)
                 {
-                    var strValue = info[metric.ToLowerInvariant()];
+                    var strValue = info[key];
                     var result = new MetricResult
                     {
-                        Path = $"{_configurationFile.Host}.Redis.{metric}",
+                        Path = $"{_configurationFile.Host}.Redis.{key}",
                         Alias = metric,
                         Timestamp = DateTime.Now
                     };

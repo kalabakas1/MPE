@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using MPE.Logging;
 using MPE.Pinger.Helpers;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
@@ -53,6 +54,9 @@ namespace MPE.Pinger.Logic
                         }
                         count++;
                     }
+
+                    LoggerFactory.Instance.Debug($"Reporting");
+
                     _persitanceRepository.Write(metrics);
                     metrics = new List<MetricResult>();
 

@@ -21,6 +21,20 @@ namespace MPE.Logging
 
         private readonly IAppSettingRepository _appSettingRepository;
 
+        private static Logger _instance;
+        public static Logger Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new LoggerFactory().Generate();
+                }
+
+                return _instance;
+            }
+        }
+
         public LoggerFactory()
         {
             _appSettingRepository = new SettingsRepository();

@@ -19,7 +19,6 @@ namespace MPE.Pinger.Logic
     {
         private List<Task<MetricResult>> _tasks;
         private readonly IEnumerable<IConnectionTester> _testers;
-        private ILogger _logger = new LoggerFactory().Generate();
 
         private RetryPolicy RetryPolicy =>
             Policy
@@ -41,7 +40,7 @@ namespace MPE.Pinger.Logic
 
         public List<MetricResult> Run()
         {
-            _logger.Debug("Starting...");
+            LoggerFactory.Instance.Debug("Starting...");
 
             var results = new List<MetricResult>();
 
@@ -65,11 +64,13 @@ namespace MPE.Pinger.Logic
                     {
                         try
                         {
+                            LoggerFactory.Instance.Debug($"Test - Start :{result.Path}");
                             RetryPolicy.Execute(() => tester.Test(connection));
+                            LoggerFactory.Instance.Debug($"Test - End :{result.Path}");
                         }
                         catch (Exception e)
                         {
-                            _logger.Fatal(e, $"Pinger failed for: {connection.Alias}");
+                            LoggerFactory.Instance.Fatal(e, $"Pinger failed for: {connection.Alias}");
                             result.Message = "Failed";
                         }
                     }
@@ -84,7 +85,7 @@ namespace MPE.Pinger.Logic
 
             results.AddRange(_tasks.Select(x => x.Result));
 
-            _logger.Debug("Done...");
+            LoggerFactory.Instance.Debug("Done...");
 
             return results;
         }

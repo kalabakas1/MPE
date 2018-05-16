@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Helpers\Configuration.cs" />
+    <Compile Include="Helpers\JsonObjectHelper.cs" />
     <Compile Include="Interfaces\ICollector.cs" />
     <Compile Include="Interfaces\IMetricRepository.cs" />
     <Compile Include="Interfaces\IProcess.cs" />

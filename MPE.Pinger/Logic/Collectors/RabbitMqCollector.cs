@@ -80,7 +80,7 @@ namespace MPE.Pinger.Logic.Collectors
             var objects = JsonConvert.DeserializeObject<List<object>>(response.Content);
             if (objects != null && objects.Any())
             {
-                var converted =  objects.Select(x => FlattenObject(x)).ToList();
+                var converted =  objects.Select(JsonObjectHelper.FlattenObject).ToList();
                 foreach (var convert in converted)
                 {
                     var name = convert["name"];
@@ -97,19 +97,6 @@ namespace MPE.Pinger.Logic.Collectors
             }
 
             return result;
-        }
-
-        private Dictionary<string, string> FlattenObject(object obj)
-        {
-            var jsonObject = JObject.Parse(JsonConvert.SerializeObject(obj));
-            var jTokens = jsonObject.Descendants().Where(p => p.Count() == 0);
-            var results = jTokens.Aggregate(new Dictionary<string, string>(), (properties, jToken) =>
-            {
-                properties.Add(jToken.Path, jToken.ToString());
-                return properties;
-            });
-
-            return results;
         }
     }
 }
