@@ -28,7 +28,8 @@ namespace MPE.Pinger
                 new ServerMetricCollector(),
                 new RedisMetricCollector(),
                 new RabbitMqCollector(),
-                new ElasticSearchCollector()
+                new ElasticSearchCollector(),
+                new HaProxyCollector()
             }, writer);
 
             _reporter = new TimedReporter(writer, new MetricRestRepository());

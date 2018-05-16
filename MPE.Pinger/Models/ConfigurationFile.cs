@@ -26,5 +26,7 @@ namespace MPE.Pinger.Models
         public RabbitMqConfiguration RabbitMq { get; set; }
         [JsonProperty("ElasticSearch")]
         public ElasticSearchConfiguration ElasticSearch { get; set; }
+        [JsonProperty("HaProxy")]
+        public HaProxyConfiguration HaProxy { get; set; }
     }
 }
