@@ -37,7 +37,7 @@ namespace MPE.Pinger.Logic.Collectors
             var port = _configurationFile.ElasticSearch.Port == 0 ? DefaultPort : _configurationFile.ElasticSearch.Port;
 
             var client = new RestClient($"http://{host}:{port}");
-            var request = new RestRequest("/_stats");
+            var request = new RestRequest("/_nodes/stats");
             var response = client.Execute(request);
 
             var data = JsonObjectHelper.FlattenObject(response.Content);

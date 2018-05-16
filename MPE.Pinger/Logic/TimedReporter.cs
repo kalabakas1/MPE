@@ -28,43 +28,51 @@ namespace MPE.Pinger.Logic
             _persitanceRepository = persitanceRepository;
             _timer = new Timer(Configuration.Get<int>(Constants.ReportIntevalSec) * 1000);
             _timer.Elapsed += (sender, args) => ReportMetrics();
+            _timer.AutoReset = true;
         }
 
         private void ReportMetrics()
         {
-            if (!IsRunning)
+            LoggerFactory.Instance.Debug($"Reporting stating...");
+
+            var run = true;
+            var metrics = new List<MetricResult>();
+
+            var count = 0;
+            while (run)
             {
-                IsRunning = true;
-
-                var run = true;
-                var metrics = new List<MetricResult>();
-
-                var count = 0;
-                while (run)
+                while (run && count < BulkSize)
                 {
-                    while (run && count < BulkSize)
+                    try
                     {
-                        try
-                        {
-                            metrics.Add(_tempMetricRepository.Pop());
-                        }
-                        catch (Exception e)
-                        {
-                            run = false;
-                        }
-                        count++;
+                        metrics.Add(_tempMetricRepository.Pop());
                     }
-
-                    LoggerFactory.Instance.Debug($"Reporting");
-
-                    _persitanceRepository.Write(metrics);
-                    metrics = new List<MetricResult>();
-
-                    count = 0;
+                    catch (Exception e)
+                    {
+                        run = false;
+                    }
+                    count++;
                 }
 
-                IsRunning = false;
+                try
+                {
+                    _persitanceRepository.Write(metrics);
+                }
+                catch (Exception e)
+                {
+                    LoggerFactory.Instance.Debug("Failed to write to Persistance storage", e);
+                    _tempMetricRepository.Write(metrics);
+                    run = false;
+                }
+
+                metrics = new List<MetricResult>();
+
+                count = 0;
             }
+
+            LoggerFactory.Instance.Debug($"Reporting ended...");
+
+            _timer.Start();
         }
 
         public void Start()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using MPE.Pinger.Helpers;
@@ -33,6 +34,10 @@ namespace MPE.Pinger.Repositories
 
 
             var response = GetClient().Execute(request);
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception(response.ErrorMessage);
+            }
         }
 
         public void Write(MetricResult result)
@@ -42,12 +47,7 @@ namespace MPE.Pinger.Repositories
                 return;
             }
 
-            var request = new RestRequest("/api/MetricResult");
-            request.Method = Method.POST;
-            request.AddHeader("Authorization", _configurationFile.ApiKey);
-            request.AddParameter("application/json", JsonConvert.SerializeObject(new List<MetricResult> {result}), ParameterType.RequestBody);
-
-            var response = GetClient().Execute(request);
+            Write(new List<MetricResult> { result });
         }
 
         public MetricResult Pop()
@@ -57,7 +57,7 @@ namespace MPE.Pinger.Repositories
 
         private RestClient GetClient()
         {
-            var client = new RestClient (_configurationFile.RestEndpoint);
+            var client = new RestClient(_configurationFile.RestEndpoint);
 
             return client;
         }
