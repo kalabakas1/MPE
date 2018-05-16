@@ -3,6 +3,7 @@ using MPE.Pinger.Interfaces;
 using MPE.Pinger.Logic;
 using MPE.Pinger.Logic.Collectors;
 using MPE.Pinger.Logic.Testers;
+using MPE.Pinger.Models;
 using MPE.Pinger.Repositories;
 
 namespace MPE.Pinger
@@ -26,7 +27,8 @@ namespace MPE.Pinger
             {
                 new ServerMetricCollector(),
                 new RedisMetricCollector(),
-                new RabbitMqCollector()
+                new RabbitMqCollector(),
+                new ElasticSearchCollector()
             }, writer);
 
             _reporter = new TimedReporter(writer, new MetricRestRepository());

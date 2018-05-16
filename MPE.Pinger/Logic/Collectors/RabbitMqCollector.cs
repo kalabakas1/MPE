@@ -27,39 +27,13 @@ namespace MPE.Pinger.Logic.Collectors
 
         public List<MetricResult> Collect()
         {
-            if (_isEnabled)
+            if (!_isEnabled)
             {
-                var data = RequestQueueApi();
-
-                var result = new List<MetricResult>();
-
-                foreach (var rabbitMqField in _configurationFile.RabbitMq.Fields)
-                {
-                    var pairs = data.Where(x => Regex.IsMatch(x.Key, rabbitMqField));
-                    result.AddRange(pairs.Select(x =>
-                    {
-                        var metric = new MetricResult
-                        {
-                            Path = $"{_configurationFile.Host}.RabbitMQ.{x.Key}".Replace("-", "_"),
-                            Alias = x.Key,
-                            Timestamp = DateTime.Now
-                        };
-
-                        float value = 0;
-                        var strVal = x.Value;
-                        if (float.TryParse(strVal, out value))
-                        {
-                            metric.Value = value;
-                        }
-
-                        return metric;
-                    }));
-                }
-
-                return result;
+                return new List<MetricResult>();
             }
 
-            return new List<MetricResult>();
+            return MetricResultHelper.Generate($"{_configurationFile.Host}.RabbitMQ",
+                _configurationFile.RabbitMq.Fields, RequestQueueApi());
         }
 
         private Dictionary<string, string> RequestQueueApi()

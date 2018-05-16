@@ -85,6 +85,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Helpers\Configuration.cs" />
     <Compile Include="Helpers\JsonObjectHelper.cs" />
+    <Compile Include="Helpers\MetricResultHelper.cs" />
     <Compile Include="Interfaces\ICollector.cs" />
     <Compile Include="Interfaces\IMetricRepository.cs" />
     <Compile Include="Interfaces\IProcess.cs" />
@@ -94,6 +95,8 @@
     <Compile Include="Logic\TimedElasticSearchRetentionPolicy.cs" />
     <Compile Include="Logic\TimedMetricExecutor.cs" />
     <Compile Include="Logic\TimedReporter.cs" />
+    <Compile Include="Logic\Collectors\ElasticSearchCollector.cs" />
+    <Compile Include="Models\ElasticSearchConfiguration.cs" />
     <Compile Include="Models\MetricResult.cs" />
     <Compile Include="Models\RabbitMqConfiguration.cs" />
     <Compile Include="Models\RedisConfiguration.cs" />

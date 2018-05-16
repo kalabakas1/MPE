@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MPE.Pinger.Helpers;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Logic;
 using MPE.Pinger.Logic.Collectors;

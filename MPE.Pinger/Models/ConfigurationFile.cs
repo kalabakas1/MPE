@@ -24,5 +24,7 @@ namespace MPE.Pinger.Models
         public RedisConfiguration Redis { get; set; }
         [JsonProperty("RabbitMQ")]
         public RabbitMqConfiguration RabbitMq { get; set; }
+        [JsonProperty("ElasticSearch")]
+        public ElasticSearchConfiguration ElasticSearch { get; set; }
     }
 }
