@@ -48,7 +48,6 @@ namespace MPE.Pinger.Logic
 
         public void Start()
         {
-            Execute();
             _timer.Start();
         }
 
