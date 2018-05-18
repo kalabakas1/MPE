@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using MPE.Pinger.Interfaces;
+using MPE.Pinger.Models;
+using MPE.Pinger.Models.Results;
 using Configuration = MPE.Pinger.Helpers.Configuration;
 
 namespace MPE.Pinger.Logic
@@ -13,15 +15,15 @@ namespace MPE.Pinger.Logic
     internal class TimedTestExecutor : IProcess
     {
         private readonly List<IConnectionTester> _testers;
-        private readonly IMetricRepository _metricRepository;
+        private readonly IRepository<MetricResult> _repository;
         private Timer _timer;
 
         public TimedTestExecutor(
             IEnumerable<IConnectionTester> testers,
-            IMetricRepository metricRepository)
+            IRepository<MetricResult> repository)
         {
             _testers = testers.ToList();
-            _metricRepository = metricRepository;
+            _repository = repository;
             _timer = new Timer(Configuration.Get<int>(Constants.WaitBetweenTestsSec) * 1000);
             _timer.Elapsed += (sender, args) => Execute();
         }
@@ -34,7 +36,7 @@ namespace MPE.Pinger.Logic
             if (fromTime <= now && toTime >= now)
             {
                 var results = new TestConductor(_testers).Run();
-                _metricRepository.Write(results);
+                _repository.Write(results);
             }
         }
 

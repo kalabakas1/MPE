@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 using MPE.Pinger.Helpers;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
+using MPE.Pinger.Models.Configurations;
+using MPE.Pinger.Models.Results;
 using StackExchange.Redis;
 
 namespace MPE.Pinger.Logic.Collectors

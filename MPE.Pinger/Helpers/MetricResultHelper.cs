@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using MPE.Pinger.Models;
+using MPE.Pinger.Models.Results;
 
 namespace MPE.Pinger.Helpers
 {

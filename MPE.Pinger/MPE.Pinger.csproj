@@ -87,43 +87,54 @@
     <Compile Include="Helpers\JsonObjectHelper.cs" />
     <Compile Include="Helpers\MetricResultHelper.cs" />
     <Compile Include="Interfaces\ICollector.cs" />
-    <Compile Include="Interfaces\IMetricRepository.cs" />
+    <Compile Include="Interfaces\IRepository.cs" />
     <Compile Include="Interfaces\IProcess.cs" />
     <Compile Include="Logic\Collectors\HaProxyCollector.cs" />
     <Compile Include="Logic\Collectors\RabbitMqCollector.cs" />
     <Compile Include="Logic\Collectors\RedisMetricCollector.cs" />
     <Compile Include="Logic\Collectors\ServerMetricCollector.cs" />
+    <Compile Include="Logic\Listeners\EventLogListener.cs" />
     <Compile Include="Logic\TimedElasticSearchRetentionPolicy.cs" />
     <Compile Include="Logic\TimedMetricExecutor.cs" />
     <Compile Include="Logic\TimedReporter.cs" />
     <Compile Include="Logic\Collectors\ElasticSearchCollector.cs" />
-    <Compile Include="Models\ElasticSearchConfiguration.cs" />
-    <Compile Include="Models\HaProxyConfiguration.cs" />
-    <Compile Include="Models\MetricResult.cs" />
-    <Compile Include="Models\RabbitMqConfiguration.cs" />
-    <Compile Include="Models\RedisConfiguration.cs" />
+    <Compile Include="Models\Configurations\ElasticSearchConfiguration.cs" />
+    <Compile Include="Models\Results\BaseResult.cs" />
+    <Compile Include="Models\Results\EventLogResult.cs" />
+    <Compile Include="Models\Configurations\HaProxyConfiguration.cs" />
+    <Compile Include="Models\Results\MetricResult.cs" />
+    <Compile Include="Models\Configurations\RabbitMqConfiguration.cs" />
+    <Compile Include="Models\Configurations\RedisConfiguration.cs" />
     <Compile Include="Repositories\ApiKeyRepository.cs" />
-    <Compile Include="Repositories\MetricRestRepository.cs" />
-    <Compile Include="Server\MetricResultController.cs" />
+    <Compile Include="Repositories\RestRepository.cs" />
+    <Compile Include="Server\Attributes\ApiKeyAuthorizeAttribute.cs" />
+    <Compile Include="Server\Controllers\EventLogResultController.cs" />
+    <Compile Include="Server\Controllers\MetricResultController.cs" />
     <Compile Include="Server\ServerStartup.cs" />
     <Compile Include="ClientStartup.cs" />
     <Compile Include="Logic\TimedTestExecutor.cs" />
-    <Compile Include="Models\ConfigurationFile.cs" />
-    <Compile Include="Models\Connection.cs" />
+    <Compile Include="Models\Configurations\ConfigurationFile.cs" />
+    <Compile Include="Models\Configurations\Connection.cs" />
     <Compile Include="Enums\ConnectionType.cs" />
     <Compile Include="Interfaces\IConnectionTester.cs" />
     <Compile Include="Logic\TestConductor.cs" />
-    <Compile Include="Models\Metric.cs" />
+    <Compile Include="Models\Configurations\Metric.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Logic\Testers\TcpTester.cs" />
     <Compile Include="Logic\Testers\WebTester.cs" />
     <Compile Include="Logic\Testers\ServiceTester.cs" />
-    <Compile Include="Repositories\InMemoryMetricRepository.cs" />
-    <Compile Include="Repositories\ElasticRestMetricRepository.cs" />
+    <Compile Include="Repositories\InMemoryRepository.cs" />
+    <Compile Include="Repositories\ElasticRestRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Configuration\configuration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Configuration\connections.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

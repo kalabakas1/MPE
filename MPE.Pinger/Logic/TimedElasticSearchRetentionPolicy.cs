@@ -10,23 +10,23 @@ using MPE.Pinger.Repositories;
 
 namespace MPE.Pinger.Logic
 {
-    internal class TimedElasticSearchRetentionPolicy : IProcess
+    internal class TimedElasticSearchRetentionPolicy<T> : IProcess
     {
         private int _retentionInDays;
         private Timer _timer;
-        private ElasticRestMetricRepository _elasticRestMetricRepository;
+        private ElasticRestRepository<T> _elasticRestRepository;
         public TimedElasticSearchRetentionPolicy()
         {
-            _elasticRestMetricRepository = new ElasticRestMetricRepository();
+            _elasticRestRepository = new ElasticRestRepository<T>();
             _retentionInDays = Configuration.Get<int>(Constants.RetentionInDays);
             _timer = new Timer(60 * 60 * 1000);
             _timer.Elapsed += (sender, args) =>
-                _elasticRestMetricRepository.DeleteIndex(DateTime.Now.AddDays(_retentionInDays * -1));
+                _elasticRestRepository.DeleteIndex(DateTime.Now.AddDays(_retentionInDays * -1));
         }
 
         public void Start()
         {
-            _elasticRestMetricRepository.DeleteIndex(DateTime.Now.AddDays(_retentionInDays * -1));
+            _elasticRestRepository.DeleteIndex(DateTime.Now.AddDays(_retentionInDays * -1));
             _timer.Start();
         }
 

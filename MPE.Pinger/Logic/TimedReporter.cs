@@ -13,18 +13,18 @@ using MPE.Pinger.Repositories;
 namespace MPE.Pinger.Logic
 {
 
-    internal class TimedReporter : IProcess
+    internal class TimedReporter<T> : IProcess
     {
         private const int BulkSize = 256;
         private bool IsRunning = false;
-        private readonly IMetricRepository _tempMetricRepository;
-        private readonly IMetricRepository _persitanceRepository;
+        private readonly IRepository<T> _tempRepository;
+        private readonly IRepository<T> _persitanceRepository;
         private Timer _timer;
         public TimedReporter(
-            IMetricRepository tempMetricRepository,
-            IMetricRepository persitanceRepository)
+            IRepository<T> tempRepository,
+            IRepository<T> persitanceRepository)
         {
-            _tempMetricRepository = tempMetricRepository;
+            _tempRepository = tempRepository;
             _persitanceRepository = persitanceRepository;
             _timer = new Timer(Configuration.Get<int>(Constants.ReportIntevalSec) * 1000);
             _timer.Elapsed += (sender, args) => ReportMetrics();
@@ -36,7 +36,7 @@ namespace MPE.Pinger.Logic
             LoggerFactory.Instance.Debug($"Reporting stating...");
 
             var run = true;
-            var metrics = new List<MetricResult>();
+            var metrics = new List<T>();
 
             var count = 0;
             while (run)
@@ -45,7 +45,7 @@ namespace MPE.Pinger.Logic
                 {
                     try
                     {
-                        metrics.Add(_tempMetricRepository.Pop());
+                        metrics.Add(_tempRepository.Pop());
                     }
                     catch (Exception e)
                     {
@@ -60,12 +60,12 @@ namespace MPE.Pinger.Logic
                 }
                 catch (Exception e)
                 {
-                    LoggerFactory.Instance.Debug("Failed to write to Persistance storage", e);
-                    _tempMetricRepository.Write(metrics);
+                    LoggerFactory.Instance.Debug("Failed to write to storage", e);
+                    _tempRepository.Write(metrics);
                     run = false;
                 }
 
-                metrics = new List<MetricResult>();
+                metrics = new List<T>();
 
                 count = 0;
             }

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace MPE.Pinger.Models
+namespace MPE.Pinger.Models.Configurations
 {
     internal class Connection
     {

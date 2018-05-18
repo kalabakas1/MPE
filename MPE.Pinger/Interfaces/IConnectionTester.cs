@@ -1,4 +1,5 @@
 ﻿using MPE.Pinger.Models;
+using MPE.Pinger.Models.Configurations;
 
 namespace MPE.Pinger.Interfaces
 {

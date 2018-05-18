@@ -7,20 +7,21 @@ using System.Timers;
 using MPE.Pinger.Helpers;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
+using MPE.Pinger.Models.Results;
 
 namespace MPE.Pinger.Logic
 {
     internal class TimedMetricExecutor : IProcess
     {
-        private readonly IMetricRepository _metricRepository;
+        private readonly IRepository<MetricResult> _repository;
         private readonly List<ICollector> _collectors;
         private readonly Timer _timer;
 
         public TimedMetricExecutor(
             List<ICollector> collectors,
-            IMetricRepository metricRepository)
+            IRepository<MetricResult> repository)
         {
-            _metricRepository = metricRepository;
+            _repository = repository;
             _collectors = collectors;
             _timer = new Timer(Configuration.Get<int>(Constants.MetricIntevalSec) * 1000);
 
@@ -43,7 +44,7 @@ namespace MPE.Pinger.Logic
             Task.WaitAll(tasks.ToArray());
 
             var results = tasks.SelectMany(x => x.Result);
-            _metricRepository.Write(results.ToList());
+            _repository.Write(results.ToList());
         }
 
         public void Start()

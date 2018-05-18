@@ -1,0 +1,139 @@
+﻿{
+  "Host": "MpeLocal",
+  "RestEndpoint": "http://localhost:8080",
+  "ApiKey": "7dcb7c7a-8d9f-4b56-9ce0-52fa40085b35",
+  "Metrics": [
+    {
+      "Alias": "CpuPct",
+      "Category": "Processor",
+      "Name": "% Processor Time",
+      "Instance": "_Total"
+    },
+    {
+      "Alias": "MemoryPct",
+      "Category": "Memory",
+      "Name": "% Committed Bytes In Use"
+    },
+    {
+      "Alias": "BytesSentPerSec",
+      "Category": "Network Interface",
+      "Name": "Bytes Sent/sec"
+    },
+    {
+      "Alias": "BytesReceivedPerSec",
+      "Category": "Network Interface",
+      "Name": "Bytes Received/sec"
+    },
+    {
+      "Alias": "PhysicalDiskReadsPerSec",
+      "Category": "PhysicalDisk",
+      "Name": "Disk Reads/sec"
+    },
+    {
+      "Alias": "PhysicalDiskWritesPerSec",
+      "Category": "PhysicalDisk",
+      "Name": "Disk Writes/sec"
+    },
+    {
+      "Alias": "DiskFreeSpacePct",
+      "Category": "LogicalDisk",
+      "Name": "% Free Space",
+      "Instance": "_Total"
+    }
+  ],
+  "LogCategories": [
+    "Application",
+    "System"
+  ]
+  //,
+  //"Connections": [
+  //  {
+  //    "Alias": "RabbitMQ-Connect",
+  //    "Target": "127.0.0.1",
+  //    "Port": 5672,
+  //    "Type": "Tcp"
+  //  },
+  //  {
+  //    "Alias": "Redis-Connect",
+  //    "Target": "127.0.0.1",
+  //    "Port": 6379,
+  //    "Type": "Tcp"
+  //  },
+  //  {
+  //    "Alias": "Elasticsearch-Service",
+  //    "Target": "Elasticsearch",
+  //    "Type": "Service"
+  //  },
+  //  {
+  //    "Alias": "Redis-Service",
+  //    "Target": "Redis",
+  //    "Type": "Service"
+  //  },
+  //  {
+  //    "Alias": "MongoDB-Service",
+  //    "Target": "MongoDB",
+  //    "Type": "Service"
+  //  },
+  //  {
+  //    "Alias": "RabbitMQ-Service",
+  //    "Target": "RabbitMQ",
+  //    "Type": "Service"
+  //  },
+  //  {
+  //    "Alias": "ElasticSearch-Connect",
+  //    "Target": "http://89.221.166.59:9200",
+  //    "Type": "Web",
+  //    "Response": [ 200 ]
+  //  }
+  //]
+  //,
+  //"Redis": {
+  //  "Host": "127.0.0.1",
+  //  "Port": 6379,
+  //  "Metrics": [
+  //    "total_connections_received",
+  //    "total_commands_processed",
+  //    "expired_keys",
+  //    "used_memory",
+  //    "used_memory_peak",
+  //    "connected_clients",
+  //    "used_cpu_sys",
+  //    "uptime_in_seconds",
+  //    "uptime_in_days",
+  //    "maxmemory"
+  //  ]
+  //},
+  //"RabbitMQ": {
+  //  "Host": "localhost",
+  //  "Port": 15672,
+  //  "Username": "guest",
+  //  "Password": "guest",
+  //  "Fields": [
+  //    "messages_ready$",
+  //    "messages_unacknowledged$",
+  //    "messages$",
+  //    "deliver$",
+  //    "ack$",
+  //    "publish$"
+  //  ]
+  //},
+  //"ElasticSearch": {
+  //  "Host": "89.221.166.59",
+  //  "Port": 9200,
+  //  "Fields": [
+  //    "indices.search",
+  //    "jvm.mem"
+  //  ]
+  //}
+  //,
+  // "HaProxy": {
+  // "Endpoint": "https://localhost:9000/haproxy_stats",
+  // "Username": "admin",
+  // "Password": "admin",
+  // "Fields": [
+  // "*.*.(?:hrsp_1xx|hrsp_2xx|hrsp_3xx|hrsp_4xx|hrsp_5xx)",
+  // "*.*.(?:hrsp_1xx|hrsp_2xx|hrsp_3xx|hrsp_4xx|hrsp_5xx)",
+  // "*.*.(?:hrsp_1xx|hrsp_2xx|hrsp_3xx|hrsp_4xx|hrsp_5xx)"
+  // ]
+  // }
+}

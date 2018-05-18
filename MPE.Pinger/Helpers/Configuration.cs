@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MPE.Logging.Repository;
 using MPE.Pinger.Models;
+using MPE.Pinger.Models.Configurations;
 using Newtonsoft.Json;
 
 namespace MPE.Pinger.Helpers

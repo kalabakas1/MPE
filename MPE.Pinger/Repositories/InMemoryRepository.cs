@@ -7,11 +7,11 @@ using MPE.Pinger.Models;
 
 namespace MPE.Pinger.Repositories
 {
-    internal class InMemoryMetricRepository : IMetricRepository
+    internal class InMemoryRepository<T> : IRepository<T>
     {
-        private static ConcurrentQueue<MetricResult> _dataStore = new ConcurrentQueue<MetricResult>();
+        private static ConcurrentQueue<T> _dataStore = new ConcurrentQueue<T>();
 
-        public void Write(List<MetricResult> results)
+        public void Write(List<T> results)
         {
             if (results == null || !results.Any())
             {
@@ -24,7 +24,7 @@ namespace MPE.Pinger.Repositories
             }
         }
 
-        public void Write(MetricResult result)
+        public void Write(T result)
         {
             if (result == null)
             {
@@ -34,9 +34,9 @@ namespace MPE.Pinger.Repositories
             _dataStore.Enqueue(result);
         }
 
-        public MetricResult Pop()
+        public T Pop()
         {
-            MetricResult metric;
+            T metric;
             if (_dataStore.TryDequeue(out metric))
             {
                 return metric;

@@ -2,8 +2,10 @@
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Logic;
 using MPE.Pinger.Logic.Collectors;
+using MPE.Pinger.Logic.Listeners;
 using MPE.Pinger.Logic.Testers;
 using MPE.Pinger.Models;
+using MPE.Pinger.Models.Results;
 using MPE.Pinger.Repositories;
 
 namespace MPE.Pinger
@@ -12,16 +14,20 @@ namespace MPE.Pinger
     {
         private readonly TimedTestExecutor _testExecutor;
         private readonly TimedMetricExecutor _metricCollector;
-        private readonly TimedReporter _reporter;
+        private readonly TimedReporter<MetricResult> _metricTimedReporter;
+
+        private readonly TimedReporter<EventLogResult> _eventLogTimedReporter;
+        private readonly EventLogListener _eventLogListener;
+
         public ClientStartup()
         {
-            var writer = new InMemoryMetricRepository();
+            var metricMemoryRepository = new InMemoryRepository<MetricResult>();
             _testExecutor = new TimedTestExecutor(new List<IConnectionTester>
             {
                 new TcpTester(),
                 new WebTester(),
                 new ServiceTester()
-            }, writer);
+            }, metricMemoryRepository);
 
             _metricCollector = new TimedMetricExecutor(new List<ICollector>
             {
@@ -30,23 +36,33 @@ namespace MPE.Pinger
                 new RabbitMqCollector(),
                 new ElasticSearchCollector(),
                 new HaProxyCollector()
-            }, writer);
+            }, metricMemoryRepository);
 
-            _reporter = new TimedReporter(writer, new MetricRestRepository());
+            var restMetricRepository = new RestRepository<MetricResult>();
+            _metricTimedReporter = new TimedReporter<MetricResult>(metricMemoryRepository, restMetricRepository);
+
+            var eventMemoryRepository = new InMemoryRepository<EventLogResult>();
+            _eventLogListener = new EventLogListener(eventMemoryRepository);
+            _eventLogListener.Init();
+            
+            var restEventLogRepository = new RestRepository<EventLogResult>();
+            _eventLogTimedReporter = new TimedReporter<EventLogResult>(eventMemoryRepository, restEventLogRepository);
         }
 
         public void Start()
         {
             _metricCollector.Start();
             _testExecutor.Start();
-            _reporter.Start();
+            _metricTimedReporter.Start();
+            _eventLogTimedReporter.Start();
         }
 
         public void Stop()
         {
             _metricCollector.Stop();
             _testExecutor.Stop();
-            _reporter.Stop();
+            _metricTimedReporter.Stop();
+            _eventLogTimedReporter.Stop();
         }
     }
 }

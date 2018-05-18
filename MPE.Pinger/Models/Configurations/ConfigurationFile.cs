@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
-namespace MPE.Pinger.Models
+namespace MPE.Pinger.Models.Configurations
 {
     internal class ConfigurationFile
     {
@@ -16,6 +11,8 @@ namespace MPE.Pinger.Models
         public string RestEndpoint { get; set; }
         [JsonProperty("ApiKey")]
         public string ApiKey { get; set; }
+        [JsonProperty("LogCategories")]
+        public string[] LogCategories { get; set; }
         [JsonProperty("Connections")]
         public List<Connection> Connections { get; set; }
         [JsonProperty("Metrics")]

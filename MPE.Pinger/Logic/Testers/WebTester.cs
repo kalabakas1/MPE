@@ -4,6 +4,7 @@ using System.Net.Http;
 using MPE.Pinger.Enums;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
+using MPE.Pinger.Models.Configurations;
 
 namespace MPE.Pinger.Logic.Testers
 {

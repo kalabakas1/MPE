@@ -1,25 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using MPE.Pinger.Helpers;
-using MPE.Pinger.Interfaces;
-using MPE.Pinger.Logic;
-using MPE.Pinger.Logic.Collectors;
-using MPE.Pinger.Models;
 using MPE.Pinger.Server;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using RestSharp;
-using RestSharp.Authenticators;
-using StackExchange.Redis;
 using Topshelf;
-using Timer = System.Timers.Timer;
 
 namespace MPE.Pinger
 {

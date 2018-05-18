@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using MPE.Pinger.Helpers;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
+using MPE.Pinger.Models.Configurations;
+using MPE.Pinger.Models.Results;
 using RestSharp;
 using RestSharp.Authenticators;
 

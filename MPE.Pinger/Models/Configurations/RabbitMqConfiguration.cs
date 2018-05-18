@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MPE.Pinger.Models
+﻿namespace MPE.Pinger.Models.Configurations
 {
     public class RabbitMqConfiguration
     {

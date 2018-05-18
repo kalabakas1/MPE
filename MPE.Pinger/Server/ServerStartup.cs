@@ -10,6 +10,7 @@ using MPE.Pinger.Helpers;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Logic;
 using MPE.Pinger.Models;
+using MPE.Pinger.Models.Results;
 using MPE.Pinger.Repositories;
 
 namespace MPE.Pinger.Server
@@ -17,8 +18,10 @@ namespace MPE.Pinger.Server
     internal class ServerStartup : IProcess
     {
         private HttpSelfHostServer _server;
-        private TimedReporter _reporter;
-        private TimedElasticSearchRetentionPolicy _retentionPolicy;
+        private TimedReporter<MetricResult> _metricReporter;
+        private TimedReporter<EventLogResult> _eventLogReporter;
+        private TimedElasticSearchRetentionPolicy<MetricResult> _retentionPolicyMetrics;
+        private TimedElasticSearchRetentionPolicy<EventLogResult> _retentionPolicyEventLogs;
 
         public ServerStartup()
         {
@@ -29,22 +32,28 @@ namespace MPE.Pinger.Server
 
             _server = new HttpSelfHostServer(config);
 
-            _reporter = new TimedReporter(new InMemoryMetricRepository(), new ElasticRestMetricRepository());
+            _metricReporter = new TimedReporter<MetricResult>(new InMemoryRepository<MetricResult>(), new ElasticRestRepository<MetricResult>());
+            _eventLogReporter = new TimedReporter<EventLogResult>(new InMemoryRepository<EventLogResult>(), new ElasticRestRepository<EventLogResult>());
 
-            _retentionPolicy = new TimedElasticSearchRetentionPolicy();
+            _retentionPolicyMetrics = new TimedElasticSearchRetentionPolicy<MetricResult>();
+            _retentionPolicyEventLogs = new TimedElasticSearchRetentionPolicy<EventLogResult>();
         }
 
         public void Start()
         {
-            _retentionPolicy.Start();
-            _reporter.Start();
+            _retentionPolicyMetrics.Start();
+            _retentionPolicyEventLogs.Start();
+            _metricReporter.Start();
+            _eventLogReporter.Start();
             _server.OpenAsync().Wait();
         }
 
         public void Stop()
         {
-            _retentionPolicy.Stop();
-            _reporter.Stop();
+            _retentionPolicyMetrics.Stop();
+            _retentionPolicyEventLogs.Stop();
+            _metricReporter.Stop();
+            _eventLogReporter.Stop();
             _server.Dispose();
         }
     }
