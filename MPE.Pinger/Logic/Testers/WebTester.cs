@@ -8,7 +8,7 @@ using MPE.Pinger.Models.Configurations;
 
 namespace MPE.Pinger.Logic.Testers
 {
-    internal class WebTester : IConnectionTester
+    internal class WebTester : ITester
     {
         private static HttpClient _client;
 

@@ -22,7 +22,7 @@ namespace MPE.Pinger
         public ClientStartup()
         {
             var metricMemoryRepository = new InMemoryRepository<MetricResult>();
-            _testExecutor = new TimedTestExecutor(new List<IConnectionTester>
+            _testExecutor = new TimedTestExecutor(new List<ITester>
             {
                 new TcpTester(),
                 new WebTester(),

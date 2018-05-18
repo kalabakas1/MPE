@@ -19,7 +19,7 @@ namespace MPE.Pinger.Logic
     internal class TestConductor
     {
         private List<Task<MetricResult>> _tasks;
-        private readonly IEnumerable<IConnectionTester> _testers;
+        private readonly IEnumerable<ITester> _testers;
 
         private RetryPolicy RetryPolicy =>
             Policy
@@ -33,7 +33,7 @@ namespace MPE.Pinger.Logic
                     });
 
         public TestConductor(
-            IEnumerable<IConnectionTester> testers)
+            IEnumerable<ITester> testers)
         {
             _testers = testers;
             _tasks = new List<Task<MetricResult>>();
@@ -59,7 +59,7 @@ namespace MPE.Pinger.Logic
                     };
 
                     var testers = _testers.Where(x => x.CanTest(connection))
-                        .Select(x => (IConnectionTester)Activator.CreateInstance(x.GetType())).ToList();
+                        .Select(x => (ITester)Activator.CreateInstance(x.GetType())).ToList();
 
                     foreach (var tester in testers)
                     {

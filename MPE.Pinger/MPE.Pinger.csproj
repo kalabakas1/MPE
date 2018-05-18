@@ -116,7 +116,7 @@
     <Compile Include="Models\Configurations\ConfigurationFile.cs" />
     <Compile Include="Models\Configurations\Connection.cs" />
     <Compile Include="Enums\ConnectionType.cs" />
-    <Compile Include="Interfaces\IConnectionTester.cs" />
+    <Compile Include="Interfaces\ITester.cs" />
     <Compile Include="Logic\TestConductor.cs" />
     <Compile Include="Models\Configurations\Metric.cs" />
     <Compile Include="Program.cs" />

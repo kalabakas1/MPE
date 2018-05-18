@@ -14,12 +14,12 @@ namespace MPE.Pinger.Logic
 {
     internal class TimedTestExecutor : IProcess
     {
-        private readonly List<IConnectionTester> _testers;
+        private readonly List<ITester> _testers;
         private readonly IRepository<MetricResult> _repository;
         private Timer _timer;
 
         public TimedTestExecutor(
-            IEnumerable<IConnectionTester> testers,
+            IEnumerable<ITester> testers,
             IRepository<MetricResult> repository)
         {
             _testers = testers.ToList();

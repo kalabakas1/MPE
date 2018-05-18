@@ -3,7 +3,7 @@ using MPE.Pinger.Models.Configurations;
 
 namespace MPE.Pinger.Interfaces
 {
-    internal interface IConnectionTester
+    internal interface ITester
     {
         bool CanTest(Connection connection);
         void Test(Connection connection);

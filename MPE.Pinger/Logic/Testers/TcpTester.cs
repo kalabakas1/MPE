@@ -8,7 +8,7 @@ using MPE.Pinger.Models.Configurations;
 
 namespace MPE.Pinger.Logic.Testers
 {
-    internal class TcpTester : IConnectionTester
+    internal class TcpTester : ITester
     {
         public bool CanTest(Connection connection)
         {
