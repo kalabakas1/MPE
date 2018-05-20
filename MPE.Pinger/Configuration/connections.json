@@ -45,47 +45,49 @@
     "Application",
     "System"
   ]
-  //,
-  //"Connections": [
-  //  {
-  //    "Alias": "RabbitMQ-Connect",
-  //    "Target": "127.0.0.1",
-  //    "Port": 5672,
-  //    "Type": "Tcp"
-  //  },
-  //  {
-  //    "Alias": "Redis-Connect",
-  //    "Target": "127.0.0.1",
-  //    "Port": 6379,
-  //    "Type": "Tcp"
-  //  },
-  //  {
-  //    "Alias": "Elasticsearch-Service",
-  //    "Target": "Elasticsearch",
-  //    "Type": "Service"
-  //  },
-  //  {
-  //    "Alias": "Redis-Service",
-  //    "Target": "Redis",
-  //    "Type": "Service"
-  //  },
-  //  {
-  //    "Alias": "MongoDB-Service",
-  //    "Target": "MongoDB",
-  //    "Type": "Service"
-  //  },
-  //  {
-  //    "Alias": "RabbitMQ-Service",
-  //    "Target": "RabbitMQ",
-  //    "Type": "Service"
-  //  },
-  //  {
-  //    "Alias": "ElasticSearch-Connect",
-  //    "Target": "http://89.221.166.59:9200",
-  //    "Type": "Web",
-  //    "Response": [ 200 ]
-  //  }
-  //]
+  ,
+  "Connections": [
+    //{
+    //  "Alias": "RabbitMQ-Connect",
+    //  "Target": "127.0.0.1",
+    //  "Port": 5672,
+    //  "Type": "Tcp"
+    //}
+    //,
+    {
+      "Alias": "Redis-Connect",
+      "Target": "127.0.0.1",
+      "Port": 6379,
+      "Type": "Tcp"
+    }
+    //,
+    //{
+    //  "Alias": "Elasticsearch-Service",
+    //  "Target": "Elasticsearch",
+    //  "Type": "Service"
+    //},
+    //{
+    //  "Alias": "Redis-Service",
+    //  "Target": "Redis",
+    //  "Type": "Service"
+    //},
+    //{
+    //  "Alias": "MongoDB-Service",
+    //  "Target": "MongoDB",
+    //  "Type": "Service"
+    //},
+    //{
+    //  "Alias": "RabbitMQ-Service",
+    //  "Target": "RabbitMQ",
+    //  "Type": "Service"
+    //},
+    //{
+    //  "Alias": "ElasticSearch-Connect",
+    //  "Target": "http://89.221.166.59:9200",
+    //  "Type": "Web",
+    //  "Response": [ 200 ]
+    //}
+  ]
   //,
   //"Redis": {
   //  "Host": "127.0.0.1",

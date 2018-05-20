@@ -20,6 +20,7 @@ namespace MPE.Pinger.Logic
     {
         private List<Task<MetricResult>> _tasks;
         private readonly IEnumerable<ITester> _testers;
+        private readonly AlertHub _alertHub;
 
         private RetryPolicy RetryPolicy =>
             Policy
@@ -33,9 +34,11 @@ namespace MPE.Pinger.Logic
                     });
 
         public TestConductor(
-            IEnumerable<ITester> testers)
+            IEnumerable<ITester> testers,
+            AlertHub alertHub)
         {
             _testers = testers;
+            _alertHub = alertHub;
             _tasks = new List<Task<MetricResult>>();
         }
 
@@ -67,12 +70,16 @@ namespace MPE.Pinger.Logic
                         {
                             LoggerFactory.Instance.Debug($"Test - Start :{result.Path}");
                             RetryPolicy.Execute(() => tester.Test(connection));
-                            LoggerFactory.Instance.Debug($"Test - End :{result.Path}");
+                            _alertHub.Abort(result.Path);
+                            LoggerFactory.Instance.Debug($"Test - End : {result.Path}");
                         }
                         catch (Exception e)
                         {
-                            LoggerFactory.Instance.Fatal(e, $"Pinger failed for: {connection.Alias}");
+                            var message = $"Pinger failed for: {connection.Alias}";
+                            LoggerFactory.Instance.Debug(e, message);
                             result.Message = "Failed";
+
+                            _alertHub.Alert(result.Path);
                         }
                     }
 

@@ -89,6 +89,7 @@
     <Compile Include="Interfaces\ICollector.cs" />
     <Compile Include="Interfaces\IRepository.cs" />
     <Compile Include="Interfaces\IProcess.cs" />
+    <Compile Include="Logic\AlertHub.cs" />
     <Compile Include="Logic\Collectors\HaProxyCollector.cs" />
     <Compile Include="Logic\Collectors\RabbitMqCollector.cs" />
     <Compile Include="Logic\Collectors\RedisMetricCollector.cs" />

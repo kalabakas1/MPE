@@ -20,20 +20,23 @@ namespace MPE.Pinger.Logic
         private readonly IRepository<T> _tempRepository;
         private readonly IRepository<T> _persitanceRepository;
         private Timer _timer;
+        private readonly string _type;
+
         public TimedReporter(
             IRepository<T> tempRepository,
             IRepository<T> persitanceRepository)
         {
             _tempRepository = tempRepository;
             _persitanceRepository = persitanceRepository;
+            _type = typeof(T).Name;
             _timer = new Timer(Configuration.Get<int>(Constants.ReportIntevalSec) * 1000);
             _timer.Elapsed += (sender, args) => ReportMetrics();
-            _timer.AutoReset = true;
+            _timer.AutoReset = false;
         }
 
         private void ReportMetrics()
         {
-            LoggerFactory.Instance.Debug($"Reporting stating...");
+            LoggerFactory.Instance.Debug($"Reporting stating - {_type}...");
 
             var run = true;
             var metrics = new List<T>();
@@ -60,7 +63,7 @@ namespace MPE.Pinger.Logic
                 }
                 catch (Exception e)
                 {
-                    LoggerFactory.Instance.Debug("Failed to write to storage", e);
+                    LoggerFactory.Instance.Debug($"Failed to write to storage - {_type}", e);
                     _tempRepository.Write(metrics);
                     run = false;
                 }
@@ -70,7 +73,7 @@ namespace MPE.Pinger.Logic
                 count = 0;
             }
 
-            LoggerFactory.Instance.Debug($"Reporting ended...");
+            LoggerFactory.Instance.Debug($"Reporting ended - {_type}...");
 
             _timer.Start();
         }

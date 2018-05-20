@@ -16,16 +16,20 @@ namespace MPE.Pinger.Logic
     {
         private readonly List<ITester> _testers;
         private readonly IRepository<MetricResult> _repository;
+        private readonly AlertHub _alertHub;
         private Timer _timer;
 
         public TimedTestExecutor(
             IEnumerable<ITester> testers,
-            IRepository<MetricResult> repository)
+            IRepository<MetricResult> repository,
+            AlertHub alertHub)
         {
             _testers = testers.ToList();
             _repository = repository;
+            _alertHub = alertHub;
             _timer = new Timer(Configuration.Get<int>(Constants.WaitBetweenTestsSec) * 1000);
             _timer.Elapsed += (sender, args) => Execute();
+            _timer.AutoReset = false;
         }
 
         private void Execute()
@@ -35,9 +39,10 @@ namespace MPE.Pinger.Logic
             var now = DateTime.Now.TimeOfDay;
             if (fromTime <= now && toTime >= now)
             {
-                var results = new TestConductor(_testers).Run();
+                var results = new TestConductor(_testers, _alertHub).Run();
                 _repository.Write(results);
             }
+            _timer.Start();
         }
 
         public void Start()
