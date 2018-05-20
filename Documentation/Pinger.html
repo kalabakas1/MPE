@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link href="prism/prism.css" rel="stylesheet" />
+    <script src="prism/prism.js"></script>
+
+    <title>Pinger</title>
+
+    <style>
+        @media print {
+            .panel-heading, .panel-footer, pre {
+                background-color: #e6e6e6 !important;
+            }
+
+            pre>code {
+                 white-space: pre-line !important;
+            }
+            
+            pre {
+              page-break-inside: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container panel panel-default">
+        <div class="row panel-heading">
+            <div class="col-xs-12 col-md-12">
+                <h1>MPE</h1>
+            </div>
+        </div>
+        <div class="row panel-body">
+            <div class="col-xs-12 col-md-12">
+                <h1 id="pinger">Pinger</h1>
+<p>Small project containing two parts: a client installed on the server we need to test and get metrics about, and a windows service server installed on a central server that contains ElasticSearch, Kibana and/or Grafana for visualization.</p>
+<h2 id="motivation">Motivation</h2>
+<p>Basically I needed some pretty simple metric about how the server acted, and I needed it without paying a high price in the sense of money. A lot of the good tools offer a lot of functionality that I don't need or use, so instead of buying a took to get my metric, I build a lightweight client.</p>
+<h2 id="client">Client</h2>
+<p>The big part of this is the client. The client reads two configuration files:</p>
+<h2 id="server">Server</h2>
+<h2 id="visualization">Visualization</h2>
+<p><img src="./dumps/2018-05-20_2347.png" alt="Grafana visualization of the data" /></p>
+
+            </div>
+        </div>
+        <div class="row panel-footer">
+        </div>
+    </div>
+</body>
+</html>

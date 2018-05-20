@@ -25,6 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 	ProjectSection(SolutionItems) = preProject
 		Documentation\Controllable API.md = Documentation\Controllable API.md
 		Documentation\OutlookRegtimeIntegration.md = Documentation\OutlookRegtimeIntegration.md
+		Documentation\Pinger.md = Documentation\Pinger.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPE.Regtime.Outlook.App", "MPE.Regtime.Outlook\MPE.Regtime.Outlook.App.csproj", "{A12F9D44-4565-43B1-BAA8-AFC2A0BF84AC}"
