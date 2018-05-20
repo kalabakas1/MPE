@@ -100,6 +100,7 @@
     <Compile Include="Logic\TimedReporter.cs" />
     <Compile Include="Logic\Collectors\ElasticSearchCollector.cs" />
     <Compile Include="Models\Configurations\ElasticSearchConfiguration.cs" />
+    <Compile Include="Models\Configurations\EventLogConfiguration.cs" />
     <Compile Include="Models\Results\BaseResult.cs" />
     <Compile Include="Models\Results\EventLogResult.cs" />
     <Compile Include="Models\Configurations\HaProxyConfiguration.cs" />

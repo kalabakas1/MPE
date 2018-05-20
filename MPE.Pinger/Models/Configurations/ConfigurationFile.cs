@@ -11,8 +11,8 @@ namespace MPE.Pinger.Models.Configurations
         public string RestEndpoint { get; set; }
         [JsonProperty("ApiKey")]
         public string ApiKey { get; set; }
-        [JsonProperty("LogCategories")]
-        public string[] LogCategories { get; set; }
+        [JsonProperty("EventLogging")]
+        public EventLogConfiguration EventLogging { get; set; }
         [JsonProperty("Connections")]
         public List<Connection> Connections { get; set; }
         [JsonProperty("Metrics")]

@@ -41,11 +41,13 @@
       "Instance": "_Total"
     }
   ],
-  "LogCategories": [
-    "Application",
-    "System"
-  ]
-  ,
+  "EventLogging": {
+    "MinimumLevel": "Information",
+    "Categories": [
+      "Application",
+      "System"
+    ]
+  },
   "Connections": [
     //{
     //  "Alias": "RabbitMQ-Connect",

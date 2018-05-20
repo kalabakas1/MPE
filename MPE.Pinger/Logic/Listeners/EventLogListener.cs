@@ -29,25 +29,46 @@ namespace MPE.Pinger.Logic.Listeners
 
         public void Init()
         {
-            var categories = _configurationFile.LogCategories;
+            var eventLogging = _configurationFile.EventLogging;
 
-            if (categories == null || !categories.Any())
+            if (eventLogging?.Categories == null || !eventLogging.Categories.Any())
             {
                 return;
             }
 
-            foreach (var category in categories)
+            var type = GetMinimumType(eventLogging.MinimumLevel);
+            foreach (var category in eventLogging.Categories)
             {
                 var eventLog = new EventLog(category);
                 eventLog.EnableRaisingEvents = true;
                 eventLog.EntryWritten += (sender, eventArgs) =>
                 {
-                    var result = ConvertToResult(eventArgs.Entry);
-                    _tmpRepository.Write(result);
+                    if (eventArgs.Entry.EntryType <= type)
+                    {
+                        var result = ConvertToResult(eventArgs.Entry);
+                        _tmpRepository.Write(result);
+                    }
                 };
 
                 _eventLogs.Add(eventLog);
             }
+        }
+
+        private EventLogEntryType GetMinimumType(string type)
+        {
+            var allowed = new List<string>
+            {
+                "Information",
+                "Warning",
+                "Error"
+            };
+
+            if (!allowed.Contains(type))
+            {
+                return EventLogEntryType.Information;
+            }
+
+            return (EventLogEntryType)Enum.Parse(typeof(EventLogEntryType), type);
         }
 
         private EventLogResult ConvertToResult(EventLogEntry entry)
