@@ -39,9 +39,148 @@
 <p>Small project containing two parts: a client installed on the server we need to test and get metrics about, and a windows service server installed on a central server that contains ElasticSearch, Kibana and/or Grafana for visualization.</p>
 <h2 id="motivation">Motivation</h2>
 <p>Basically I needed some pretty simple metric about how the server acted, and I needed it without paying a high price in the sense of money. A lot of the good tools offer a lot of functionality that I don't need or use, so instead of buying a took to get my metric, I build a lightweight client.</p>
-<h2 id="client">Client</h2>
+<h2 id="configuration">Configuration</h2>
 <p>The big part of this is the client. The client reads two configuration files:</p>
-<h2 id="server">Server</h2>
+<ol>
+<li>General configuration file defining central aspects of the execution of the pinger program</li>
+<li>Connection configuration file that contains the different metrics and tests the program have to execute on the server it is installed on</li>
+</ol>
+<h3 id="general-configuration-file">General configuration file</h3>
+<pre><code class="language-json">{
+  &quot;Logging.MinimumLevel&quot;: &quot;Debug&quot;,
+  &quot;Logging.File.MinimumLevel&quot; :&quot;Warning&quot;,
+  &quot;Logging.Console.MinimumLevel&quot;: &quot;Verbose&quot;,
+	
+  &quot;Logging.Elastic.MinimumLevel&quot;: &quot;Debug&quot;,
+  &quot;Logging.Elastic.Url&quot;: &quot;http://localhost:9200&quot;,
+  &quot;Logging.Elastic.IndexFormat&quot;: &quot;customername_log_{0:yyyy.MM}&quot;,
+	
+  &quot;Logging.Slack.MinimumLevel&quot;: &quot;Error&quot;,
+  &quot;Logging.Slack.Url&quot;: &quot;&quot;,
+	
+  &quot;Logging.Sentry.Dsn&quot;: &quot;&quot;,
+	
+  &quot;Logging.CoolSms.Key&quot;: &quot;&quot;,
+  &quot;Logging.CoolSms.FromName&quot;: &quot;&quot;,
+  &quot;Logging.CoolSms.Phonenumbers&quot;: &quot;&quot;,
+	
+  &quot;MPE.Pinger.Configuration.Path&quot;: &quot;./Configuration/connections.json&quot;,
+  &quot;MPE.Pinger.Fail1.Pause.Secs&quot;: &quot;5&quot;,
+  &quot;MPE.Pinger.Fail2.Pause.Secs&quot;: &quot;60&quot;,
+  &quot;MPE.Pinger.Fail3.Pause.Secs&quot;: &quot;180&quot;,
+  &quot;MPE.Pinger.WaitBetweenTest.Secs&quot;: &quot;30&quot;,
+  &quot;MPE.Pinger.Report.Inteval.Sec&quot;: &quot;60&quot;,
+  &quot;MPE.Pinger.Metric.Inteval.Sec&quot;: &quot;5&quot;,
+  &quot;MPE.Pinger.TimeSpan.From&quot;: &quot;00:01&quot;,
+  &quot;MPE.Pinger.TimeSpan.To&quot;: &quot;23:59&quot;,
+  &quot;MPE.Pinger.ApiKeys.Path&quot;: &quot;keys.txt&quot;,
+  &quot;MPE.Pinger.Server.Host&quot;: &quot;localhost&quot;,
+  &quot;MPE.Pinger.Server.Port&quot;: &quot;8080&quot;,
+  &quot;MPE.Pinger.RetentionInDays&quot;: &quot;5&quot;
+}
+</code></pre>
+<p><strong>Logging.*</strong><br />
+Configuration to define the different way of logging. Normally used to define how it reports the failed alerts.</p>
+<p><strong>MPE.Pinger.Configuration.Path</strong><br />
+Path to the connections configuration file containing the tests and what metrics it needs to extract</p>
+<p><strong>MPE.Pinger.Fail?.Pause.Secs</strong>
+How may seconds it needs to pause after the first, second or third failed test</p>
+<p><strong>MPE.Pinger.WaitBetweenTest.Secs</strong><br />
+How may seconds between the different test executions</p>
+<p><strong>MPE.Pinger.Report.Inteval.Sec</strong><br />
+How often it reports its metrics to the report server</p>
+<p><strong>MPE.Pinger.Metric.Inteval.Sec</strong><br />
+How often it gathers metrics</p>
+<p><strong>MPE.Pinger.TimeSpan.From</strong><br />
+Start time for alerting period in case of failed test</p>
+<p><strong>MPE.Pinger.TimeSpan.To</strong><br />
+End time for alerting period in case of failed test</p>
+<p><strong>MPE.Pinger.ApiKeys.Path</strong><br />
+Path to newline separated file containing valid API keys - used if the execution mode is &quot;Server&quot;</p>
+<p><strong>MPE.Pinger.Server.Host</strong><br />
+Host for the reporting server</p>
+<p><strong>MPE.Pinger.RetentionInDays</strong><br />
+How long it persist data in ElasticSearch</p>
+<h2 id="connections-configuration-file">Connections configuration file</h2>
+<p>This configuration file contains how it will gather the data and what tests it should execute while on the server. It also defines the naming for the different objects when persisted to storage, along with the report endpoint and api key.</p>
+<pre><code class="language-json">{
+  &quot;Host&quot;: &quot;MpeLocal&quot;,
+  &quot;RestEndpoint&quot;: &quot;http://localhost:8080&quot;,
+  &quot;ApiKey&quot;: &quot;7dcb7c7a-8d9f-4b56-9ce0-52fa40085b35&quot;,
+  &quot;Metrics&quot;: [
+    {
+      &quot;Alias&quot;: &quot;CpuPct&quot;,
+      &quot;Category&quot;: &quot;Processor&quot;,
+      &quot;Name&quot;: &quot;% Processor Time&quot;,
+      &quot;Instance&quot;: &quot;_Total&quot;
+    }
+  ],
+  &quot;EventLogging&quot;: {
+    &quot;MinimumLevel&quot;: &quot;Information&quot;,
+    &quot;Categories&quot;: [
+      &quot;Application&quot;,
+      &quot;System&quot;
+    ]
+  },
+  &quot;Connections&quot;: [
+    {
+      &quot;Alias&quot;: &quot;Redis-Connect&quot;,
+      &quot;Target&quot;: &quot;127.0.0.1&quot;,
+      &quot;Port&quot;: 6379,
+      &quot;Type&quot;: &quot;Tcp&quot;
+    }
+  ],
+  &quot;Redis&quot;: {
+    &quot;Host&quot;: &quot;127.0.0.1&quot;,
+    &quot;Port&quot;: 6379,
+    &quot;Metrics&quot;: [
+      &quot;total_connections_received&quot;,
+      &quot;total_commands_processed&quot;,
+      &quot;expired_keys&quot;,
+      &quot;used_memory&quot;,
+      &quot;used_memory_peak&quot;,
+      &quot;connected_clients&quot;,
+      &quot;used_cpu_sys&quot;,
+      &quot;uptime_in_seconds&quot;,
+      &quot;uptime_in_days&quot;,
+      &quot;maxmemory&quot;
+    ]
+  },
+  &quot;RabbitMQ&quot;: {
+    &quot;Host&quot;: &quot;localhost&quot;,
+    &quot;Port&quot;: 15672,
+    &quot;Username&quot;: &quot;guest&quot;,
+    &quot;Password&quot;: &quot;guest&quot;,
+    &quot;Fields&quot;: [
+      &quot;messages_ready$&quot;,
+      &quot;messages_unacknowledged$&quot;,
+      &quot;messages$&quot;,
+      &quot;deliver$&quot;,
+      &quot;ack$&quot;,
+      &quot;publish$&quot;
+    ]
+  },
+  &quot;ElasticSearch&quot;: {
+    &quot;Host&quot;: &quot;89.221.166.59&quot;,
+    &quot;Port&quot;: 9200,
+    &quot;Fields&quot;: [
+      &quot;indices.search&quot;,
+      &quot;jvm.mem&quot;
+    ]
+  },
+  &quot;HaProxy&quot;: {
+    &quot;Endpoint&quot;: &quot;https://localhost:9000/haproxy_stats&quot;,
+    &quot;Username&quot;: &quot;admin&quot;,
+    &quot;Password&quot;: &quot;admin&quot;,
+    &quot;Fields&quot;: [
+      &quot;*.*.(?:hrsp_1xx|hrsp_2xx|hrsp_3xx|hrsp_4xx|hrsp_5xx)&quot;,
+      &quot;*.*.(?:hrsp_1xx|hrsp_2xx|hrsp_3xx|hrsp_4xx|hrsp_5xx)&quot;,
+      &quot;*.*.(?:hrsp_1xx|hrsp_2xx|hrsp_3xx|hrsp_4xx|hrsp_5xx)&quot;
+    ]
+  }
+}
+
+</code></pre>
 <h2 id="visualization">Visualization</h2>
 <p><img src="./dumps/2018-05-20_2347.png" alt="Grafana visualization of the data" /></p>
 
