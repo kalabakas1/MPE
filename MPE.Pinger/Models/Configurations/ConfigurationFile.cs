@@ -25,5 +25,7 @@ namespace MPE.Pinger.Models.Configurations
         public ElasticSearchConfiguration ElasticSearch { get; set; }
         [JsonProperty("HaProxy")]
         public HaProxyConfiguration HaProxy { get; set; }
+        [JsonProperty("Sql")]
+        public SqlConfiguration SqlConfiguration { get; set; }
     }
 }

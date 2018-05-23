@@ -37,7 +37,8 @@ namespace MPE.Pinger
                 new RedisMetricCollector(),
                 new RabbitMqCollector(),
                 new ElasticSearchCollector(),
-                new HaProxyCollector()
+                new HaProxyCollector(),
+                new SqlQueryCollector()
             }, metricMemoryRepository);
 
             var restMetricRepository = new RestRepository<MetricResult>();
