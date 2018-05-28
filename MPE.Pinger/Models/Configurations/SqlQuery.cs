@@ -10,6 +10,8 @@ namespace MPE.Pinger.Models.Configurations
 {
     public class SqlQuery
     {
+        [JsonProperty("Interval")]
+        public int IntervalInSec { get; set; }
         [JsonProperty("Alias")]
         public string Alias { get; set; }
         [JsonProperty("ConnectionString")]

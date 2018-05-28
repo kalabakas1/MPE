@@ -1,6 +1,5 @@
 ﻿SELECT
-	GETDATE() AS Timestamp
-	, CONCAT(pl.Alias,'.', pls.Alias) AS Alias
+	CONCAT(pc.Name,'.', pls.Alias) AS Alias
 	, p.Name AS Message
 	, SUM(pr.Quantity) AS Value
 FROM 
@@ -12,6 +11,6 @@ FROM
 	JOIN ProductLogic pl WITH(NOLOCK) ON pl.ProductLogicID = pt.ProductLogicID AND pl.Deleted = 0
 	JOIN ProductLogicStatus pls WITH(NOLOCK) ON pr.ProductLogicStatusID = pls.ProductLogicStatusID
 GROUP BY
-	pl.Alias
+	pc.Name
 	, p.Name
 	, pls.Alias

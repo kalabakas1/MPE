@@ -89,7 +89,20 @@
     //  "Type": "Web",
     //  "Response": [ 200 ]
     //}
-  ]
+  ],
+  "Sql": {
+    "ConnectionStrings": {
+      "Member": ""
+    },
+    "Queries": [
+      {
+        "Alias":  "PSD", 
+        "ConnectionString": "Member",
+        "FilePath": "./Configuration/Queries/MemberProductStatusDistribution.sql",
+        "Interval": 60 
+      }
+    ] 
+  }, 
   //,
   //"Redis": {
   //  "Host": "127.0.0.1",
