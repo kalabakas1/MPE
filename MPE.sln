@@ -53,6 +53,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{623A245E
 		Documentation\Files\RabbitMqApiQueuesResult.json = Documentation\Files\RabbitMqApiQueuesResult.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPE.Dibs.CallbackApp", "MPE.Dibs.CallbackApp\MPE.Dibs.CallbackApp.csproj", "{7921C46A-3540-4C5B-9719-B28F800F4ADB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,10 @@ Global
 		{2A53E71C-A9FA-4DAC-B4DD-DC74059730A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A53E71C-A9FA-4DAC-B4DD-DC74059730A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A53E71C-A9FA-4DAC-B4DD-DC74059730A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7921C46A-3540-4C5B-9719-B28F800F4ADB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7921C46A-3540-4C5B-9719-B28F800F4ADB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7921C46A-3540-4C5B-9719-B28F800F4ADB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7921C46A-3540-4C5B-9719-B28F800F4ADB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
