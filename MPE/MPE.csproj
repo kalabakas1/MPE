@@ -41,6 +41,10 @@
       <HintPath>..\packages\Polly.5.9.0\lib\net45\Polly.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.3\lib\net452\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Serilog">
       <HintPath>..\packages\Serilog.2.6.0\lib\net45\Serilog.dll</HintPath>
     </Reference>
