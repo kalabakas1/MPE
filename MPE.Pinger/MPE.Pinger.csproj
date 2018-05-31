@@ -165,6 +165,9 @@
     <Content Include="Configuration\Queries\LogCount.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Configuration\Queries\GuestProductStatusDistribution.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Configuration\Queries\TeamMemberStatusDistribution.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

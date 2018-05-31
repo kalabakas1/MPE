@@ -20,6 +20,10 @@ namespace MPE.Dibs.CallbackApp.Models
         public string CallbackUrl { get; set; }
         [JsonProperty("HMAC")]
         public string Hmac { get; set; }
+        [JsonProperty("Key1")]
+        public string Key1 { get; set; }
+        [JsonProperty("Key2")]
+        public string Key2 { get; set; }
         [JsonProperty("TransactionFilePath")]
         public string TransctionFilePath { get; set; }
     }

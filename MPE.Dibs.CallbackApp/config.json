@@ -4,5 +4,7 @@
   "Merchant": "",
   "CallbackUrl": "",
   "HMAC": "",
+  "Key1": "",
+  "Key2":  "",  
   "TransactionFilePath":  ""
 }

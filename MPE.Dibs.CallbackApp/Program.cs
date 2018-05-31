@@ -50,11 +50,32 @@ namespace MPE.Dibs.CallbackApp
 
                 var rawData = response.Content;
                 var data = rawData.Split('&').ToDictionary(x => x.Split('=')[0], x => HttpUtility.UrlDecode(x.Split('=')[1]));
-                var oldMac = data["MAC"];
-                data.Remove("MAC");
 
-                var calcVal = CalculateMacForDibsPayment(data, HexToString(config.Hmac)).ToLower();
-                data.Add("MAC", calcVal);
+                var oldHash = string.Empty;
+                var calcVal = string.Empty;
+                if (data.ContainsKey("MAC"))
+                {
+                    oldHash = data["MAC"];
+                    data.Remove("MAC");
+
+                    calcVal = CalculateMac(data, HexToString(config.Hmac)).ToLower();
+                    data.Add("MAC", calcVal);
+                }
+                else if (data.ContainsKey("md5key"))
+                {
+                    oldHash = data["md5key"];
+                    data.Remove("md5key");
+
+                    calcVal = CalculateMd5(data, config.Key1, config.Key2).ToLower();
+                    data.Add("md5key", calcVal);
+                }
+
+                if (string.IsNullOrEmpty(calcVal))
+                {
+                    Console.WriteLine("MAC or md5key not pressent");
+                    Console.ReadLine();
+                    Environment.Exit(0);
+                }
 
                 var url = new Uri(config.CallbackUrl);
                 var venmaClient = new RestClient(url.Scheme + "://" + url.Host);
@@ -71,13 +92,15 @@ namespace MPE.Dibs.CallbackApp
                 Console.WriteLine(data["billingEmail"]);
 
                 var callbackResponse = venmaClient.Execute(venmaRequest);
+
+                Console.WriteLine(callbackResponse.Content);
                 Console.ReadLine();
             }
         }
 
         private static ConfigurationFile ReadConfig(out List<string> transactions)
         {
-            var filePath = ConfigurationManager.AppSettings["MPE.Config.Path"];
+            var filePath = ConfigurationManager.AppSettings["MPE.Config.Path"]; 
             ConfigurationFile config = null;
             transactions = new List<string>();
             if (File.Exists(filePath))
@@ -101,7 +124,36 @@ namespace MPE.Dibs.CallbackApp
             return config;
         }
 
-        public static string CalculateMacForDibsPayment(Dictionary<string, string> formFields, string macKey)
+        public static string CalculateMd5(Dictionary<string, string> formFields, string key1, string key2)
+        {
+
+            var md5Key = GenerateMd5(
+                string.Format("merchant={0}&orderid={1}&currency={2}&amount={3}",
+                    formFields["merchant"], formFields["orderid"], formFields["currency"], formFields["amount"]), key1, key2);
+
+            return md5Key;
+        }
+
+        public static string GenerateMd5(string input, string key1, string key2)
+        {
+            using (MD5 cs = MD5.Create())
+            {
+                var sb = new StringBuilder();
+                byte[] hash;
+
+                hash = cs.ComputeHash(Encoding.ASCII.GetBytes(key1
+                                                              + input));
+                foreach (byte b in hash)
+                    sb.Append(b.ToString("x2"));
+                hash = cs.ComputeHash(Encoding.ASCII.GetBytes(key2 + sb));
+                sb.Length = 0;
+                foreach (byte b in hash)
+                    sb.Append(b.ToString("x2"));
+                return sb.ToString();
+            }
+        }
+
+        public static string CalculateMac(Dictionary<string, string> formFields, string macKey)
         {
             var encoding = new UTF8Encoding();
             byte[] keyByte = encoding.GetBytes(macKey);

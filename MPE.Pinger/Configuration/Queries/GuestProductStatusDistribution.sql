@@ -9,7 +9,7 @@ FROM
 	JOIN ProductType pt WITH(NOLOCK) ON p.ProductTypeID = pt.ProductTypeID AND pt.Deleted = 0
 	JOIN ProductLogic pl WITH(NOLOCK) ON pl.ProductLogicID = pt.ProductLogicID AND pl.Deleted = 0
 	JOIN ProductLogicStatus pls WITH(NOLOCK) ON pl.ProductLogicID = pls.ProductLogicID
-	LEFT JOIN ProductRelation pr WITH(NOLOCK) ON p.ProductID = pr.ProductID AND pls.ProductLogicStatusID = pr.ProductLogicStatusID  AND pr.Deleted = 0 AND p.Deleted = 0 AND pr.MemberID IS NOT NULL
+	LEFT JOIN ProductRelation pr WITH(NOLOCK) ON p.ProductID = pr.ProductID AND pls.ProductLogicStatusID = pr.ProductLogicStatusID  AND pr.Deleted = 0 AND p.Deleted = 0 AND pr.GuestID IS NOT NULL
 GROUP BY
 	pc.Name
 	, p.Name
