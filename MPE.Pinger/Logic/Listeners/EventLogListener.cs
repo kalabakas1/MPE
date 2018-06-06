@@ -75,7 +75,7 @@ namespace MPE.Pinger.Logic.Listeners
         {
             return new EventLogResult
             {
-                Path = $"{_configurationFile.Host}.Log.",
+                Path = $"{_configurationFile.Host}.Log",
                 Type = entry.EntryType.ToString(),
                 Source = entry.Source,
                 Message = entry.Message,

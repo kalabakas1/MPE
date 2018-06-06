@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MPE.Logging;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
 using RestSharp;
@@ -33,10 +34,11 @@ namespace MPE.Pinger.Repositories
                 var request = new RestRequest($"{_prefix}-{DateTime.Now:yyyy-MM-dd}/{_prefix}/{Guid.NewGuid()}", Method.PUT);
                 request.AddJsonBody(result);
                 var response = _client.Execute(request);
+                LoggerFactory.Instance.Debug($"{response.StatusCode} - {response.Content}");
             }
             catch (Exception e)
             {
-                
+                LoggerFactory.Instance.Debug(e.Message);
             }
         }
 

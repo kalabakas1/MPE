@@ -164,3 +164,30 @@ This configuration file contains how it will gather the data and what tests it s
 ## Visualization
 
 ![Grafana visualization of the data](./dumps/2018-05-20_2347.png)
+
+## Debugs
+
+### My cluster broke my ElasticSearch
+
+So after some cluster went down at my hosting company I started to see that there were no more data being saved in Elastic. So i updated my server code including it to write debug notes when calling the elastic save REST endpoint. And i got the following back:
+
+```json
+{
+	"error": {
+		"root_cause": [{
+				"type": "cluster_block_exception",
+				"reason": "blocked by: [FORBIDDEN/12/index read-only / allow delete (api)];"
+			}
+		],
+		"type": "cluster_block_exception",
+		"reason": "blocked by: [FORBIDDEN/12/index read-only / allow delete (api)];"
+	},
+	"status": 403
+}
+```
+
+So to fix this, please fire the following against elastic
+
+    > curl -Method Put -H @{'Content-Type'='application/json'} http://localhost:9200/_all/_settings -Body '{"index.blocks.read_only_allow_delete": null}'
+
+A new feature for this could be to respond correctly to the failing POST request to ElasticSearch REST endpoint
