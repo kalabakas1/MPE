@@ -17,7 +17,7 @@ namespace MPE.Pinger.Logic
         private ElasticRestRepository<T> _elasticRestRepository;
         public TimedElasticSearchRetentionPolicy()
         {
-            _elasticRestRepository = new ElasticRestRepository<T>();
+            _elasticRestRepository = new ElasticRestRepository<T>(new InMemoryRepository<T>());
             _retentionInDays = Configuration.Get<int>(Constants.RetentionInDays);
             _timer = new Timer(60 * 60 * 1000);
             _timer.Elapsed += (sender, args) =>

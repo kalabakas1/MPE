@@ -32,8 +32,8 @@ namespace MPE.Pinger.Server
 
             _server = new HttpSelfHostServer(config);
 
-            _metricReporter = new TimedReporter<MetricResult>(new InMemoryRepository<MetricResult>(), new ElasticRestRepository<MetricResult>());
-            _eventLogReporter = new TimedReporter<EventLogResult>(new InMemoryRepository<EventLogResult>(), new ElasticRestRepository<EventLogResult>());
+            _metricReporter = new TimedReporter<MetricResult>(new InMemoryRepository<MetricResult>(), new ElasticRestRepository<MetricResult>(new InMemoryRepository<MetricResult>()));
+            _eventLogReporter = new TimedReporter<EventLogResult>(new InMemoryRepository<EventLogResult>(), new ElasticRestRepository<EventLogResult>(new InMemoryRepository<EventLogResult>()));
 
             _retentionPolicyMetrics = new TimedElasticSearchRetentionPolicy<MetricResult>();
             _retentionPolicyEventLogs = new TimedElasticSearchRetentionPolicy<EventLogResult>();
