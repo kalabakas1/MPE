@@ -90,7 +90,7 @@ namespace MPE.Pinger.Logic.Collectors
 
         public List<MetricResult> Collect()
         {
-            if (!_isStarted)
+            if (!_isStarted && _isEnabled)
             {
                 Init();
             }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using MPE.Logging;
 using MPE.Pinger.Helpers;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
@@ -37,6 +38,7 @@ namespace MPE.Pinger.Repositories
             var response = GetClient().Execute(request);
             if (response.StatusCode != HttpStatusCode.OK)
             {
+                LoggerFactory.Instance.Debug(response.ErrorMessage);
                 throw new Exception(response.ErrorMessage);
             }
         }
