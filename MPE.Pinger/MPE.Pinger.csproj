@@ -156,6 +156,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Configuration\Queries\CaptureStatusDistribution.sql" />
     <Content Include="Configuration\Queries\CheckinProductRegistrationCount.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -180,6 +181,7 @@
     <Content Include="Configuration\Queries\MemberProductStatusDistribution.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Configuration\Queries\TeamMemberStatusVariationDistribution.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

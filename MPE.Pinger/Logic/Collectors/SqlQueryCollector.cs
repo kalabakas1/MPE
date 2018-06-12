@@ -61,8 +61,9 @@ namespace MPE.Pinger.Logic.Collectors
                                 var date = DateTime.Now;
                                 foreach (var metric in metrics)
                                 {
-                                    metric.Path =
-                                        $"{_configurationFile.Host}.Sql.{query.ConnectionString.RemoveSpecialCharacters()}.{query.Alias.RemoveSpecialCharacters()}.{metric.Alias.RemoveSpecialCharacters()}";
+                                    metric.Path = $"{_configurationFile.Host}.Sql.{query.ConnectionString.RemoveSpecialCharacters()}.{query.Alias.RemoveSpecialCharacters()}.{metric.Alias.RemoveSpecialCharacters()}";
+                                    metric.Alias = $"{query.ConnectionString}.{metric.Alias}".RemoveSpecialCharacters();
+                                    metric.Message = $"{query.ConnectionString} - {metric.Message}";
                                     metric.Timestamp = date;
                                 }
 
