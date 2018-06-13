@@ -31,9 +31,9 @@ namespace MPE.Logging.Sinks
         public void Emit(LogEvent logEvent)
         {
             if (logEvent.Level >= LogEventLevel.Fatal 
-                && logEvent.Exception != null)
+                && logEvent.MessageTemplate != null)
             {
-                Send(logEvent.Exception.Message);
+                Send(logEvent.MessageTemplate.Text);
             }
         }
 

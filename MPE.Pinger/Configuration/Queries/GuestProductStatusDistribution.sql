@@ -1,6 +1,6 @@
 ﻿SELECT
-	CONCAT(pc.Name,'.', pls.Alias) AS Alias
-	, p.Name AS Message
+	CONCAT(pc.Name,'.', ISNULL(pa.Name, 'NA'), '.', pls.Alias) AS Alias
+	, CONCAT(p.Name, ' ', ISNULL(pa.Name, '')) AS Message
 	, SUM(ISNULL(pr.Quantity, 0)) AS Value
 FROM 
 	Product p WITH(NOLOCK) 
@@ -10,7 +10,9 @@ FROM
 	JOIN ProductLogic pl WITH(NOLOCK) ON pl.ProductLogicID = pt.ProductLogicID AND pl.Deleted = 0
 	JOIN ProductLogicStatus pls WITH(NOLOCK) ON pl.ProductLogicID = pls.ProductLogicID
 	LEFT JOIN ProductRelation pr WITH(NOLOCK) ON p.ProductID = pr.ProductID AND pls.ProductLogicStatusID = pr.ProductLogicStatusID  AND pr.Deleted = 0 AND p.Deleted = 0 AND pr.GuestID IS NOT NULL
+	LEFT JOIN PluginGuest_Association pa ON pr.AssociationID = pa.AssociationID
 GROUP BY
 	pc.Name
+	, pa.Name
 	, p.Name
 	, pls.Alias
