@@ -8,37 +8,63 @@
       "Category": "Processor",
       "Name": "% Processor Time",
       "Instance": "_Total"
-    },
-    {
+    }, {
       "Alias": "MemoryPct",
       "Category": "Memory",
       "Name": "% Committed Bytes In Use"
-    },
-    {
+    }, {
       "Alias": "BytesSentPerSec",
       "Category": "Network Interface",
       "Name": "Bytes Sent/sec"
-    },
-    {
+    }, {
       "Alias": "BytesReceivedPerSec",
       "Category": "Network Interface",
       "Name": "Bytes Received/sec"
-    },
-    {
+    }, {
       "Alias": "PhysicalDiskReadsPerSec",
       "Category": "PhysicalDisk",
       "Name": "Disk Reads/sec"
-    },
-    {
+    }, {
       "Alias": "PhysicalDiskWritesPerSec",
       "Category": "PhysicalDisk",
       "Name": "Disk Writes/sec"
-    },
-    {
+    }, {
       "Alias": "DiskFreeSpacePct",
       "Category": "LogicalDisk",
       "Name": "% Free Space",
+      "Instance": "E:"
+    }, {
+      "Alias": "CurrentConnections",
+      "Category": "Web Service",
+      "Name": "Current Connections",
       "Instance": "_Total"
+    }, {
+      "Alias": "GetRequests",
+      "Category": "Web Service",
+      "Name": "Get Requests/sec",
+      "Instance": "_Total"
+    }, {
+      "Alias": "PostRequests",
+      "Category": "Web Service",
+      "Name": "Post Requests/sec",
+      "Instance": "_Total"
+    }, {
+      "Alias": "Response5xx",
+      "Category": "ASP.NET Applications",
+      "Name": "Requests Failed"
+    }, {
+      "Alias": "Response404",
+      "Category": "ASP.NET Applications",
+      "Name": "Requests Not Found"
+    }, {
+      "Alias": "Response2xx",
+      "Category": "ASP.NET Applications",
+      "Name": "Requests Succeeded"
+    }, {
+      "Alias": "RequestsExecuting",
+      "Category": "ASP.NET Applications",
+      "Name": "Requests Executing",
+      "Instance": "__Total__"
     }
   ],
   "EventLogging": {
