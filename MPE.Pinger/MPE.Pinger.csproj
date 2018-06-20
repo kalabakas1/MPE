@@ -160,6 +160,7 @@
     <Content Include="Configuration\Queries\CheckinProductRegistrationCount.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Configuration\Queries\LogErrorPct.sql" />
     <Content Include="Configuration\Queries\MemberAcceptedTOS.sql" />
     <Content Include="Configuration\Queries\MemberMessageCount.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
