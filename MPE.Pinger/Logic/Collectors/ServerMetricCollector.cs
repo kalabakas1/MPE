@@ -90,7 +90,7 @@ namespace MPE.Pinger.Logic.Collectors
                     }
                     catch (Exception e)
                     {
-                        _logger.Debug("Failed to get metric", e);
+                        _logger.Debug($"Failed to get metric - {x.Name}", e);
                         return 0;
                     }
                 })
