@@ -163,6 +163,10 @@ This configuration file contains how it will gather the data and what tests it s
 
 ## Visualization
 
+### Flow of data
+![Grafana visualization of the data](./dumps/2018-06-21-1555.png)
+
+### Example dashboard
 ![Grafana visualization of the data](./dumps/2018-05-20_2347.png)
 
 ## Debugs
