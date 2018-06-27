@@ -21,37 +21,41 @@ namespace MPE
     {
         static void Main(string[] args)
         {
-            var repo = new RequestLogRepository(@"C:\Users\mpe\Desktop\requestlogs\");
+            var path = @"C:\Users\mpe\Desktop\requestlogs\";
+            var files = Directory.GetFiles(path, "*.log", SearchOption.AllDirectories);
 
-            var lines = repo.ReadLogRecords(2, "u_ex180619.log");
-
-            var records = repo.ParseLines("RfProd", lines);
-
-            var apiRecords = records.Where(x => x.Uri.StartsWith("/api/"));
-
-            int index = 0;
-            int chunkSize = 256;
-            while (true)
+            foreach (var file in files)
             {
-                var chunk = records.Skip(index * chunkSize).Take(chunkSize);
+                var repo = new RequestLogRepository(path);
 
-                if (!chunk.Any())
+                var lines = repo.ReadLogRecords(2, Path.GetFileName(file));
+
+                var records = repo.ParseLines("RfProd", lines);
+
+                int index = 0;
+                int chunkSize = 256;
+                while (true)
                 {
-                    break;
+                    var chunk = records.Skip(index * chunkSize).Take(chunkSize);
+
+                    if (!chunk.Any())
+                    {
+                        break;
+                    }
+
+                    var client = new RestClient("http://195.215.240.99:8080/api/RequestLogResult");
+                    var request = new RestRequest(Method.POST);
+                    request.AddHeader("postman-token", "0e37c32c-ef1d-1721-0bd2-f819d5784aee");
+                    request.AddHeader("cache-control", "no-cache");
+                    request.AddHeader("authorization", "8fe1657c-9b23-4ac6-9da4-175a2a33f71d");
+                    request.AddHeader("content-type", "application/json");
+                    request.AddParameter("application/json", JsonConvert.SerializeObject(chunk),
+                        ParameterType.RequestBody);
+                    IRestResponse response = client.Execute(request);
+
+                    index++;
                 }
-
-                var client = new RestClient("http://195.215.240.99:8080/api/RequestLogResult");
-                var request = new RestRequest(Method.POST);
-                request.AddHeader("postman-token", "0e37c32c-ef1d-1721-0bd2-f819d5784aee");
-                request.AddHeader("cache-control", "no-cache");
-                request.AddHeader("authorization", "8fe1657c-9b23-4ac6-9da4-175a2a33f71d");
-                request.AddHeader("content-type", "application/json");
-                request.AddParameter("application/json", JsonConvert.SerializeObject(chunk), ParameterType.RequestBody);
-                IRestResponse response = client.Execute(request);
-
-                index++;
             }
-
 
             Console.ReadLine();
         }
@@ -112,7 +116,7 @@ namespace MPE
                 var record = new RequestLogResult();
                 if (headers.Contains("date") && headers.Contains("time"))
                 {
-                    record.Timestamp = DateTime.Parse($"{values[headers.IndexOf("date")]} {values[headers.IndexOf("time")]}");
+                    record.Timestamp = DateTime.Parse($"{values[headers.IndexOf("date")]} {values[headers.IndexOf("time")]}").AddHours(2);
                 }
 
                 if (headers.Contains("c-ip"))

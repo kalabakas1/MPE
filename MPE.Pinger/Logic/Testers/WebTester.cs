@@ -17,6 +17,7 @@ namespace MPE.Pinger.Logic.Testers
             if (_client == null)
             {
                 _client = new HttpClient();
+                _client.Timeout = TimeSpan.FromSeconds(10);
             }
 
             return _client;
