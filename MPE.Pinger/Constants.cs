@@ -19,5 +19,6 @@ namespace MPE.Pinger
         public const string ServerPort = "MPE.Pinger.Server.Port";
         public const string ServerHost = "MPE.Pinger.Server.Host";
         public const string RetentionInDays = "MPE.Pinger.RetentionInDays";
+        public const string SlackToken = "MPE.Pinger.SlackToken";
     }
 }

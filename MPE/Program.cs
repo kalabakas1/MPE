@@ -7,8 +7,10 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using System.Timers;
 using Newtonsoft.Json;
 using RestSharp;
@@ -21,43 +23,55 @@ namespace MPE
     {
         static void Main(string[] args)
         {
-            var path = @"C:\Users\mpe\Desktop\requestlogs\";
-            var files = Directory.GetFiles(path, "*.log", SearchOption.AllDirectories);
-
-            foreach (var file in files)
+            Parallel.For(0, 1000000, (x) =>
             {
-                var repo = new RequestLogRepository(path);
-
-                var lines = repo.ReadLogRecords(2, Path.GetFileName(file));
-
-                var records = repo.ParseLines("RfProd", lines);
-
-                int index = 0;
-                int chunkSize = 256;
-                while (true)
+                using (var client = new HttpClient())
                 {
-                    var chunk = records.Skip(index * chunkSize).Take(chunkSize);
-
-                    if (!chunk.Any())
-                    {
-                        break;
-                    }
-
-                    var client = new RestClient("http://195.215.240.99:8080/api/RequestLogResult");
-                    var request = new RestRequest(Method.POST);
-                    request.AddHeader("postman-token", "0e37c32c-ef1d-1721-0bd2-f819d5784aee");
-                    request.AddHeader("cache-control", "no-cache");
-                    request.AddHeader("authorization", "8fe1657c-9b23-4ac6-9da4-175a2a33f71d");
-                    request.AddHeader("content-type", "application/json");
-                    request.AddParameter("application/json", JsonConvert.SerializeObject(chunk),
-                        ParameterType.RequestBody);
-                    IRestResponse response = client.Execute(request);
-
-                    index++;
+                    var response = client.GetAsync("https://www.smukfest.dk/media/4503/tn%C3%B8_smukfest_under_koncert_livecamp_man_cousin_2017_m1cp31ff33-1.jpga").Result;
                 }
-            }
+            });
 
             Console.ReadLine();
+        }
+
+        private class IisLogExecuter
+        {
+            public static void Run()
+            {
+                var path = @"C:\Users\mpe\Desktop\requestlogs\";
+                var files = Directory.GetFiles(path, "*.log", SearchOption.AllDirectories);
+
+                foreach (var file in files)
+                {
+                    var repo = new RequestLogRepository(path);
+
+                    var lines = repo.ReadLogRecords(2, Path.GetFileName(file));
+
+                    var records = repo.ParseLines("RfProd", lines);
+
+                    int index = 0;
+                    int chunkSize = 256;
+                    while (true)
+                    {
+                        var chunk = records.Skip(index * chunkSize).Take(chunkSize);
+
+                        if (!chunk.Any())
+                        {
+                            break;
+                        }
+
+                        var client = new RestClient("http://195.215.240.99:8080/api/RequestLogResult");
+                        var request = new RestRequest(Method.POST);
+                        request.AddHeader("authorization", "");
+                        request.AddHeader("content-type", "application/json");
+                        request.AddParameter("application/json", JsonConvert.SerializeObject(chunk),
+                            ParameterType.RequestBody);
+                        IRestResponse response = client.Execute(request);
+
+                        index++;
+                    }
+                }
+            }
         }
 
         private class RequestLogRepository

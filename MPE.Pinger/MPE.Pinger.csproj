@@ -122,8 +122,9 @@
     <Compile Include="Repositories\RestRepository.cs" />
     <Compile Include="Server\Attributes\ApiKeyAuthorizeAttribute.cs" />
     <Compile Include="Server\Controllers\EventLogResultController.cs" />
-    <Compile Include="Server\Controllers\RequestLogResultController.cs" />
     <Compile Include="Server\Controllers\MetricResultController.cs" />
+    <Compile Include="Server\Controllers\RequestLogResultController.cs" />
+    <Compile Include="Server\Controllers\SlackResultController.cs" />
     <Compile Include="Server\ServerStartup.cs" />
     <Compile Include="ClientStartup.cs" />
     <Compile Include="Logic\TimedTestExecutor.cs" />
@@ -158,6 +159,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Configuration\keys.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Configuration\Queries\CaptureStatusDistribution.sql" />
     <Content Include="Configuration\Queries\CheckinProductRegistrationCount.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
