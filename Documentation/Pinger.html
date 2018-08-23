@@ -36,9 +36,31 @@
         <div class="row panel-body">
             <div class="col-xs-12 col-md-12">
                 <h1 id="pinger">Pinger</h1>
-<p>Small project containing two parts: a client installed on the server we need to test and get metrics about, and a windows service server installed on a central server that contains ElasticSearch, Kibana and/or Grafana for visualization.</p>
+<p>So this project contains of one application that can be installed with two different modes. A client mode that reads different matrics, and a server mode that is a selfhosted web service receiving all the metrics a client-mode application have gathered. All this data is then persisted into a storage, in this case I choose ElasticSearch. To make all this visual, I choose to use Grafana. The reason for this was that it contained user management and alerting, without having to do scripts (the end user is not tended to be a programmer).</p>
+<p>If you watch the PDF version, i apologies about the indentations. You can find the configuration files and examples on my git hub account:<br />
+<a href="https://github.com/kalabakas1/MPE">https://github.com/kalabakas1/MPE</a></p>
 <h2 id="motivation">Motivation</h2>
-<p>Basically I needed some pretty simple metric about how the server acted, and I needed it without paying a high price in the sense of money. A lot of the good tools offer a lot of functionality that I don't need or use, so instead of buying a took to get my metric, I build a lightweight client.</p>
+<p>Basically I needed some pretty simple metric about how the server acted, and I needed it without paying a high price in the sense of money. A lot of the good tools offer a lot of functionality that I don't need or use, so instead of buying a took to get my metric, I build a lightweight client. This project developed over time, so it not only gathers interesting metrics that the programmer or hosting can use, but can also gather data that the customer can use to identify the health of their business by quiring the MSSQL database.</p>
+<h2 id="storage">Storage</h2>
+<p>So the server stores the collected metrics in the database. This is done by using a specific kind of object called a MetricResult. It have the following parameters:</p>
+<pre><code class="language-csharp">private class Metric
+{
+    [JsonProperty(&quot;Timestamp&quot;)]
+    public DateTime Timestamp { get; set; }
+    [JsonProperty(&quot;Path&quot;)]
+    public string Path { get; set; }
+    [JsonProperty(&quot;Alias&quot;)]
+    public string Alias { get; set; }
+    [JsonProperty(&quot;Value&quot;)]
+    public float Value { get; set; }
+    [JsonProperty(&quot;Message&quot;)]
+    public string Message { get; set; }
+}
+</code></pre>
+<p>When it comes to visualizing the metrics, Grafana are dependent on the structure that is defined in the Path property. The string defined in the &quot;Host&quot; parameter in the connections.json configuration file is defining the base of Path. Meaning, that if &quot;Host&quot; have the value &quot;FooBar&quot;, then a path could have the following format if the metric alias are &quot;CpuPct&quot;:</p>
+<pre><code>FooBar.CpuPct
+</code></pre>
+<p>That way you can have different servers for your customers piping their metric data to the same central metric endpoint. That way you can have a customer called FooBar having 3 webservers that have different host values in each of their local configuration files (field in connections.json called &quot;Host&quot;), e.g. FooBar.Web1, FooBar.Web2, and FooBar.Web3, and visualizing Cpu percentage graph spanning all three servers.</p>
 <h2 id="configuration">Configuration</h2>
 <p>The big part of this is the client. The client reads two configuration files:</p>
 <ol>
@@ -47,42 +69,45 @@
 </ol>
 <h3 id="general-configuration-file">General configuration file</h3>
 <pre><code class="language-json">{
-  &quot;Logging.MinimumLevel&quot;: &quot;Debug&quot;,
-  &quot;Logging.File.MinimumLevel&quot; :&quot;Warning&quot;,
-  &quot;Logging.Console.MinimumLevel&quot;: &quot;Verbose&quot;,
+    &quot;Logging.MinimumLevel&quot;: &quot;Debug&quot;,
+    &quot;Logging.File.MinimumLevel&quot; :&quot;Warning&quot;,
+    &quot;Logging.Console.MinimumLevel&quot;: &quot;Verbose&quot;,
 	
-  &quot;Logging.Elastic.MinimumLevel&quot;: &quot;Debug&quot;,
-  &quot;Logging.Elastic.Url&quot;: &quot;http://localhost:9200&quot;,
-  &quot;Logging.Elastic.IndexFormat&quot;: &quot;customername_log_{0:yyyy.MM}&quot;,
+    &quot;Logging.Elastic.MinimumLevel&quot;: &quot;Debug&quot;,
+    &quot;Logging.Elastic.Url&quot;: &quot;http://localhost:9200&quot;,
+    &quot;Logging.Elastic.IndexFormat&quot;: &quot;customername_log_{0:yyyy.MM}&quot;,
 	
-  &quot;Logging.Slack.MinimumLevel&quot;: &quot;Error&quot;,
-  &quot;Logging.Slack.Url&quot;: &quot;&quot;,
+    &quot;Logging.Slack.MinimumLevel&quot;: &quot;Error&quot;,
+    &quot;Logging.Slack.Url&quot;: &quot;&quot;,
 	
-  &quot;Logging.Sentry.Dsn&quot;: &quot;&quot;,
+    &quot;Logging.Sentry.Dsn&quot;: &quot;&quot;,
 	
-  &quot;Logging.CoolSms.Key&quot;: &quot;&quot;,
-  &quot;Logging.CoolSms.FromName&quot;: &quot;&quot;,
-  &quot;Logging.CoolSms.Phonenumbers&quot;: &quot;&quot;,
+    &quot;Logging.CoolSms.Key&quot;: &quot;&quot;,
+    &quot;Logging.CoolSms.FromName&quot;: &quot;&quot;,
+    &quot;Logging.CoolSms.Phonenumbers&quot;: &quot;&quot;,
 	
-  &quot;MPE.Pinger.Configuration.Path&quot;: &quot;./Configuration/connections.json&quot;,
-  &quot;MPE.Pinger.Fail1.Pause.Secs&quot;: &quot;5&quot;,
-  &quot;MPE.Pinger.Fail2.Pause.Secs&quot;: &quot;60&quot;,
-  &quot;MPE.Pinger.Fail3.Pause.Secs&quot;: &quot;180&quot;,
-  &quot;MPE.Pinger.WaitBetweenTest.Secs&quot;: &quot;30&quot;,
-  &quot;MPE.Pinger.Report.Inteval.Sec&quot;: &quot;60&quot;,
-  &quot;MPE.Pinger.Metric.Inteval.Sec&quot;: &quot;5&quot;,
-  &quot;MPE.Pinger.TimeSpan.From&quot;: &quot;00:01&quot;,
-  &quot;MPE.Pinger.TimeSpan.To&quot;: &quot;23:59&quot;,
-  &quot;MPE.Pinger.ApiKeys.Path&quot;: &quot;keys.txt&quot;,
-  &quot;MPE.Pinger.Server.Host&quot;: &quot;localhost&quot;,
-  &quot;MPE.Pinger.Server.Port&quot;: &quot;8080&quot;,
-  &quot;MPE.Pinger.RetentionInDays&quot;: &quot;5&quot;
+    &quot;MPE.Pinger.Configuration.Path&quot;: &quot;./Configuration/connections.json&quot;,
+    &quot;MPE.Pinger.Fail1.Pause.Secs&quot;: &quot;5&quot;,
+    &quot;MPE.Pinger.Fail2.Pause.Secs&quot;: &quot;60&quot;,
+    &quot;MPE.Pinger.Fail3.Pause.Secs&quot;: &quot;180&quot;,
+    &quot;MPE.Pinger.WaitBetweenTest.Secs&quot;: &quot;30&quot;,
+    &quot;MPE.Pinger.Report.Inteval.Sec&quot;: &quot;60&quot;,
+    &quot;MPE.Pinger.Metric.Inteval.Sec&quot;: &quot;5&quot;,
+    &quot;MPE.Pinger.TimeSpan.From&quot;: &quot;00:01&quot;,
+    &quot;MPE.Pinger.TimeSpan.To&quot;: &quot;23:59&quot;,
+
+    &quot;MPE.Pinger.ApiKeys.Path&quot;: &quot;keys.txt&quot;,
+    &quot;MPE.Pinger.Server.Host&quot;: &quot;localhost&quot;,
+    &quot;MPE.Pinger.Server.Port&quot;: &quot;8080&quot;,
+    &quot;MPE.Pinger.RetentionInDays&quot;: &quot;5&quot;
 }
 </code></pre>
+<h3 id="general-configurations">General configurations</h3>
 <p><strong>Logging.*</strong><br />
 Configuration to define the different way of logging. Normally used to define how it reports the failed alerts.</p>
 <p><strong>MPE.Pinger.Configuration.Path</strong><br />
 Path to the connections configuration file containing the tests and what metrics it needs to extract</p>
+<h3 id="client-specific-configurations">Client specific configurations</h3>
 <p><strong>MPE.Pinger.Fail?.Pause.Secs</strong>
 How may seconds it needs to pause after the first, second or third failed test</p>
 <p><strong>MPE.Pinger.WaitBetweenTest.Secs</strong><br />
@@ -95,6 +120,7 @@ How often it gathers metrics</p>
 Start time for alerting period in case of failed test</p>
 <p><strong>MPE.Pinger.TimeSpan.To</strong><br />
 End time for alerting period in case of failed test</p>
+<h3 id="server-specific-configurations">Server specific configurations</h3>
 <p><strong>MPE.Pinger.ApiKeys.Path</strong><br />
 Path to newline separated file containing valid API keys - used if the execution mode is &quot;Server&quot;</p>
 <p><strong>MPE.Pinger.Server.Host</strong><br />
@@ -104,108 +130,489 @@ How long it persist data in ElasticSearch</p>
 <h2 id="connections-configuration-file">Connections configuration file</h2>
 <p>This configuration file contains how it will gather the data and what tests it should execute while on the server. It also defines the naming for the different objects when persisted to storage, along with the report endpoint and api key.</p>
 <pre><code class="language-json">{
-  &quot;Host&quot;: &quot;MpeLocal&quot;,
-  &quot;RestEndpoint&quot;: &quot;http://localhost:8080&quot;,
-  &quot;ApiKey&quot;: &quot;7dcb7c7a-8d9f-4b56-9ce0-52fa40085b35&quot;,
-  &quot;Metrics&quot;: [
-    {
-      &quot;Alias&quot;: &quot;CpuPct&quot;,
-      &quot;Category&quot;: &quot;Processor&quot;,
-      &quot;Name&quot;: &quot;% Processor Time&quot;,
-      &quot;Instance&quot;: &quot;_Total&quot;
-    }
-  ],
-  &quot;EventLogging&quot;: {
+	&quot;Host&quot;: &quot;MpeLocal&quot;,
+	&quot;RestEndpoint&quot;: &quot;http://localhost:8080&quot;,
+	&quot;ApiKey&quot;: &quot;7dcb7c7a-8d9f-4b56-9ce0-52fa40085b35&quot;,
+	&quot;Metrics&quot;: [
+		{
+			&quot;Alias&quot;: &quot;CpuPct&quot;,
+			&quot;Category&quot;: &quot;Processor&quot;,
+			&quot;Name&quot;: &quot;% Processor Time&quot;,
+			&quot;Instance&quot;: &quot;_Total&quot;
+		}
+	],
+	&quot;EventLogging&quot;: {
+		&quot;MinimumLevel&quot;: &quot;Information&quot;,
+		&quot;Categories&quot;: [
+			&quot;Application&quot;,
+			&quot;System&quot;
+		]
+	},
+	&quot;Connections&quot;: [
+		{
+			&quot;Alias&quot;: &quot;Redis-Connect&quot;,
+			&quot;Target&quot;: &quot;127.0.0.1&quot;,
+			&quot;Port&quot;: 6379,
+			&quot;Type&quot;: &quot;Tcp&quot;
+		}
+	],
+	&quot;Redis&quot;: {
+		&quot;Host&quot;: &quot;127.0.0.1&quot;,
+		&quot;Port&quot;: 6379,
+		&quot;Metrics&quot;: [
+			&quot;total_connections_received&quot;,
+			&quot;total_commands_processed&quot;,
+			&quot;expired_keys&quot;,
+			&quot;used_memory&quot;,
+			&quot;used_memory_peak&quot;,
+			&quot;connected_clients&quot;,
+			&quot;used_cpu_sys&quot;,
+			&quot;uptime_in_seconds&quot;,
+			&quot;uptime_in_days&quot;,
+			&quot;maxmemory&quot;
+		]
+	},
+	&quot;RabbitMQ&quot;: {
+		&quot;Host&quot;: &quot;localhost&quot;,
+		&quot;Port&quot;: 15672,
+		&quot;Username&quot;: &quot;guest&quot;,
+		&quot;Password&quot;: &quot;guest&quot;,
+		&quot;Fields&quot;: [
+			&quot;messages_ready$&quot;,
+			&quot;messages_unacknowledged$&quot;,
+			&quot;messages$&quot;,
+			&quot;deliver$&quot;,
+			&quot;ack$&quot;,
+			&quot;publish$&quot;
+		]
+	},
+	&quot;ElasticSearch&quot;: {
+		&quot;Host&quot;: &quot;localhost&quot;,
+		&quot;Port&quot;: 9200,
+		&quot;Fields&quot;: [
+			&quot;indices.search&quot;,
+			&quot;jvm.mem&quot;
+		]
+	},
+	&quot;HaProxy&quot;: {
+		&quot;Endpoint&quot;: &quot;https://localhost:9000/haproxy_stats&quot;,
+		&quot;Username&quot;: &quot;admin&quot;,
+		&quot;Password&quot;: &quot;admin&quot;,
+		&quot;Fields&quot;: [
+			&quot;*.*.(?:hrsp_1xx|hrsp_2xx|hrsp_3xx|hrsp_4xx|hrsp_5xx)&quot;
+		]
+	},
+	&quot;Sql&quot;: {
+		&quot;ConnectionStrings&quot;: {
+			&quot;Con1&quot;: &quot;qweasdqweasd&quot;,
+			&quot;Con2&quot;: &quot;lkajsdpodsfo&quot;
+		},
+		&quot;Queries&quot;: [{
+				&quot;Interval&quot;: 60,
+				&quot;Alias&quot;: &quot;YYY&quot;,
+				&quot;ConnectionString&quot;: &quot;Con1&quot;,
+				&quot;FilePath&quot;: &quot;./Queries/XXX.sql&quot;
+			}
+		]
+	}
+}
+
+</code></pre>
+<p><strong>Host</strong><br />
+Defines the base of the Path the metric is specified under. e.g. Foobar.CpuPct. That way it is possible to target in Grafana.</p>
+<p><strong>RestEndpoint</strong><br />
+The HTTP endpoint the client should pipe its data to</p>
+<p><strong>ApiKey</strong><br />
+The clients api key that should be defined in the servers keys.txt, else the server will not accept the request.</p>
+<p><strong>Metrics</strong><br />
+So metrics are defined by using the following setup:</p>
+<pre><code class="language-json">{
+    &quot;Alias&quot;: &quot;CpuPct&quot;,
+    &quot;Category&quot;: &quot;Processor&quot;,
+    &quot;Name&quot;: &quot;% Processor Time&quot;,
+    &quot;Instance&quot;: &quot;_Total&quot;
+}
+</code></pre>
+<p>The Alias are used as a part of the Path. It will be appended to the Host property e.g. FooBar.CpuPct. The category are the metric property, name the metric name, and the Instance defines witch process it should target.</p>
+<p>If you need a more detailed understanding of it (and I recommend it), then try do a google search on the keywords &quot;performance counters&quot;</p>
+<p><strong>EventLogging</strong><br />
+To make use of annotations in Grafana you can enable that the client gathers informations about from the EventViewer. Using the following format, you can define which level of information to gather and which event categories to listen to.</p>
+<pre><code class="language-json">{
     &quot;MinimumLevel&quot;: &quot;Information&quot;,
     &quot;Categories&quot;: [
-      &quot;Application&quot;,
-      &quot;System&quot;
+        &quot;Application&quot;,
+        &quot;System&quot;
     ]
-  },
-  &quot;Connections&quot;: [
-    {
-      &quot;Alias&quot;: &quot;Redis-Connect&quot;,
-      &quot;Target&quot;: &quot;127.0.0.1&quot;,
-      &quot;Port&quot;: 6379,
-      &quot;Type&quot;: &quot;Tcp&quot;
-    }
-  ],
-  &quot;Redis&quot;: {
+}
+</code></pre>
+<p><strong>Connections</strong><br />
+One of the more central aspects, and actually the reason I started this project, is the connections section of the configuration. This defines the different tests the client should perform, if it fails on one, it should do some re-tries before alerting (SeriLog)</p>
+<pre><code class="language-json">TCP-connection
+{
+    &quot;Alias&quot;: &quot;Redis-Connect&quot;,
+    &quot;Target&quot;: &quot;127.0.0.1&quot;,
+    &quot;Port&quot;: 6379,
+    &quot;Type&quot;: &quot;Tcp&quot;
+}
+
+
+Web-connection
+{
+	&quot;Alias&quot;: &quot;some.website.dk&quot;,
+	&quot;Target&quot;: &quot;some.website.dk&quot;,
+	&quot;Type&quot;: &quot;Web&quot;,
+	&quot;Response&quot;: [200]
+}
+
+WindowsService
+{
+	&quot;Alias&quot;: &quot;MongoDB-Service&quot;,
+	&quot;Target&quot;: &quot;MongoDB&quot;,
+	&quot;Type&quot;: &quot;Service&quot;
+}
+</code></pre>
+<p>But basically it can test if a WindowsService (Service) are running, if a TCP connection (Tcp) are open on a specific port, or you get a specific response on a http address (Web).</p>
+<p><strong>Redis</strong><br />
+So basically you want to keep track of you redis instance. Here I have implemented a way to get some basic information from the server. You just define the host and port, along with the given metrics you want to track.</p>
+<pre><code class="language-json">{
     &quot;Host&quot;: &quot;127.0.0.1&quot;,
     &quot;Port&quot;: 6379,
     &quot;Metrics&quot;: [
-      &quot;total_connections_received&quot;,
-      &quot;total_commands_processed&quot;,
-      &quot;expired_keys&quot;,
-      &quot;used_memory&quot;,
-      &quot;used_memory_peak&quot;,
-      &quot;connected_clients&quot;,
-      &quot;used_cpu_sys&quot;,
-      &quot;uptime_in_seconds&quot;,
-      &quot;uptime_in_days&quot;,
-      &quot;maxmemory&quot;
+        &quot;total_connections_received&quot;,
+        &quot;total_commands_processed&quot;,
+        &quot;expired_keys&quot;,
+        &quot;used_memory&quot;,
+        &quot;used_memory_peak&quot;,
+        &quot;connected_clients&quot;,
+        &quot;used_cpu_sys&quot;,
+        &quot;uptime_in_seconds&quot;,
+        &quot;uptime_in_days&quot;,
+        &quot;maxmemory&quot;
     ]
-  },
-  &quot;RabbitMQ&quot;: {
+}
+</code></pre>
+<p><strong>RabbitMQ</strong><br />
+When your infrastructure on a project you really want to know when there are queues that starts to pile up because a consumer perhaps fails, or isnt started. Again, you can define the host, port, and credentials. The differene are that RabbitMQ exposes a complex JSON structure containing all the metric information. Imagine you flatten this JSON structure to a key value collection. That way you can target the different metrics by using regex patterns to collect all the informations regarding the metric &quot;messages_ready&quot; by postfixing it with $</p>
+<pre><code class="language-json">{
     &quot;Host&quot;: &quot;localhost&quot;,
     &quot;Port&quot;: 15672,
     &quot;Username&quot;: &quot;guest&quot;,
     &quot;Password&quot;: &quot;guest&quot;,
     &quot;Fields&quot;: [
-      &quot;messages_ready$&quot;,
-      &quot;messages_unacknowledged$&quot;,
-      &quot;messages$&quot;,
-      &quot;deliver$&quot;,
-      &quot;ack$&quot;,
-      &quot;publish$&quot;
+        &quot;messages_ready$&quot;,
+        &quot;messages_unacknowledged$&quot;,
+        &quot;messages$&quot;,
+        &quot;deliver$&quot;,
+        &quot;ack$&quot;,
+        &quot;publish$&quot;
     ]
-  },
-  &quot;ElasticSearch&quot;: {
-    &quot;Host&quot;: &quot;89.221.166.59&quot;,
+}
+</code></pre>
+<p><strong>ElasticSearch</strong><br />
+One of the central things I needed to keep track on was the usage of the heep. Here you can configure it the same ways as the other service providers, and define what fields you want. It uses the same &quot;flatten-JSON-structure&quot; approach, so it is possible to target it by regex.</p>
+<pre><code class="language-json">{
+    &quot;Host&quot;: &quot;localhost&quot;,
     &quot;Port&quot;: 9200,
     &quot;Fields&quot;: [
-      &quot;indices.search&quot;,
-      &quot;jvm.mem&quot;
+        &quot;indices.search&quot;,
+        &quot;jvm.mem&quot;
     ]
-  },
-  &quot;HaProxy&quot;: {
+}
+</code></pre>
+<p><strong>HaProxy</strong><br />
+I think this was the most irritating gathing of data. HaProxy exposes data by exporting a CSV file with a lot of rows and cols. So to be able to get the data I needed i did a cross product of the cols and rows, and that way it was possible to target the correct fields. In the example you define the endpoint, credentials and the fields you want. Here I get the count on different response codes</p>
+<pre><code class="language-json">{
     &quot;Endpoint&quot;: &quot;https://localhost:9000/haproxy_stats&quot;,
     &quot;Username&quot;: &quot;admin&quot;,
     &quot;Password&quot;: &quot;admin&quot;,
     &quot;Fields&quot;: [
-      &quot;*.*.(?:hrsp_1xx|hrsp_2xx|hrsp_3xx|hrsp_4xx|hrsp_5xx)&quot;,
-      &quot;*.*.(?:hrsp_1xx|hrsp_2xx|hrsp_3xx|hrsp_4xx|hrsp_5xx)&quot;,
-      &quot;*.*.(?:hrsp_1xx|hrsp_2xx|hrsp_3xx|hrsp_4xx|hrsp_5xx)&quot;
+        &quot;*.*.(?:hrsp_1xx|hrsp_2xx|hrsp_3xx|hrsp_4xx|hrsp_5xx)&quot;
     ]
-  }
 }
+</code></pre>
+<p><strong>SQL</strong><br />
+So this is the more business aspect of the project. This is now possible to define a SQL query that gets executed against a specific connection every defined seconds. As long as the result have the same fields as the MetricResult class (Alias, Message, Value)</p>
+<pre><code class="language-json">{
+    &quot;ConnectionStrings&quot;: {
+	    &quot;Con1&quot;: &quot;qweasdqweasd&quot;,
+	    &quot;Con2&quot;: &quot;lkajsdpodsfo&quot;
+    },
+    &quot;Queries&quot;: [{
+		    &quot;Interval&quot;: 60,
+		    &quot;Alias&quot;: &quot;YYY&quot;,
+		    &quot;ConnectionString&quot;: &quot;Con1&quot;,
+		    &quot;FilePath&quot;: &quot;./Queries/XXX.sql&quot;
+	    }
+    ]
+}
+</code></pre>
+<h2 id="client-implementation">Client implementation</h2>
+<p>The one thing I want to know something about are the different Web API's that I exposes in a project. That way I needed a class that I could copy paste into any given project. In the ideal world you would create a nuget package that you could install and update. But it wasnt really my target for this project.</p>
+<p>It basically just exposes a singleton that contains of one public method with the following signature:</p>
+<pre><code class="language-csharp">void Enqueue(long elapsed, string prefix, string endpoint, string responseCode)
+</code></pre>
+<p>It basically collects all of this information in a queue and flushes it to the metric server every 15 seconds.</p>
+<h3 id="complete-implementation-of-reporter-class">Complete implementation of Reporter class</h3>
+<pre><code class="language-csharp">public class Reporter
+{
+    private static Reporter _instance;
+    private static object _lock = new object();
+    private static Timer _timer;
+    private static FixedConcurrentQueue&lt;Metric&gt; _store;
+    private static MetricRestService _metricRestService;
+    private static List&lt;string&gt; _ignoreEnvironments;
 
+    private const string TimerIntevalSecAppSettingsName = &quot;Pinger.Client.TimerIntevalSec&quot;;
+    private const string MaxLocalItemsAppSettingsName = &quot;Pinger.Client.MaxLocalItems&quot;;
+    private const string IgnoreEnvironmentAppSettingsName = &quot;Pinger.Client.IgnoreEnvironmentsCsv&quot;;
+    private const string HostAppSettingsName = &quot;Pinger.Host&quot;;
+    private const string ApiKeyAppSettingsName = &quot;Pinger.Key&quot;;
+
+    private const int DefaultTimerIntevalSec = 15;
+    private const int DefaultMaxLocalItems = 1000000;
+    private const int BulkSize = 256;
+
+    public static Reporter Instance
+    {
+        get
+        {
+            lock (_lock)
+            {
+                if (_instance == null)
+                {
+                    _instance = new Reporter();
+                }
+
+                return _instance;
+            }
+        }
+    }
+
+    private Reporter()
+    {
+        _store = new FixedConcurrentQueue&lt;Metric&gt;(GetAppSettingOrDefault(MaxLocalItemsAppSettingsName, DefaultMaxLocalItems));
+
+        _timer = new Timer(GetAppSettingOrDefault(TimerIntevalSecAppSettingsName, DefaultTimerIntevalSec) * 1000);
+        _timer.Elapsed += (sender, args) =&gt; FlushStore();
+        _timer.AutoReset = false;
+        _timer.Start();
+
+        _metricRestService = new MetricRestService(
+            ConfigurationManager.AppSettings[ApiKeyAppSettingsName],
+            ConfigurationManager.AppSettings[HostAppSettingsName]);
+
+        _ignoreEnvironments = GetAppSettingOrDefault(IgnoreEnvironmentAppSettingsName, string.Empty).Split(',').ToList();
+    }
+
+    public void Enqueue(long elapsed, string prefix, string endpoint, string responseCode)
+    {
+        var environment = CalculateEnvironment();
+
+        if (_ignoreEnvironments.Contains(environment))
+        {
+            return;
+        }
+
+        var itemName = endpoint;
+        if (!string.IsNullOrEmpty(prefix))
+        {
+            itemName = $&quot;{prefix}.{endpoint}&quot;;
+        }
+
+        var metric = new Metric
+        {
+            Timestamp = DateTime.Now,
+            Value = elapsed,
+            Path = $&quot;FooBar.{RemoveSpecialCharacters(environment)}.Response.{itemName}&quot;,
+            Alias = itemName,
+            Message = responseCode
+        };
+
+        _store.Enqueue(metric);
+    }
+
+    private void FlushStore()
+    {
+        var run = true;
+        var metrics = new List&lt;Metric&gt;();
+
+        var count = 0;
+        while (run)
+        {
+            while (run &amp;&amp; count &lt; BulkSize)
+            {
+                try
+                {
+                    Metric item;
+                    if (_store.TryDequeue(out item))
+                    {
+                        metrics.Add(item);
+                    }
+                }
+                catch
+                {
+                    run = false;
+                }
+                count++;
+            }
+
+            try
+            {
+                _metricRestService.Persist(metrics);
+            }
+            catch
+            {
+                metrics.ForEach(x =&gt; _store.Enqueue(x));
+                run = false;
+            }
+
+            metrics = new List&lt;Metric&gt;();
+
+            count = 0;
+        }
+
+        _timer.Start();
+    }
+
+    private static string CalculateEnvironment()
+    {
+        var environment = Environment.GetEnvironmentVariable(&quot;ASPNETCORE_ENVIRONMENT&quot;);
+
+        if (string.IsNullOrEmpty(environment))
+        {
+            environment = ConfigurationManager.AppSettings[&quot;Pinger.Client.Environment&quot;];
+        }
+
+        if (string.IsNullOrEmpty(environment))
+        {
+            environment = &quot;localhost&quot;;
+        }
+
+        return environment;
+    }
+
+    private static T GetAppSettingOrDefault&lt;T&gt;(string appSettingsName, T defaultValue)
+    {
+        T result = default(T);
+        try
+        {
+            result = (T)Convert.ChangeType(ConfigurationManager.AppSettings[appSettingsName], typeof(T));
+        }
+        catch
+        {
+            result = defaultValue;
+        }
+
+        return result;
+    }
+
+    private static string RemoveSpecialCharacters(string str)
+    {
+        return Regex.Replace(str, &quot;[^a-zA-Z0-9_.]+&quot;, &quot;&quot;, RegexOptions.Compiled);
+    }
+
+    private class MetricRestService
+    {
+        private string _apiKey;
+        private string _host;
+
+        private RestClient _client;
+        public MetricRestService(
+            string apiKey,
+            string host)
+        {
+            _apiKey = apiKey;
+            _host = host;
+
+            _client = new RestClient($&quot;{_host}&quot;);
+        }
+
+        public void Persist(List&lt;Metric&gt; metrics)
+        {
+            var request = new RestRequest(&quot;/api/MetricResult&quot;);
+            request.Method = Method.POST;
+            request.AddHeader(&quot;Authorization&quot;, _apiKey);
+            request.Timeout = 2000;
+            request.AddParameter(&quot;application/json&quot;, JsonConvert.SerializeObject(metrics), ParameterType.RequestBody);
+
+            var response = _client.Execute(request);
+        }
+    }
+
+    private class FixedConcurrentQueue&lt;T&gt; : ConcurrentQueue&lt;T&gt;
+    {
+        private static object Lock = new object();
+
+        private int _maxItemx;
+        public FixedConcurrentQueue(int maxItems)
+        {
+            _maxItemx = maxItems;
+        }
+
+        public new void Enqueue(T obj)
+        {
+            base.Enqueue(obj);
+            lock (Lock)
+            {
+                T item;
+                while (Count &gt; _maxItemx &amp;&amp; TryDequeue(out item)) ;
+            }
+        }
+    }
+
+    private class Metric
+    {
+        [JsonProperty(&quot;Timestamp&quot;)]
+        public DateTime Timestamp { get; set; }
+        [JsonProperty(&quot;Path&quot;)]
+        public string Path { get; set; }
+        [JsonProperty(&quot;Alias&quot;)]
+        public string Alias { get; set; }
+        [JsonProperty(&quot;Value&quot;)]
+        public float Value { get; set; }
+        [JsonProperty(&quot;Message&quot;)]
+        public string Message { get; set; }
+    }
+}
+</code></pre>
+<h3 id="web-api-attribute">Web API attribute</h3>
+<p>Well the implementation above can be used to track all kind of different things. The real usage for me was to track the execution time for my API methods. By implementing this ActionFilterAttribute (i used some inspiration from a StackOverflow post that showed how to track the execution by a stopwatch) I ended up by being able to get the execution time for my API methods, by controller or on specific action methods.</p>
+<pre><code class="language-csharp">public class StopwatchAttribute : ActionFilterAttribute
+{
+    private const string StopwatchKey = &quot;StopwatchFilter.Value&quot;;
+
+    public override void OnActionExecuting(HttpActionContext actionContext)
+    {
+        base.OnActionExecuting(actionContext);
+
+        actionContext.Request.Properties[StopwatchKey] = Stopwatch.StartNew();
+    }
+
+    public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
+    {
+        base.OnActionExecuted(actionExecutedContext);
+        try
+        {
+            var stopwatch = (Stopwatch)actionExecutedContext.Request.Properties[StopwatchKey];
+            stopwatch.Stop();
+
+            Reporter.Instance.Enqueue(stopwatch.ElapsedMilliseconds,
+                actionExecutedContext.ActionContext.ActionDescriptor.ControllerDescriptor.ControllerName,
+                actionExecutedContext.ActionContext.ActionDescriptor.ActionName,
+                actionExecutedContext.Request.RequestUri.LocalPath);
+        }
+        catch { }
+    }
+}
 </code></pre>
 <h2 id="visualization">Visualization</h2>
+<p>One of the central things was to be able to visualize the data. This aspect is not something I would try to program myself, so I choose to use Grafana for this task. The reason I used Grafana and not Kibana was because of the good user interface and the possibility to configure users and permissions easily. No offense to Kibana, I still use its &quot;Discover&quot; functionality.</p>
 <h3 id="flow-of-data">Flow of data</h3>
-<p><img src="./dumps/2018-06-21-1555.png" alt="Grafana visualization of the data" /></p>
+<p>I drew this small drawing to visualize what the setup actually does. It might need some work, but it took no more than five minutes
+<img src="./dumps/2018-06-21-1555.png" alt="Grafana visualization of the data" /></p>
 <h3 id="example-dashboard">Example dashboard</h3>
+<p>This dashboard shows a big part of the data that I have explained above, and this have been the entry point to identify items in error message queues, windows services not started, and website endpoints not available. It have been tested on roughly ten different servers for at least six different production infrastructures.</p>
 <p><img src="./dumps/2018-05-20_2347.png" alt="Grafana visualization of the data" /></p>
-<h2 id="debugs">Debugs</h2>
-<h3 id="my-cluster-broke-my-elasticsearch">My cluster broke my ElasticSearch</h3>
-<p>So after some cluster went down at my hosting company I started to see that there were no more data being saved in Elastic. So i updated my server code including it to write debug notes when calling the elastic save REST endpoint. And i got the following back:</p>
-<pre><code class="language-json">{
-	&quot;error&quot;: {
-		&quot;root_cause&quot;: [{
-				&quot;type&quot;: &quot;cluster_block_exception&quot;,
-				&quot;reason&quot;: &quot;blocked by: [FORBIDDEN/12/index read-only / allow delete (api)];&quot;
-			}
-		],
-		&quot;type&quot;: &quot;cluster_block_exception&quot;,
-		&quot;reason&quot;: &quot;blocked by: [FORBIDDEN/12/index read-only / allow delete (api)];&quot;
-	},
-	&quot;status&quot;: 403
-}
-</code></pre>
-<p>So to fix this, please fire the following against elastic</p>
-<pre><code>&gt; curl -Method Put -H @{'Content-Type'='application/json'} http://localhost:9200/_all/_settings -Body '{&quot;index.blocks.read_only_allow_delete&quot;: null}'
-</code></pre>
-<p>A new feature for this could be to respond correctly to the failing POST request to ElasticSearch REST endpoint</p>
 
             </div>
         </div>
