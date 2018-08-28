@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using MPE.Logging;
 using MPE.Pinger.Helpers;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
@@ -40,39 +41,57 @@ namespace MPE.Pinger.Logic.Collectors
 
         private Dictionary<string, string> RequestQueueApi()
         {
-            var host = string.IsNullOrEmpty(_configurationFile.RabbitMq.Host) ? "localhost" : _configurationFile.RabbitMq.Host;
-            var port = _configurationFile.RabbitMq.Port == 0 ? 15672 : _configurationFile.RabbitMq.Port;
-            var username = string.IsNullOrEmpty(_configurationFile.RabbitMq.Username) ? "guest" : _configurationFile.RabbitMq.Username;
-            var password = string.IsNullOrEmpty(_configurationFile.RabbitMq.Password) ? "guest" : _configurationFile.RabbitMq.Password;
-
-            var client = new RestClient($"http://{host}:{port}");
-            client.Authenticator = new HttpBasicAuthenticator(username, password);
-
-            var request = new RestRequest("/api/queues");
-            var response = client.Execute(request);
-
-
-            var result = new Dictionary<string, string>();
-            var objects = JsonConvert.DeserializeObject<List<object>>(response.Content);
-            if (objects != null && objects.Any())
+            try
             {
-                var converted =  objects.Select(JsonObjectHelper.FlattenObject).ToList();
-                foreach (var convert in converted)
+                var host = string.IsNullOrEmpty(_configurationFile.RabbitMq.Host)
+                    ? "localhost"
+                    : _configurationFile.RabbitMq.Host;
+                var port = _configurationFile.RabbitMq.Port == 0 ? 15672 : _configurationFile.RabbitMq.Port;
+                var username = string.IsNullOrEmpty(_configurationFile.RabbitMq.Username)
+                    ? "guest"
+                    : _configurationFile.RabbitMq.Username;
+                var password = string.IsNullOrEmpty(_configurationFile.RabbitMq.Password)
+                    ? "guest"
+                    : _configurationFile.RabbitMq.Password;
+
+                var client = new RestClient($"http://{host}:{port}");
+                client.Authenticator = new HttpBasicAuthenticator(username, password);
+
+                var request = new RestRequest("/api/queues");
+                var response = client.Execute(request);
+
+
+                var result = new Dictionary<string, string>();
+                var objects = JsonConvert.DeserializeObject<List<object>>(response.Content);
+                if (objects != null && objects.Any())
                 {
-                    var name = convert["name"];
-                    foreach (var key in convert.Keys.ToList())
+                    var converted = objects.Select(JsonObjectHelper.FlattenObject).ToList();
+                    foreach (var convert in converted)
                     {
-                        if (key != "name")
+                        var name = convert["name"];
+                        foreach (var key in convert.Keys.ToList())
                         {
-                            result.Add($"{name}.{key}", convert[key]);
+                            if (key != "name")
+                            {
+                                var resultKey = $"{name}.{key}";
+                                if (!result.ContainsKey(resultKey))
+                                {
+                                    result.Add(resultKey, convert[key]);
+                                }
+                            }
                         }
                     }
+
+                    return result;
                 }
 
                 return result;
             }
-
-            return result;
+            catch (Exception e)
+            {
+                LoggerFactory.Instance.Debug(e.Message);
+                return new Dictionary<string, string>();
+            }
         }
     }
 }
