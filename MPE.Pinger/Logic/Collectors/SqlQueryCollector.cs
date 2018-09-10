@@ -73,7 +73,9 @@ namespace MPE.Pinger.Logic.Collectors
                         catch (Exception e)
                         {
                             LoggerFactory.Instance.Debug(
-                                $"SqlQueryCollector - Failed to execute {query.FilePath} on {query.ConnectionString}");
+                                $"SqlQueryCollector - Failed to execute {query.FilePath} on {query.ConnectionString} - {e.Message}");
+
+                            LoggerFactory.Instance.Debug(e.StackTrace);
                         }
                     };
                     timer.Start();
