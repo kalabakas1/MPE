@@ -4,6 +4,7 @@
     {
         Tcp,
         Web,
-        Service
+        Service,
+        Ssl
     }
 }

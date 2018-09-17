@@ -27,7 +27,8 @@ namespace MPE.Pinger
             {
                 new TcpTester(),
                 new WebTester(),
-                new ServiceTester()
+                new ServiceTester(),
+                new SslTester()
             }, metricMemoryRepository,
             alertHub);
 

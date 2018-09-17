@@ -253,7 +253,6 @@ TCP-connection
     "Type": "Tcp"
 }
 
-
 Web-connection
 {
 	"Alias": "some.website.dk",
@@ -267,6 +266,14 @@ WindowsService
 	"Alias": "MongoDB-Service",
 	"Target": "MongoDB",
 	"Type": "Service"
+}
+
+SSL-certificate
+{
+    "Alias": "Ssl.XXX",
+    "Target":  "XXX.dk", 
+    "DaysLeft": 2,
+    "Type": "Ssl"
 }
 ```
 

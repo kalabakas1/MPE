@@ -255,7 +255,6 @@ One of the more central aspects, and actually the reason I started this project,
     &quot;Type&quot;: &quot;Tcp&quot;
 }
 
-
 Web-connection
 {
 	&quot;Alias&quot;: &quot;some.website.dk&quot;,
@@ -269,6 +268,14 @@ WindowsService
 	&quot;Alias&quot;: &quot;MongoDB-Service&quot;,
 	&quot;Target&quot;: &quot;MongoDB&quot;,
 	&quot;Type&quot;: &quot;Service&quot;
+}
+
+SSL-certificate
+{
+    &quot;Alias&quot;: &quot;Ssl.XXX&quot;,
+    &quot;Target&quot;:  &quot;XXX.dk&quot;, 
+    &quot;DaysLeft&quot;: 2,
+    &quot;Type&quot;: &quot;Ssl&quot;
 }
 </code></pre>
 <p>But basically it can test if a WindowsService (Service) are running, if a TCP connection (Tcp) are open on a specific port, or you get a specific response on a http address (Web).</p>

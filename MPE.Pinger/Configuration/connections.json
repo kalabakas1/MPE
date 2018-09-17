@@ -32,7 +32,7 @@
       "Alias": "DiskFreeSpacePct",
       "Category": "LogicalDisk",
       "Name": "% Free Space",
-      "Instance": "E:"
+      "Instance": "C:"
     }, {
       "Alias": "CurrentConnections",
       "Category": "Web Service",
@@ -82,12 +82,18 @@
     //  "Type": "Tcp"
     //}
     //,
-    {
-      "Alias": "Redis-Connect",
-      "Target": "127.0.0.1",
-      "Port": 6379,
-      "Type": "Tcp"
-    }
+    //{
+    //  "Alias": "Redis-Connect",
+    //  "Target": "127.0.0.1",
+    //  "Port": 6379,
+    //  "Type": "Tcp"
+    //}
+    //{
+    //  "Alias": "Ssl.XXX",
+    //  "Target":  "XXX.dk", 
+    //  "DaysLeft": 2,
+    //  "Type": "Ssl"
+    //}
     //,
     //{
     //  "Alias": "Elasticsearch-Service",
