@@ -58,7 +58,8 @@ namespace MPE.Pinger.Logic
                         Path = $"{configuration.Host}.Test.{connection.Type}.{connection.Alias}",
                         Timestamp = DateTime.Now,
                         Alias = $"{connection.Type}.{connection.Alias}" ,
-                        Message = "Succeeded"
+                        Message = "Succeeded",
+                        Value = 1
                     };
 
                     var testers = _testers.Where(x => x.CanTest(connection))
@@ -78,6 +79,7 @@ namespace MPE.Pinger.Logic
                             var message = $"Pinger failed for: {connection.Alias}";
                             LoggerFactory.Instance.Debug(e, message);
                             result.Message = "Failed";
+                            result.Value = 0;
 
                             _alertHub.Alert(result.Path);
                         }
