@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
@@ -25,32 +26,32 @@ namespace MPE.Pinger.Logic.Testers
         {
             try
             {
-                TcpClient client = new TcpClient(connection.Target, DefaultPort);
-
                 X509Certificate2 certificate = null;
-                SslStream sslStream = new SslStream(client.GetStream(), false,
-                    delegate (object sender, X509Certificate cert, X509Chain chain, SslPolicyErrors sslError)
-                    {
-                        if (sslError != SslPolicyErrors.None)
-                        {
-                            throw new Exception(sslError.ToString());    
-                        }
 
-                        certificate = new X509Certificate2(cert);
-                        return true;
-                    });
-                sslStream.AuthenticateAsClient(connection.Target);
-                client.Close();
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://" + connection.Target);
+                request.ServerCertificateValidationCallback = (sender, x509Certificate, chain, errors) =>
+                {
+                    if (errors != SslPolicyErrors.None)
+                    {
+                        throw new Exception(errors.ToString());
+                    }
+
+                    certificate = new X509Certificate2(x509Certificate);
+                    return true;
+                };
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                response.Close();
 
                 var threshold = DateTime.Now.AddDays(connection.DaysLeft);
                 if (threshold > certificate.NotAfter)
                 {
-                    throw new Exception();
+                    throw new Exception("Expired");
                 }
             }
             catch (Exception e)
             {
-                var msg = $"{connection.Alias} - {connection.Target}:{connection.Port} - {e.Message}";
+                var msg = $"{connection.Alias} - {connection.Target}:{connection.Port} - {(e.InnerException != null ? e.InnerException.Message : e.Message)}";
                 throw new Exception(msg);
             }
         }

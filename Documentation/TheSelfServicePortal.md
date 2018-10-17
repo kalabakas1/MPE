@@ -68,3 +68,5 @@ __Take-away:__ Do have a QA setup that resembles the planned production setup. W
 ### Monitoring and alerting
 
 ### Now...
+
+## Summary

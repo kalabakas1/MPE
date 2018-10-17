@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Professional", "Professiona
 		Documentation\Life as a developer.md = Documentation\Life as a developer.md
 		Documentation\SoftwareProjects.md = Documentation\SoftwareProjects.md
 		Documentation\Subject list.md = Documentation\Subject list.md
+		Documentation\TheSelfServicePortal.md = Documentation\TheSelfServicePortal.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Personal ish", "Personal ish", "{F75462B6-0658-4014-A568-B4CBD2BB0C14}"
