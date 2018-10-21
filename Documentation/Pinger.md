@@ -279,6 +279,21 @@ SSL-certificate
 
 But basically it can test if a WindowsService (Service) are running, if a TCP connection (Tcp) are open on a specific port, or you get a specific response on a http address (Web).
 
+There is also added the possibility of self-healing the service. That way it can fire a script when the alerting is about to fire. The script will get fired and wait for 30 sec, then run a single test to see if the service is restored. If not it will alert through the hub:
+
+```json
+{
+	"Alias": "RabbitMQ-Service",
+	"Target": "RabbitMQ",
+	"Type": "Service",
+	"Healing": {
+		"Script": "Start-Service RabbitMQ"
+	}
+}
+```
+
+If the service is unstable and fakes that it works for 30 sec and then crashes, the alert will not get fired. This might be fixed in a later commit.
+
 __Redis__  
 So basically you want to keep track of you redis instance. Here I have implemented a way to get some basic information from the server. You just define the host and port, along with the given metrics you want to track. 
 

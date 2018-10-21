@@ -40,6 +40,10 @@ __Take-away:__ Don´t expect that people actually do groom the stories - do follo
 
 We got through our first sprint-ish meeting and the project manager started to define what should be solved through the use of his new tool. So at this point the designer and frontend developers started to do their thing: a pretty simple MVC website with asynchronous content loaded from different API endpoints. At least that was what I were told the customer had bought, and what the architect had told me was the agreement at a separate meeting were we went through all the features and the infrastructure of the solution he had penned down in the project management tool (PMT)
 
+So the picture of the setup is the following:
+
+![Overall architecture](./dumps/2018-10-18_1000.png)
+
 So I went on three weeks vacation during the summer with my mind at ease because all the developers knew where we were going with the project, and how it should take its form. And I could not be more wrong. That is one of the things vacation sucks at: maintaining control of the project. When me and my project manager got back from our needed vacation we were stunned with the direction the project were going.
 
 All of a sudden we were developing a NodeJS application, currently based on some dummy API's using data contracts no backend developer had agreed upon. The only way to keep the web application running on production were by having a console window running on the remote desktop, and by the way, we had no way of deploying it. When I asked for the considerations regarding deployment, I were told that they thought it was okay to just copy paste the files from some random developers computer to the remote desktop enabled server. Three weeks had passed and the backend team I was a part of were currently set back two years, to the time of manually deploying artifacts because of some decisions made by some sales person, architect, frontend developer, or some other person that should have considered the question of skill and ability of deployment

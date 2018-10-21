@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MPE.Logging;
 using MPE.Pinger.Interfaces;
@@ -21,6 +22,7 @@ namespace MPE.Pinger.Logic
         private List<Task<MetricResult>> _tasks;
         private readonly IEnumerable<ITester> _testers;
         private readonly AlertHub _alertHub;
+        private readonly HealingExecutor _healingExecutor;
 
         private RetryPolicy RetryPolicy =>
             Policy
@@ -35,10 +37,12 @@ namespace MPE.Pinger.Logic
 
         public TestConductor(
             IEnumerable<ITester> testers,
-            AlertHub alertHub)
+            AlertHub alertHub,
+            HealingExecutor healingExecutor)
         {
             _testers = testers;
             _alertHub = alertHub;
+            _healingExecutor = healingExecutor;
             _tasks = new List<Task<MetricResult>>();
         }
 
@@ -69,19 +73,33 @@ namespace MPE.Pinger.Logic
                     {
                         try
                         {
-                            LoggerFactory.Instance.Debug($"Test - Start :{result.Path}");
+                            LoggerFactory.Instance.Debug($"Test - Start: {result.Path}");
                             RetryPolicy.Execute(() => tester.Test(connection));
                             _alertHub.Abort(result.Path);
-                            LoggerFactory.Instance.Debug($"Test - End : {result.Path}");
+                            LoggerFactory.Instance.Debug($"Test - End: {result.Path}");
                         }
                         catch (Exception e)
                         {
-                            var message = $"Pinger failed for: {connection.Alias}";
-                            LoggerFactory.Instance.Debug(e, message);
-                            result.Message = "Failed";
-                            result.Value = 0;
+                            if (!_alertHub.IsAlerting(result.Path))
+                            {
+                                _healingExecutor.ExecuteHealing(connection);
 
-                            _alertHub.Alert(result.Path);
+                                Thread.Sleep(30000);
+
+                                try
+                                {
+                                    tester.Test(connection);
+                                }
+                                catch
+                                {
+                                    var message = $"Pinger failed for: {connection.Alias}";
+                                    LoggerFactory.Instance.Debug(e, message);
+                                    result.Message = "Failed";
+                                    result.Value = 0;
+
+                                    _alertHub.Alert(result.Path);
+                                }
+                            }
                         }
                     }
 

@@ -60,6 +60,10 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\System\System.Management.Automation.dll</HintPath>
+    </Reference>
     <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
@@ -102,6 +106,7 @@
     <Compile Include="Logic\Collectors\RedisMetricCollector.cs" />
     <Compile Include="Logic\Collectors\ServerMetricCollector.cs" />
     <Compile Include="Logic\Collectors\SqlQueryCollector.cs" />
+    <Compile Include="Logic\HealingExecutor.cs" />
     <Compile Include="Logic\Listeners\EventLogListener.cs" />
     <Compile Include="Logic\Testers\SslTester.cs" />
     <Compile Include="Logic\TimedElasticSearchRetentionPolicy.cs" />
@@ -110,6 +115,7 @@
     <Compile Include="Logic\Collectors\ElasticSearchCollector.cs" />
     <Compile Include="Models\Configurations\ElasticSearchConfiguration.cs" />
     <Compile Include="Models\Configurations\EventLogConfiguration.cs" />
+    <Compile Include="Models\Configurations\Healing.cs" />
     <Compile Include="Models\Configurations\SqlConfiguration.cs" />
     <Compile Include="Models\Configurations\SqlQuery.cs" />
     <Compile Include="Models\Results\BaseResult.cs" />

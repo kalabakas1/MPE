@@ -23,6 +23,8 @@ namespace MPE.Pinger
         {
             var metricMemoryRepository = new InMemoryRepository<MetricResult>();
             var alertHub = new AlertHub();
+            var healingExecutor = new HealingExecutor();
+            
             _testExecutor = new TimedTestExecutor(new List<ITester>
             {
                 new TcpTester(),
@@ -30,7 +32,8 @@ namespace MPE.Pinger
                 new ServiceTester(),
                 new SslTester()
             }, metricMemoryRepository,
-            alertHub);
+            alertHub,
+            healingExecutor);
 
             _metricCollector = new TimedMetricExecutor(new List<ICollector>
             {

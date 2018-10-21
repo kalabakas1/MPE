@@ -3,77 +3,90 @@
   "RestEndpoint": "http://localhost:8080",
   "ApiKey": "7dcb7c7a-8d9f-4b56-9ce0-52fa40085b35",
   "Metrics": [
-    {
-      "Alias": "CpuPct",
-      "Category": "Processor",
-      "Name": "% Processor Time",
-      "Instance": "_Total"
-    }, {
-      "Alias": "MemoryPct",
-      "Category": "Memory",
-      "Name": "% Committed Bytes In Use"
-    }, {
-      "Alias": "BytesSentPerSec",
-      "Category": "Network Interface",
-      "Name": "Bytes Sent/sec"
-    }, {
-      "Alias": "BytesReceivedPerSec",
-      "Category": "Network Interface",
-      "Name": "Bytes Received/sec"
-    }, {
-      "Alias": "PhysicalDiskReadsPerSec",
-      "Category": "PhysicalDisk",
-      "Name": "Disk Reads/sec"
-    }, {
-      "Alias": "PhysicalDiskWritesPerSec",
-      "Category": "PhysicalDisk",
-      "Name": "Disk Writes/sec"
-    }, {
-      "Alias": "DiskFreeSpacePct",
-      "Category": "LogicalDisk",
-      "Name": "% Free Space",
-      "Instance": "C:"
-    }, {
-      "Alias": "CurrentConnections",
-      "Category": "Web Service",
-      "Name": "Current Connections",
-      "Instance": "_Total"
-    }, {
-      "Alias": "GetRequests",
-      "Category": "Web Service",
-      "Name": "Get Requests/sec",
-      "Instance": "_Total"
-    }, {
-      "Alias": "PostRequests",
-      "Category": "Web Service",
-      "Name": "Post Requests/sec",
-      "Instance": "_Total"
-    }, {
-      "Alias": "Response5xx",
-      "Category": "ASP.NET Applications",
-      "Name": "Requests Failed"
-    }, {
-      "Alias": "Response404",
-      "Category": "ASP.NET Applications",
-      "Name": "Requests Not Found"
-    }, {
-      "Alias": "Response2xx",
-      "Category": "ASP.NET Applications",
-      "Name": "Requests Succeeded"
-    }, {
-      "Alias": "RequestsExecuting",
-      "Category": "ASP.NET Applications",
-      "Name": "Requests Executing",
-      "Instance": "__Total__"
-    }
+    //{
+    //  "Alias": "CpuPct",
+    //  "Category": "Processor",
+    //  "Name": "% Processor Time",
+    //  "Instance": "_Total"
+    //},
+    //{
+    //  "Alias": "MemoryPct",
+    //  "Category": "Memory",
+    //  "Name": "% Committed Bytes In Use"
+    //},
+    //{
+    //  "Alias": "BytesSentPerSec",
+    //  "Category": "Network Interface",
+    //  "Name": "Bytes Sent/sec"
+    //},
+    //{
+    //  "Alias": "BytesReceivedPerSec",
+    //  "Category": "Network Interface",
+    //  "Name": "Bytes Received/sec"
+    //},
+    //{
+    //  "Alias": "PhysicalDiskReadsPerSec",
+    //  "Category": "PhysicalDisk",
+    //  "Name": "Disk Reads/sec"
+    //},
+    //{
+    //  "Alias": "PhysicalDiskWritesPerSec",
+    //  "Category": "PhysicalDisk",
+    //  "Name": "Disk Writes/sec"
+    //},
+    //{
+    //  "Alias": "DiskFreeSpacePct",
+    //  "Category": "LogicalDisk",
+    //  "Name": "% Free Space",
+    //  "Instance": "C:"
+    //},
+    //{
+    //  "Alias": "CurrentConnections",
+    //  "Category": "Web Service",
+    //  "Name": "Current Connections",
+    //  "Instance": "_Total"
+    //},
+    //{
+    //  "Alias": "GetRequests",
+    //  "Category": "Web Service",
+    //  "Name": "Get Requests/sec",
+    //  "Instance": "_Total"
+    //},
+    //{
+    //  "Alias": "PostRequests",
+    //  "Category": "Web Service",
+    //  "Name": "Post Requests/sec",
+    //  "Instance": "_Total"
+    //},
+    //{
+    //  "Alias": "Response5xx",
+    //  "Category": "ASP.NET Applications",
+    //  "Name": "Requests Failed"
+    //},
+    //{
+    //  "Alias": "Response404",
+    //  "Category": "ASP.NET Applications",
+    //  "Name": "Requests Not Found"
+    //},
+    //{
+    //  "Alias": "Response2xx",
+    //  "Category": "ASP.NET Applications",
+    //  "Name": "Requests Succeeded"
+    //},
+    //{
+    //  "Alias": "RequestsExecuting",
+    //  "Category": "ASP.NET Applications",
+    //  "Name": "Requests Executing",
+    //  "Instance": "__Total__"
+    //}
   ],
-  "EventLogging": {
-    "MinimumLevel": "Information",
-    "Categories": [
-      "Application",
-      "System"
-    ]
-  },
+  //"EventLogging": {
+  //  "MinimumLevel": "Information",
+  //  "Categories": [
+  //    "Application",
+  //    "System"
+  //  ]
+  //},
   "Connections": [
     //{
     //  "Alias": "RabbitMQ-Connect",
@@ -90,7 +103,7 @@
     //}
     //{
     //  "Alias": "Ssl.XXX",
-    //  "Target":  "XXX.dk", 
+    //  "Target":  "XXX.dk",
     //  "DaysLeft": 2,
     //  "Type": "Ssl"
     //}
@@ -100,11 +113,15 @@
     //  "Target": "Elasticsearch",
     //  "Type": "Service"
     //},
-    //{
-    //  "Alias": "Redis-Service",
-    //  "Target": "Redis",
-    //  "Type": "Service"
-    //},
+    {
+      "Alias": "Redis-Service",
+      "Target": "Redis",
+      "Type": "Service",
+      "Healing": {
+        "Script": "Start-Service Redis"
+      }
+    }
+    //,
     //{
     //  "Alias": "MongoDB-Service",
     //  "Target": "MongoDB",
@@ -113,28 +130,32 @@
     //{
     //  "Alias": "RabbitMQ-Service",
     //  "Target": "RabbitMQ",
-    //  "Type": "Service"
-    //},
+    //  "Type": "Service",
+    //  "Healing": {
+    //    "Script":  "Start-Service RabbitMQ"
+    //  }
+    //}
+    //,
     //{
     //  "Alias": "ElasticSearch-Connect",
-    //  "Target": "http://89.221.166.59:9200",
+    //  "Target": "http:/xx.xx.xx.xx.xx:9200",
     //  "Type": "Web",
     //  "Response": [ 200 ]
     //}
   ],
-  "Sql": {
-    "ConnectionStrings": {
-      "Member": ""
-    },
-    "Queries": [
-      {
-        "Alias":  "PSD", 
-        "ConnectionString": "Member",
-        "FilePath": "./Configuration/Queries/MemberProductStatusDistribution.sql",
-        "Interval": 60 
-      }
-    ] 
-  }, 
+  //"Sql": {
+  //  "ConnectionStrings": {
+  //    "Member": ""
+  //  },
+  //  "Queries": [
+  //    {
+  //      "Alias": "PSD",
+  //      "ConnectionString": "Member",
+  //      "FilePath": "./Configuration/Queries/MemberProductStatusDistribution.sql",
+  //      "Interval": 60
+  //    }
+  //  ]
+  //},
   //,
   //"Redis": {
   //  "Host": "127.0.0.1",

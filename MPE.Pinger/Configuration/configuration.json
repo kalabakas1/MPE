@@ -18,8 +18,8 @@
 	
   "MPE.Pinger.Configuration.Path": "./Configuration/connections.json",
   "MPE.Pinger.Fail1.Pause.Secs": "5",
-  "MPE.Pinger.Fail2.Pause.Secs": "60",
-  "MPE.Pinger.Fail3.Pause.Secs": "180",
+  "MPE.Pinger.Fail2.Pause.Secs": "10",
+  "MPE.Pinger.Fail3.Pause.Secs": "30",
   "MPE.Pinger.WaitBetweenTest.Secs": "30",
   "MPE.Pinger.Report.Inteval.Sec": "60",
   "MPE.Pinger.Metric.Inteval.Sec": "5",

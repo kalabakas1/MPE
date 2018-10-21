@@ -46,5 +46,13 @@ namespace MPE.Pinger.Logic
                 }
             }
         }
+
+        public bool IsAlerting(string alias)
+        {
+            lock (_lock)
+            {
+                return _alerts.Contains(alias);
+            }
+        }
     }
 }

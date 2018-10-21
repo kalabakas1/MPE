@@ -16,5 +16,7 @@ namespace MPE.Pinger.Models.Configurations
         public int[] Response { get; set; }
         [JsonProperty("DaysLeft")]
         public int DaysLeft { get; set; }
+        [JsonProperty(PropertyName = "Healing")]
+        public Healing Healing { get; set; }
     }
 }
