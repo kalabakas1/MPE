@@ -50,7 +50,7 @@ All of a sudden we were developing a NodeJS application, currently based on some
 
 __Take-away:__ Always ask yourself how you are gonna deploy your code before you chose some framework or other type of component.
 
-### Infrastructure
+## Infrastructure
 We had some work to do as deployment- and operations-responsible. We were in a situations were more decisions had been taken without us being a part of it. But thats not a first in this project, so we just had to make do. The first thing we had to solve was the hosting and deployment issue of the NodeJS server. Because we were dealing with GDPR tricky data, we could not just use some external vendor that automatically boots the NodeJS application up and everything works, the customer needed control of the application. 
 
 At this point in time we were already using TeamCity to build our code repositories and making Octopus deploy it to the target environments. So the idea were simple. Make the NodeJS application work on a Windows server so the customer do not have to buy a new server outside of the projects budget. After hours of research and frustrations a colleague of mine found a, some what, stable hosting and configuration setup that could be build, transformed and deployed through the current pipeline configuration. SUCCESS!!!
@@ -65,7 +65,7 @@ The time were limited because the customer were doing UAT with the QA department
 
 __Take-away:__ Do have a QA setup that resembles the planned production setup. We were without a proxy server so we did not know the problems before it hit the customer in the face. Note to sales-personal: if you sell these projects, please sell the customers a proper QA and development environment as well.
 
-### Integrations slow-down
+## Integrations slow-down
 So in parallel with all these fantastic challenges we also had to get some data from a provider. Not a fairly difficult thing to do, just call some API's and map it to a data model the website could use to display the data to the website-visitor. And the good part was that the architect had already agreed with the customer that all the API's that we had to use should only return the needed data in a readable and understandable format. In my mind I was already done with this case - it sounded so easy!
 
 Well, theres also something called reality. First of all, make sure that all these so called agreements are in writing so you can actually judge the data foundation and say that it was not what we expected. I admit that my career is not that long, but the returned data from some of these API's were so long that it would fill seven to eight screens in my editor. The JSON were in 20 indented levels and the logic were not at all straight forward and understandable. It was a mess.
@@ -92,7 +92,7 @@ __Take-away:__ Test your external providers as early in the project as possible.
 
 So back to the our individual drawing boards. The question were if we, at our end, could optimize our worker, and perhaps guide the data provider on how we actually could achieve this. At our end we concluded that we couldn't do much more without compromising the existing requirements. The data provider suggested that we could add a proxy in front of four service tiers to perhaps quadruple the visitors per minute count. At the current setup we could let 30 visitors in and load their data from the data provider per minute. So if we could let four times that in per minute. One problem. This were a unforeseen expense for the customer on about $50.000 - lets just say I am glad not to be the developer telling the customer this. Tried it, its not funny to have to say that the customer have to pay an expense this high to actually achieve the wanted throughput. But again, if you want to get something you have to pay. This is still some unfinished business, but lets see in a couple of months when the data provider have released their changes to the production environment - so much for agile development and fast feedback loops.
 
-### Monitoring and alerting
+## Monitoring and alerting
 To monitor this we currently are using the small client called Pinger. The reason for this current choice is basically driven by some budget issues (no one wants to pay for monitoring of staging and QA setups, even though we need it when stress testing), and because it is fairly easy to setup and customize the visualization in Graphana. No one is saying that this is gonna be a production monitoring tool, but it was fast, easy, and didn't cost the customer anything.
 
 The current components we are getting metrics from are:
@@ -115,6 +115,7 @@ Along with that we executes tests to make sure that the different components act
 The debate here had to be regarding alert-ignorance. I had to define some alerts that would make sense, and make sure that it had to be alerts the ops-developer shouldn't ignore over time - they should act on it. With that in mind we are alerting on all the prior described tests and the following:
 * Are Redis running out of memory?
 * Are the data provider average response time over five sec?
+* Are there any errors in the error-queues?
 * Do we return InternalServerError on our API? (avg of five over five min)
 * Under 10% of disk space left?
 * Over 80% of CPU utilization over the last 5 min.
@@ -137,11 +138,27 @@ When it comes to alerting, I experimented with the idea of a self-healing infras
 7. Test again, it is still not running
 8. Try to run a Powershell script e.g. Start-Service FooBar
 9. Wait 30 secons
-10. Test again, service are now running
-    a. If it still not running, send the alert to the operations developer.
+10. Test again - service are now running don't do stuff - else if it still not running, send the alert to the operations developer.
 
 The idea here is, don't disturb the developer if you can build a automated monitoring system that tries to heal your infrastructure before requiring manual intervention.
 
-### Now...
+__Take-away:__ If you have to alert some actual living person, make sure that what could be done automatically have been done...
+
+At the current moment the customer doesn't have a SLA with us as firm, so we don't react to the alerts. When they manage to get a SLA we might have to convert the slack alerts into text-messages alerts so the on-call actually have a living chance to react.
+
+## Now...
+At the current moment the infrastructure is as good as it gets with the resources at hand. If the customer accepts the upgraded proxy-multi-service-tier setup, then we might have a living chance of achieving the goal set by the customer. There are a lot of things that the customer wants to implement in the future, and I think that this architecture are a good solid foundation for their ideas in relation with their current budget. They have a system that is totally separated when it comes to the front- and back-end, which gives a huge focus advantage. The people who are experts in the two separate fields can actually use their energy on creating the best possible solutions for the customer.
 
 ## Summary
+You can conclude a lot of things in this story. All sides have things to do better, but have also done what they could to make this project happen. The key thing here are that as long as people know their role, communicates and takes responsibility then every project, no matter how chaotic, might have a chance of succeeding.
+
+* Ask the team before saying anything to the customer regarding tooling. And if you choose not to, please do estimate some time so the team can learn to use your chosen tool.
+* Don't sell a Product Owner skill-set you don't know if the person have - it ruins a lot for the ones who have to pick up the pieces.
+* Don´t expect that people actually do groom the stories - do follow up on it yourself.
+* Test your external providers as early in the project as possible. That way you don't have to wait multiple weeks to get changes into their production environment. Lets call it a unofficial SLA/SLO with the provider.
+* If you have to alert some actual living person, make sure that what could be done automatically have been done...
+
+# Regards
+My 10 cent might fill a bit, but I hope it makes sense and can be used in other projects in the future - the process of making all this into writing have been fun and a long learning process for me.
+
+__Mads Pedersen__
