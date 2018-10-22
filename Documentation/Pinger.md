@@ -281,7 +281,7 @@ Powershell
 {
     "Alias": "ScheduledTask",
     "Type": "Powershell",
-    "Script":  ".\\Configuration\\Scripts\\LastExecutedScheduledTask.ps1 -jobName \"Fibia.Workers.SsoPlexusSynchronizer\" -secDiffMax 86400" 
+    "Script":  ".\\Configuration\\Scripts\\LastExecutedScheduledTask.ps1 -jobName \"XXX\" -secDiffMax 86400" 
 }
 ```
 
