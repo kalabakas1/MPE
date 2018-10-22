@@ -108,6 +108,7 @@
     <Compile Include="Logic\Collectors\SqlQueryCollector.cs" />
     <Compile Include="Logic\HealingExecutor.cs" />
     <Compile Include="Logic\Listeners\EventLogListener.cs" />
+    <Compile Include="Logic\Testers\PowershellTest.cs" />
     <Compile Include="Logic\Testers\SslTester.cs" />
     <Compile Include="Logic\TimedElasticSearchRetentionPolicy.cs" />
     <Compile Include="Logic\TimedMetricExecutor.cs" />
@@ -155,6 +156,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Configuration\connections.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Configuration\Scripts\LastCreatedFile.ps1">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Configuration\Scripts\LastExecutedScheduledTask.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

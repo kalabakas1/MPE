@@ -12,9 +12,14 @@ namespace MPE.Pinger.Logic
 {
     public class HealingExecutor
     {
-        internal void ExecuteHealing(Connection connection)
+        internal bool CanHeal(Connection connection)
         {
-            if (string.IsNullOrEmpty(connection.Healing?.Script))
+            return string.IsNullOrEmpty(connection.Healing?.Script);
+        }
+
+        internal void Heal(Connection connection)
+        {
+            if (!CanHeal(connection))
             {
                 return;
             }

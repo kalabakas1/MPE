@@ -61,44 +61,54 @@ namespace MPE.Pinger.Logic
                     {
                         Path = $"{configuration.Host}.Test.{connection.Type}.{connection.Alias}",
                         Timestamp = DateTime.Now,
-                        Alias = $"{connection.Type}.{connection.Alias}" ,
+                        Alias = $"{connection.Type}.{connection.Alias}",
                         Message = "Succeeded",
                         Value = 1
                     };
 
-                    var testers = _testers.Where(x => x.CanTest(connection))
-                        .Select(x => (ITester)Activator.CreateInstance(x.GetType())).ToList();
+                    var tester = _testers.Where(x => x.CanTest(connection))
+                        .Select(x => (ITester)Activator.CreateInstance(x.GetType())).FirstOrDefault();
 
-                    foreach (var tester in testers)
+                    if (tester == null)
                     {
-                        try
+                        LoggerFactory.Instance.Debug($"No testers found for {connection.Alias}");
+                        return result;
+                    }
+
+                    try
+                    {
+                        LoggerFactory.Instance.Debug($"Test - Start: {result.Path}");
+                        RetryPolicy.Execute(() => tester.Test(connection));
+                        _alertHub.Abort(result.Path);
+                        LoggerFactory.Instance.Debug($"Test - End: {result.Path}");
+                    }
+                    catch (Exception e)
+                    {
+                        if (!_alertHub.IsAlerting(result.Path))
                         {
-                            LoggerFactory.Instance.Debug($"Test - Start: {result.Path}");
-                            RetryPolicy.Execute(() => tester.Test(connection));
-                            _alertHub.Abort(result.Path);
-                            LoggerFactory.Instance.Debug($"Test - End: {result.Path}");
-                        }
-                        catch (Exception e)
-                        {
-                            if (!_alertHub.IsAlerting(result.Path))
+                            try
                             {
-                                _healingExecutor.ExecuteHealing(connection);
-
-                                Thread.Sleep(30000);
-
-                                try
+                                if (_healingExecutor.CanHeal(connection))
                                 {
+                                    _healingExecutor.Heal(connection);
+
+                                    Thread.Sleep(30000);
+
                                     tester.Test(connection);
                                 }
-                                catch
+                                else
                                 {
-                                    var message = $"Pinger failed for: {connection.Alias}";
-                                    LoggerFactory.Instance.Debug(e, message);
-                                    result.Message = "Failed";
-                                    result.Value = 0;
-
-                                    _alertHub.Alert(result.Path);
+                                    throw new Exception();
                                 }
+                            }
+                            catch
+                            {
+                                var message = $"Pinger failed for: {connection.Alias}";
+                                LoggerFactory.Instance.Debug(e, message);
+                                result.Message = "Failed";
+                                result.Value = 0;
+
+                                _alertHub.Alert(result.Path);
                             }
                         }
                     }

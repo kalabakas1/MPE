@@ -113,13 +113,18 @@
     //  "Target": "Elasticsearch",
     //  "Type": "Service"
     //},
+    //{
+    //  "Alias": "Redis-Service",
+    //  "Target": "Redis",
+    //  "Type": "Service",
+    //  "Healing": {
+    //    "Script": "Start-Service Redis"
+    //  }
+    //}
     {
-      "Alias": "Redis-Service",
-      "Target": "Redis",
-      "Type": "Service",
-      "Healing": {
-        "Script": "Start-Service Redis"
-      }
+      "Alias": "ScheduledTask",
+      "Type": "Powershell",
+      "Script":  ".\\Configuration\\Scripts\\LastExecutedScheduledTask.ps1 -jobName \"Fibia.Workers.SsoPlexusSynchronizer\" -secDiffMax 86400" 
     }
     //,
     //{

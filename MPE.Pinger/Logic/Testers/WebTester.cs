@@ -38,6 +38,13 @@ namespace MPE.Pinger.Logic.Testers
                     throw new Exception(
                         $"{connection.Alias} - Not returning one of the responsecodes [{string.Join(",", connection.Response)}]");
                 }
+
+                if (!string.IsNullOrEmpty(connection.Contains) &&
+                    !response.Content.ReadAsStringAsync().Result.Contains(connection.Contains))
+                {
+                    throw new Exception(
+                        $"{connection.Alias} - Response not containing value: {connection.Contains}");
+                }
             }
             catch(Exception e)
             {

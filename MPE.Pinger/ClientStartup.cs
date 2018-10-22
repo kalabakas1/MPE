@@ -30,7 +30,8 @@ namespace MPE.Pinger
                 new TcpTester(),
                 new WebTester(),
                 new ServiceTester(),
-                new SslTester()
+                new SslTester(),
+                new PowershellTest()
             }, metricMemoryRepository,
             alertHub,
             healingExecutor);

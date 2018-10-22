@@ -40,7 +40,7 @@ __Take-away:__ Don´t expect that people actually do groom the stories - do follo
 
 We got through our first sprint-ish meeting and the project manager started to define what should be solved through the use of his new tool. So at this point the designer and frontend developers started to do their thing: a pretty simple MVC website with asynchronous content loaded from different API endpoints. At least that was what I were told the customer had bought, and what the architect had told me was the agreement at a separate meeting were we went through all the features and the infrastructure of the solution he had penned down in the project management tool (PMT)
 
-So the picture of the setup is the following:
+So the picture of the setup are the following:
 
 ![Overall architecture](./dumps/2018-10-18_1000.png)
 
@@ -66,6 +66,7 @@ The time were limited because the customer were doing UAT with the QA department
 __Take-away:__ Do have a QA setup that resembles the planned production setup. We were without a proxy server so we did not know the problems before it hit the customer in the face. Note to sales-personal: if you sell these projects, please sell the customers a proper QA and development environment as well.
 
 ### Integrations slow-down
+
 
 ### Testing the slow-down
 

@@ -14,9 +14,13 @@ namespace MPE.Pinger.Models.Configurations
         public string Type { get; set; }
         [JsonProperty("Response")]
         public int[] Response { get; set; }
+        [JsonProperty(PropertyName = "Contains")]
+        public string Contains { get; set; }
         [JsonProperty("DaysLeft")]
         public int DaysLeft { get; set; }
         [JsonProperty(PropertyName = "Healing")]
         public Healing Healing { get; set; }
+        [JsonProperty(PropertyName = "Script")]
+        public string Script { get; set; }
     }
 }

@@ -5,6 +5,7 @@
         Tcp,
         Web,
         Service,
-        Ssl
+        Ssl,
+        Powershell
     }
 }

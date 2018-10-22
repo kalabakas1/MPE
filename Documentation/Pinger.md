@@ -258,7 +258,8 @@ Web-connection
 	"Alias": "some.website.dk",
 	"Target": "some.website.dk",
 	"Type": "Web",
-	"Response": [200]
+	"Response": [200],
+    "Contains": "Foobar 1234"
 }
 
 WindowsService
@@ -275,9 +276,20 @@ SSL-certificate
     "DaysLeft": 2,
     "Type": "Ssl"
 }
+
+Powershell
+{
+    "Alias": "ScheduledTask",
+    "Type": "Powershell",
+    "Script":  ".\\Configuration\\Scripts\\LastExecutedScheduledTask.ps1 -jobName \"Fibia.Workers.SsoPlexusSynchronizer\" -secDiffMax 86400" 
+}
 ```
 
 But basically it can test if a WindowsService (Service) are running, if a TCP connection (Tcp) are open on a specific port, or you get a specific response on a http address (Web).
+
+The web based have a field containing the Response that is expected, this i required. Likewise you can define that it have to check for a specific string is a part of the returned response.
+
+The Powershell tester just requires a Script that it needs to execute. In this case it will execute a ps1 file with some parameters. This enables easy reuse. Just rementer that it only returns $true or $false. That is the only thing it expects, all other data will mark the test as failed. Please observe the impact the script have on you machine like RAM and CPU.
 
 There is also added the possibility of self-healing the service. That way it can fire a script when the alerting is about to fire. The script will get fired and wait for 30 sec, then run a single test to see if the service is restored. If not it will alert through the hub:
 
