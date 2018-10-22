@@ -51,9 +51,9 @@ All of a sudden we were developing a NodeJS application, currently based on some
 __Take-away:__ Always ask yourself how you are gonna deploy your code before you chose some framework or other type of component.
 
 ### Infrastructure
-We had some work to do as deployment and operations responsible. We were in a situations were more decisions had been taken without us being a part of it. But thats not a first in this project, so we just had to make do. The first thing we had to solve was the hosting and deployment issue of the NodeJS server. Because we were dealing with GDPR tricky data, we could not just use some external vendor that automatically boots the NodeJS application up and everything works, the customer needed control of the application. 
+We had some work to do as deployment- and operations-responsible. We were in a situations were more decisions had been taken without us being a part of it. But thats not a first in this project, so we just had to make do. The first thing we had to solve was the hosting and deployment issue of the NodeJS server. Because we were dealing with GDPR tricky data, we could not just use some external vendor that automatically boots the NodeJS application up and everything works, the customer needed control of the application. 
 
-At this point in time we were already using TeamCity to build our code repositories and making Octopus deploy it to the target environments. So the idea were simple. Make the NodeJS application work on a Windows server so the customer do not have to buy a new server outside of the projects budget. After hours of research and frustrations regarding the decisions a colleague of mine found a, some what, stable hosting and configuration setup that could be build, transformed and deployed through the current pipeline configuration. SUCCESS!!!
+At this point in time we were already using TeamCity to build our code repositories and making Octopus deploy it to the target environments. So the idea were simple. Make the NodeJS application work on a Windows server so the customer do not have to buy a new server outside of the projects budget. After hours of research and frustrations a colleague of mine found a, some what, stable hosting and configuration setup that could be build, transformed and deployed through the current pipeline configuration. SUCCESS!!!
 
 __Take-away:__ People that builds the components should be the ones running the ops part of it as well
 
@@ -66,11 +66,81 @@ The time were limited because the customer were doing UAT with the QA department
 __Take-away:__ Do have a QA setup that resembles the planned production setup. We were without a proxy server so we did not know the problems before it hit the customer in the face. Note to sales-personal: if you sell these projects, please sell the customers a proper QA and development environment as well.
 
 ### Integrations slow-down
+So in parallel with all these fantastic challenges we also had to get some data from a provider. Not a fairly difficult thing to do, just call some API's and map it to a data model the website could use to display the data to the website-visitor. And the good part was that the architect had already agreed with the customer that all the API's that we had to use should only return the needed data in a readable and understandable format. In my mind I was already done with this case - it sounded so easy!
 
+Well, theres also something called reality. First of all, make sure that all these so called agreements are in writing so you can actually judge the data foundation and say that it was not what we expected. I admit that my career is not that long, but the returned data from some of these API's were so long that it would fill seven to eight screens in my editor. The JSON were in 20 indented levels and the logic were not at all straight forward and understandable. It was a mess.
 
-### Testing the slow-down
+On top of that I did not entirely trust PostMan's calculated response time. It were about six seconds to get the needed product data (this were the most central piece of data needed for the portal)! I'm sorry, but WTF! By repeating my findings I had to do some documentations for the customer and the data provider - this were the start of a very long mail correspondence.
+
+To do this I had to use some sort of tool to generate the graphs and manage the data. The choice were rather easy So i choose to use the small client (Pinger) I already had developed to survey other infrastructures. That way I just had to develop a small stop-watch client in the data provider integration, and make it post the data to the server for future visualization.
+
+Below you can see the latest test executed. At the first couple of stages, and early in the mail correspondence these numbers were between two and seven seconds per API endpoint.
+
+![Response times](./dumps/2018-10-22_1644.png)
+
+We tried to spread out the load to only load what were needed when the customer entered the site. The issue came if the customer had to access a deep link on the site, then the data would not be present, so we had to get as much data as possible to make sure that we did not have to call the data provider again and the visitor only experienced the site loading "slow" once, instead of being lacky all the time. 
+
+To make sure that we actually have done something before going further with this issue, we went through our codebase and removed a bunch of unused code that both called the external data provider, but also stored a lot of data we did not use
+
+__Take-away:__ Don't store data you don't know if you are gonna use. Wait and see.
+
+After that we had to contact the customer and the external data provider - this were not good. At this point I had generated a 10 page performance and stress-test report so we had some data to use in the discussion. It contained both a baseline were we only used one data worker to get the data from the provider, along with a test with five, ten and twenty workers. The tendency were clear: no matter how many workers we booted, the response time at the data providers end just got longer, and we couldn't get more data faster - we just waited in line for our data.
+
+Our analyzes defined pretty much what needed to be done. Either lower the response time on the different endpoints or change the server architecture. So the data provider developers started to dig into what might be wrong with the code, and sure thing they found some pieces of code that wasn't exactly optimized. Meaning that we went from six seconds to the around two second response time as shown in the graph. That is actually a pretty good optimization. At this point we had a long talk with our customer about what they actually expected we could manage, and how many visitors they thought the portal should be able to let in. The conclusion were somewhat chocking: "We need to be able to let 1000 visitors in over a period of 10 minutes". Translated to normal English, that would be 100 visitors per minute, ergo we had some work and discussions to do.
+
+__Take-away:__ Test your external providers as early in the project as possible. That way you don't have to wait multiple weeks to get changes into their production environment. Lets call it a unofficial SLA/SLO with the provider.
+
+So back to the our individual drawing boards. The question were if we, at our end, could optimize our worker, and perhaps guide the data provider on how we actually could achieve this. At our end we concluded that we couldn't do much more without compromising the existing requirements. The data provider suggested that we could add a proxy in front of four service tiers to perhaps quadruple the visitors per minute count. At the current setup we could let 30 visitors in and load their data from the data provider per minute. So if we could let four times that in per minute. One problem. This were a unforeseen expense for the customer on about $50.000 - lets just say I am glad not to be the developer telling the customer this. Tried it, its not funny to have to say that the customer have to pay an expense this high to actually achieve the wanted throughput. But again, if you want to get something you have to pay. This is still some unfinished business, but lets see in a couple of months when the data provider have released their changes to the production environment - so much for agile development and fast feedback loops.
 
 ### Monitoring and alerting
+To monitor this we currently are using the small client called Pinger. The reason for this current choice is basically driven by some budget issues (no one wants to pay for monitoring of staging and QA setups, even though we need it when stress testing), and because it is fairly easy to setup and customize the visualization in Graphana. No one is saying that this is gonna be a production monitoring tool, but it was fast, easy, and didn't cost the customer anything.
+
+The current components we are getting metrics from are:
+* Server metric data (Microservice-, web-, and Middleware-servers)
+* RabbitMQ
+* Redis
+
+On a more application near level we monitor:
+* Response time on our own API's
+* Response time on the integration towards our data-provider
+
+The first of these two are one of the points were we setup some visualization to define how many requests actually failed with a InternalServerError compared with the overall amount of requests. That way we could have a primitive definition of a SLA and an error budget.
+
+Along with that we executes tests to make sure that the different components actually works, or at least runs. On that level we test:
+* Are the windows services (Redis, RabbitMQ and our own microservices) running
+* Have the scheduled tasks been executed within X seconds
+* Can we ping the endpoints and get a expected response back.
+* Are our SSL certificate about to run out.
+
+The debate here had to be regarding alert-ignorance. I had to define some alerts that would make sense, and make sure that it had to be alerts the ops-developer shouldn't ignore over time - they should act on it. With that in mind we are alerting on all the prior described tests and the following:
+* Are Redis running out of memory?
+* Are the data provider average response time over five sec?
+* Do we return InternalServerError on our API? (avg of five over five min)
+* Under 10% of disk space left?
+* Over 80% of CPU utilization over the last 5 min.
+* Over 80% of RAM utilization over the last 5 min.
+
+The two latter cases are still something that I'm considering to remove from the alerting list. The reason for this considerations are the following quote:
+
+> Are you service running as expected? If yes, what does it then matter if the host are running high om CPU or RAM?
+
+I read it in a SRE book once and it sort of makes sense. Setup performance indicators based on throughput and then sort of ignore the host metrics. If the host is the limit it will reflect on the indicators you have defined.
+
+When it comes to alerting, I experimented with the idea of a self-healing infrastructure. It sounds fancy but the flow is pretty straight forward, but might be discussed: 
+
+1. The test fails e.g. a service is not running
+2. Wait X seconds
+3. Test again, it is still not running
+4. Wait Y seconds
+5. Test again, it is still not running
+6. Wait Z seconds
+7. Test again, it is still not running
+8. Try to run a Powershell script e.g. Start-Service FooBar
+9. Wait 30 secons
+10. Test again, service are now running
+    a. If it still not running, send the alert to the operations developer.
+
+The idea here is, don't disturb the developer if you can build a automated monitoring system that tries to heal your infrastructure before requiring manual intervention.
 
 ### Now...
 
