@@ -84,30 +84,31 @@ namespace MPE.Pinger.Logic
                     }
                     catch (Exception e)
                     {
-                        if (!_alertHub.IsAlerting(result.Path))
+
+                        try
                         {
-                            try
+                            if (_healingExecutor.CanHeal(connection))
                             {
-                                if (_healingExecutor.CanHeal(connection))
-                                {
-                                    _healingExecutor.Heal(connection);
+                                _healingExecutor.Heal(connection);
 
-                                    Thread.Sleep(30000);
+                                Thread.Sleep(30000);
 
-                                    tester.Test(connection);
-                                }
-                                else
-                                {
-                                    throw new Exception();
-                                }
+                                tester.Test(connection);
                             }
-                            catch
+                            else
                             {
-                                var message = $"Pinger failed for: {connection.Alias}";
-                                LoggerFactory.Instance.Debug(e, message);
-                                result.Message = "Failed";
-                                result.Value = 0;
+                                throw new Exception();
+                            }
+                        }
+                        catch
+                        {
+                            var message = $"Pinger failed for: {connection.Alias}";
+                            LoggerFactory.Instance.Debug(e, message);
+                            result.Message = "Failed";
+                            result.Value = 0;
 
+                            if (!_alertHub.IsAlerting(result.Path))
+                            {
                                 _alertHub.Alert(result.Path);
                             }
                         }

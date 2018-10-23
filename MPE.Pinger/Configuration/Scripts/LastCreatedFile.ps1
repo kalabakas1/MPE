@@ -3,7 +3,7 @@
    [int32]$secDiffMax
 )
 
-$lastRunTime = (Get-ChildItem $directoryPath | sort LastWriteTime | Select -Last 1)
+$lastRunTime = (Get-ChildItem -File $directoryPath | sort LastWriteTime | Select -Last 1 | Select -ExpandProperty "LastWriteTime")
 $timeDifference = New-TimeSpan -Start $lastRunTime -End (Get-Date)
 $diffInSec = ([int32]($timeDifference.TotalSeconds))
 
@@ -15,4 +15,3 @@ else
 {
     $false
 }
-
