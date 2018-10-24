@@ -14,7 +14,7 @@ namespace MPE.Pinger.Logic
     {
         internal bool CanHeal(Connection connection)
         {
-            return string.IsNullOrEmpty(connection.Healing?.Script);
+            return !string.IsNullOrEmpty(connection.Healing?.Script);
         }
 
         internal void Heal(Connection connection)
