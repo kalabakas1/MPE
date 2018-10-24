@@ -30,7 +30,7 @@ namespace MPE.Pinger.Logic
                 if (!_alerts.Contains(alias))
                 {
                     _alerts.Add(alias);
-                    LoggerFactory.Instance.Fatal($"Alert: {alias}", new Exception($"Alert: {alias}"));
+                    LoggerFactory.Instance.Fatal($"ALERT: {alias}", new Exception($"ALERT: {alias}"));
                 }
             }
         }
@@ -42,7 +42,7 @@ namespace MPE.Pinger.Logic
                 if (_alerts.Contains(alias))
                 {
                     _alerts.Remove(alias);
-                    LoggerFactory.Instance.Fatal($"Abort: {alias}", new Exception($"Abort: {alias}"));
+                    LoggerFactory.Instance.Fatal($"ABORT: {alias}", new Exception($"ABORT: {alias}"));
                 }
             }
         }
