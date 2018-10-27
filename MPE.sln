@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notes", "Notes", "{B1273552
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Professional", "Professional", "{5B3AC3CA-89F2-4743-B0A3-E6C62439BE32}"
 	ProjectSection(SolutionItems) = preProject
+		Documentation\DealingWithSlowDataproviders.md = Documentation\DealingWithSlowDataproviders.md
 		Documentation\DevelopersGuide.md = Documentation\DevelopersGuide.md
 		Documentation\Life as a developer.md = Documentation\Life as a developer.md
 		Documentation\SoftwareProjects.md = Documentation\SoftwareProjects.md

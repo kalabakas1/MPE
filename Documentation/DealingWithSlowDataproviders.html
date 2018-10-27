@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link href="prism/prism.css" rel="stylesheet" />
+    <script src="prism/prism.js"></script>
+
+    <title>Dealing with slow data-providers</title>
+
+    <style>
+        @media print {
+            .panel-heading, .panel-footer, pre {
+                background-color: #e6e6e6 !important;
+            }
+
+            pre>code {
+                 white-space: pre-line !important;
+            }
+            
+            pre {
+              page-break-inside: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container panel panel-default">
+        <div class="row panel-heading">
+            <div class="col-xs-12 col-md-12">
+                <h1>MPE</h1>
+            </div>
+        </div>
+        <div class="row panel-body">
+            <div class="col-xs-12 col-md-12">
+                <h1 id="dealing-with-slow-data-providers">Dealing with slow data-providers</h1>
+<p>I have never said that I were good at making titles, and this one is no different - it is not sexy at all. But never the less I think it could be interesting to write about the experiences I had when I developed a small part of a self service portal, that included integration towards a slow data provider.</p>
+<h2 id="summary">Summary</h2>
+<p>So basically we had a single page application that had to display some data that we had to get from the data-provider. The issue here were that the data provider had response times up to six seconds to start with - this got optimized over time. As all knows, your response time is bound to the response time from your data provider. If you can't get it faster than six seconds, that is how fast your frontend can receive their data for display.</p>
+<h2 id="the-task">The task</h2>
+<p>We had a user flow where they had to login to a SSO site that then validated and redirect the user back to the self service portal. The page they were presented to were a dashboard displaying your products, latest invoice, and manuals for the products they had - each in a small widget on the dashboard.</p>
+<p>Somewhere in that flow we had to gather data that took about six seconds total to acquire from the data provider. And on top of that the main architect had told the customer that we had a performance indicator stating that we could load all data within two seconds per component.</p>
+<p>Basically we had to do some sort of fictive budget for time consumed after the user clicks the login button on the SSO site, each stage can max take two seconds.</p>
+<ol>
+<li>Validation of user (500ms)</li>
+<li>Redirect to portal (1000ms)</li>
+<li>Load each widget on the dashboard (2000ms)</li>
+</ol>
+<p>Basically it would take roughly 3500ms before we were over the performance indicator limit - at least that was our current budget.</p>
+<p>Next to that we had a other issue in the form of the customers key performance indicator that statet we should be able to load a 1000 users data within 10 minutes.</p>
+<h2 id="the-provider">The provider</h2>
+<p>We had a bit of data to acquire before the user could get a proper experience of the dashboard. It had to get the following data:</p>
+<ul>
+<li>User data (firstname, lastname, email etc.) (70ms)</li>
+<li>Main product data (700ms)
+<ul>
+<li>Sub product data for each of the main products (1800ms)</li>
+</ul>
+</li>
+<li>Invoice data (620ms)</li>
+</ul>
+<p>The ms next to each of the data is roughly the average response time for each of the calls to the data-provider. The issue here were that a big part of the users would have multiple main products, that meaning multiple calls to the sub product endpoint.</p>
+<p>But lets start by looking at the math here for a user having e.g. two main products:</p>
+<ul>
+<li>70ms for user data</li>
+<li>700ms Main products</li>
+<li>1.800ms for each of the two main products</li>
+<li>620ms for the invoice data</li>
+</ul>
+<p>A total on <strong>4.990ms</strong></p>
+<p>Comparing those two calculations we could conclude that this were not gonna be possible and still being able to be within the performance indicator.</p>
+<p>So what could we do.</p>
+<h2 id="the-naive-approach">The naive approach</h2>
+<p>In school we were always told to do the most simple implementation as possible to start with - it might be the best one anyway. So that was what I did.</p>
+<p>When the user clicks the login button and get validated it would result in a item being pushed to a queue. The worker would pick up that item and start to acquire the data from the data-provider.</p>
+<p>I started to implement the worker by doing a synchronous implementation, just getting the data needed one after each other. I knew that it would result in a total of 3.990ms per user before the data were loaded and locally stored. But at least I would have a base for an implementation and tweaking it later on.</p>
+<h2 id="the-better-approach">The better approach</h2>
+<p>The main architecture including the queue were still the center of the approach. But this time I had a look at what actually could be done in parallel. So for a starters I needed the users data before actually being able to start acquiring other data. For what if the user didn't exist in the data-providers store? Then there wasn't a reason to try to get all the other data, and I would just be wasting bandwidth and time that I didn't have.</p>
+<p>So the &quot;algorithm&quot; would look like this:</p>
+<ol>
+<li>Get the users data</li>
+<li>Create threads for each of the other data sources needed. e.g. products and invoices (and communications)</li>
+<li>Start the threads in parallel and wait for them to complete</li>
+</ol>
+<p>So you can primitively conclude that the overall time used for one user would be the time used to get the users main data along with the slowest of the parallel executed threads ergo:</p>
+<p>70ms + 700ms + 1.800ms = <strong>2.570ms</strong> (you need the 700ms to get the main products to be able to get the sub-products). But hey, we made it about 2.420ms faster, in theory. And keep in mind this is only the time used on getting the data, the processing time, event though it is not that much is not considered a part of this calculation.</p>
+<h2 id="the-limitations">The limitations</h2>
+<p>At the current point in time we could get it to run faster because of the limitation in form of the data-providers response time. Now we ran what we could in parallel if possible to get as much external work done at the same time. All these calculations are based on tests done towards the data-providers test environment, that is a shared environment with the possibility of being slow if other customers were using it. But it were the only possibility we had.</p>
+<p>The future includes a new test against their dedicated production environment that might include a proxy and multiple dedicated servers to just handle our requests. This approach might enhance our response time quite a bit. But it is speculations at the current point.</p>
+<h2 id="the-forgotten-part">The forgotten part</h2>
+<p>So now we actually had a data flow pattern that retrieves the needed data as fast at it were possible based on the current data providers server architecture. But what about the frontend? How did that fit into the current data flow? Well. Lets say that our local storage had expired your data because you had been inactive for too long. The frontend would do its thing as always, by calling a API to gets it data. It might be the Customer endpoint that should return the main data for the current user.</p>
+<p>If it didn't have the data in the storage, it would generate a queue item that the worker would pick up and act on. While the worker did its data-retrieval thing it would ask the storage for the generate item for each 500ms for a total of 20 times before it times out and return a &quot;Not Found&quot; message to the frontend.</p>
+<p>At this time the user had waited for ten seconds to just get a &quot;We don't have your data... Fool&quot; message thrown back in the face. The user had just waisted ten seconds that they never get back. This could result in the user loosing its confidence to the system and wont visit the site again.</p>
+<p>So lets try a second time to get this right.</p>
+<p>At this time I changed the worker a bit. If it at any point in time could not find the data and store it in our temporary storage it should instead create a entry that defines that the data wasn't there. That way the API could ask for the data, if the data wasn't there it could look for the error record. If that were present it could terminates its retry pattern and return a not found message to the frontend within one second.</p>
+<p>That way the user would get a fast failure message and carry on with whatever they needed to do on the site.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>So what have I learned in this process? Well, as always, do the most simple integration as possible to get started. From there on you can enhance your design to optimize your overall performance. The important thing is also to understand who is gonna be using you integration. If they are user faced you might want to consider how you are gonna let them know if things fail fast. That way you enhance the user experience and lets the user think the site is acting fast and not waisting time.</p>
+
+            </div>
+        </div>
+        <div class="row panel-footer">
+        </div>
+    </div>
+</body>
+</html>
