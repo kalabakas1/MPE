@@ -411,13 +411,15 @@ public class Reporter
     private static Reporter _instance;
     private static object _lock = new object();
     private static Timer _timer;
-    private static FixedConcurrentQueue<Metric> _store;
-    private static MetricRestService _metricRestService;
+    private static FixedConcurrentQueue<Metric> _metricStore;
+    private static FixedConcurrentQueue<LogEvent> _logEventStore;
+    private static RestService _restService;
     private static List<string> _ignoreEnvironments;
 
     private const string TimerIntevalSecAppSettingsName = "Pinger.Client.TimerIntevalSec";
     private const string MaxLocalItemsAppSettingsName = "Pinger.Client.MaxLocalItems";
     private const string IgnoreEnvironmentAppSettingsName = "Pinger.Client.IgnoreEnvironmentsCsv";
+    private const string ProjectAppSettingName = "Pinger.Project";
     private const string HostAppSettingsName = "Pinger.Host";
     private const string ApiKeyAppSettingsName = "Pinger.Key";
 
@@ -443,25 +445,32 @@ public class Reporter
 
     private Reporter()
     {
-        _store = new FixedConcurrentQueue<Metric>(GetAppSettingOrDefault(MaxLocalItemsAppSettingsName, DefaultMaxLocalItems));
+        var storeMax = GetAppSettingOrDefault(MaxLocalItemsAppSettingsName, DefaultMaxLocalItems);
+        _metricStore = new FixedConcurrentQueue<Metric>(storeMax);
+        _logEventStore = new FixedConcurrentQueue<LogEvent>(storeMax);
 
         _timer = new Timer(GetAppSettingOrDefault(TimerIntevalSecAppSettingsName, DefaultTimerIntevalSec) * 1000);
-        _timer.Elapsed += (sender, args) => FlushStore();
+        _timer.Elapsed += (sender, args) =>
+        {
+            FlushStore(_metricStore);
+            FlushStore(_logEventStore);
+                _timer.Start();
+        };
         _timer.AutoReset = false;
         _timer.Start();
 
-        _metricRestService = new MetricRestService(
+        _restService = new RestService(
             ConfigurationManager.AppSettings[ApiKeyAppSettingsName],
             ConfigurationManager.AppSettings[HostAppSettingsName]);
 
         _ignoreEnvironments = GetAppSettingOrDefault(IgnoreEnvironmentAppSettingsName, string.Empty).Split(',').ToList();
     }
 
-    public void Enqueue(long elapsed, string prefix, string endpoint, string responseCode)
+    public void EnqueueMetric(long elapsed, string prefix, string endpoint, string responseCode)
     {
         var environment = CalculateEnvironment();
 
-        if (_ignoreEnvironments.Contains(environment))
+        if (_ignoreEnvironments?.Contains(environment) ?? false)
         {
             return;
         }
@@ -476,18 +485,36 @@ public class Reporter
         {
             Timestamp = DateTime.Now,
             Value = elapsed,
-            Path = $"FooBar.{RemoveSpecialCharacters(environment)}.Response.{itemName}",
+            Path = $"{GetAppSettingOrDefault(ProjectAppSettingName, "FooBar")}.{RemoveSpecialCharacters(environment)}.Response.{itemName}",
             Alias = itemName,
             Message = responseCode
         };
 
-        _store.Enqueue(metric);
+        _metricStore.Enqueue(metric);
     }
 
-    private void FlushStore()
+    public void EnqueueLogEvent(string type, string message)
+    {
+        var environment = CalculateEnvironment();
+            
+        var logEvent = new LogEvent
+        {
+            Type = type,
+            Path = $"{GetAppSettingOrDefault(ProjectAppSettingName, "FooBar")}.{RemoveSpecialCharacters(environment)}.Log",
+            Message = message,
+            Timestamp = DateTime.Now,
+            Machine = Environment.MachineName,
+            Source = Process.GetCurrentProcess().ProcessName,
+            Username = Environment.UserName
+        };
+
+        _logEventStore.Enqueue(logEvent);
+    }
+
+    private void FlushStore<T>(FixedConcurrentQueue<T> store)
     {
         var run = true;
-        var metrics = new List<Metric>();
+        var records = new List<T>();
 
         var count = 0;
         while (run)
@@ -496,10 +523,13 @@ public class Reporter
             {
                 try
                 {
-                    Metric item;
-                    if (_store.TryDequeue(out item))
+                    T item;
+                    if (store.TryDequeue(out item))
                     {
-                        metrics.Add(item);
+                        records.Add(item);
+                    }else if (store.Count == 0)
+                    {
+                        run = false;
                     }
                 }
                 catch
@@ -511,20 +541,25 @@ public class Reporter
 
             try
             {
-                _metricRestService.Persist(metrics);
+                if (records.Any())
+                {
+                    _restService.Persist(records);
+                }
+                else
+                {
+                    run = false;
+                }
             }
             catch
             {
-                metrics.ForEach(x => _store.Enqueue(x));
+                records.ForEach(store.Enqueue);
                 run = false;
             }
 
-            metrics = new List<Metric>();
+            records = new List<T>();
 
             count = 0;
         }
-
-        _timer.Start();
     }
 
     private static string CalculateEnvironment()
@@ -559,18 +594,18 @@ public class Reporter
         return result;
     }
 
-    private static string RemoveSpecialCharacters(string str)
+    public static string RemoveSpecialCharacters(string str)
     {
         return Regex.Replace(str, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
     }
 
-    private class MetricRestService
+    private class RestService
     {
         private string _apiKey;
         private string _host;
 
         private RestClient _client;
-        public MetricRestService(
+        public RestService(
             string apiKey,
             string host)
         {
@@ -580,9 +615,11 @@ public class Reporter
             _client = new RestClient($"{_host}");
         }
 
-        public void Persist(List<Metric> metrics)
+        public void Persist<T>(List<T> metrics)
         {
-            var request = new RestRequest("/api/MetricResult");
+            var endpoint = typeof(T).GetAttribute<DescriptionAttribute>().Description;
+
+            var request = new RestRequest($"/api/{endpoint}");
             request.Method = Method.POST;
             request.AddHeader("Authorization", _apiKey);
             request.Timeout = 2000;
@@ -613,6 +650,7 @@ public class Reporter
         }
     }
 
+    [Description("MetricResult")]
     private class Metric
     {
         [JsonProperty("Timestamp")]
@@ -626,10 +664,29 @@ public class Reporter
         [JsonProperty("Message")]
         public string Message { get; set; }
     }
+
+    [Description("EventLogResult")]
+    private class LogEvent
+    {
+        [JsonProperty("Timestamp")]
+        public DateTime Timestamp { get; set; }
+        [JsonProperty("Path")]
+        public string Path { get; set; }
+        [JsonProperty("Type")]
+        public string Type { get; set; }
+        [JsonProperty("Source")]
+        public string Source { get; set; }
+        [JsonProperty("Message")]
+        public string Message { get; set; }
+        [JsonProperty("Machine")]
+        public string Machine { get; set; }
+        [JsonProperty("Username")]
+        public string Username { get; set; }
+    }
 }
 ```
 
-### Web API attribute
+### Web API attributes
 Well the implementation above can be used to track all kind of different things. The real usage for me was to track the execution time for my API methods. By implementing this ActionFilterAttribute (i used some inspiration from a StackOverflow post that showed how to track the execution by a stopwatch) I ended up by being able to get the execution time for my API methods, by controller or on specific action methods.
 
 ```csharp
@@ -658,6 +715,16 @@ public class StopwatchAttribute : ActionFilterAttribute
                 actionExecutedContext.Request.RequestUri.LocalPath);
         }
         catch { }
+    }
+}
+
+public class ExceptionReportingAttribute : ExceptionFilterAttribute
+{
+    public override void OnException(HttpActionExecutedContext context)
+    {
+        Reporter.Instance.EnqueueLogEvent("Error", $"URI: {context.Request.RequestUri}{Environment.NewLine}" +
+                                                    $"MESSAGE: {context.Exception.Message}{Environment.NewLine}" +
+                                                    $"STACKTRACE: {context.Exception.StackTrace}");
     }
 }
 ```
