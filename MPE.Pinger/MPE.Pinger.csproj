@@ -127,8 +127,11 @@
     <Compile Include="Models\Configurations\RedisConfiguration.cs" />
     <Compile Include="Models\Results\RequestLogResult.cs" />
     <Compile Include="Repositories\ApiKeyRepository.cs" />
+    <Compile Include="Repositories\ConfigurationRestRepository.cs" />
+    <Compile Include="Repositories\ConfigurationServerRepository.cs" />
     <Compile Include="Repositories\RestRepository.cs" />
     <Compile Include="Server\Attributes\ApiKeyAuthorizeAttribute.cs" />
+    <Compile Include="Server\Controllers\ConfigurationController.cs" />
     <Compile Include="Server\Controllers\EventLogResultController.cs" />
     <Compile Include="Server\Controllers\MetricResultController.cs" />
     <Compile Include="Server\Controllers\RequestLogResultController.cs" />
@@ -152,6 +155,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Configuration\Configs\MpeLocal_7dcb7c7a-8d9f-4b56-9ce0-52fa40085b35.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Configuration\configuration.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
