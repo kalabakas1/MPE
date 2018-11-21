@@ -13,12 +13,12 @@ namespace MPE.Pinger.Repositories
 {
     internal class ConfigurationRestRepository
     {
-        public ConfigurationFile RequestConfiguration(ConfigurationFile current)
+        public ConfigurationFile RequestConfiguration(string restEndpoint, string host, string apiKey)
         {
-            var restClient = new RestClient(current.RestEndpoint);
+            var restClient = new RestClient(restEndpoint);
             var request = new RestRequest("/api/Configuration");
-            request.AddQueryParameter("host", current.Host);
-            request.AddHeader(Constants.AuthenticationHeaderName, current.ApiKey);
+            request.AddQueryParameter("host", host);
+            request.AddHeader(Constants.AuthenticationHeaderName, apiKey);
             request.Method = Method.GET;
 
             var result = restClient.Execute<ConfigurationFile>(request);

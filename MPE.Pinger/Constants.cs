@@ -21,6 +21,9 @@ namespace MPE.Pinger
         public const string ServerHost = "MPE.Pinger.Server.Host";
         public const string RetentionInDays = "MPE.Pinger.RetentionInDays";
         public const string SlackToken = "MPE.Pinger.SlackToken";
+        public const string ClientHost = "MPE.Pinger.Client.Host";
+        public const string ClientApiKey = "MPE.Pinger.Client.ApiKey";
+        public const string RestEndpoint = "MPE.Pinger.RestEndpoint";
 
         public const string AuthenticationHeaderName = "Authorization";
     }
