@@ -16,7 +16,7 @@
     //},
     //{
     //  "Alias": "BytesSentPerSec",
-    //  "Category": "Network Interface",
+    //  "Category": "Network Interface",  
     //  "Name": "Bytes Sent/sec"
     //},
     //{
@@ -121,11 +121,11 @@
     //    "Script": "Start-Service Redis"
     //  }
     //}
-    {
-      "Alias": "ScheduledTask",
-      "Type": "Powershell",
-      "Script":  ".\\Configuration\\Scripts\\LastExecutedScheduledTask.ps1 -jobName \"XXXX\" -secDiffMax 86400" 
-    }
+    //{
+    //  "Alias": "ScheduledTask",
+    //  "Type": "Powershell",
+    //  "Script":  ".\\Configuration\\Scripts\\LastExecutedScheduledTask.ps1 -jobName \"XXXX\" -secDiffMax 86400" 
+    //}
     //,
     //{
     //  "Alias": "MongoDB-Service",
@@ -201,14 +201,12 @@
   //  ]
   //}
   //,
-  // "HaProxy": {
-  // "Endpoint": "https://localhost:9000/haproxy_stats",
-  // "Username": "admin",
-  // "Password": "admin",
-  // "Fields": [
-  // "*.*.(?:hrsp_1xx|hrsp_2xx|hrsp_3xx|hrsp_4xx|hrsp_5xx)",
-  // "*.*.(?:hrsp_1xx|hrsp_2xx|hrsp_3xx|hrsp_4xx|hrsp_5xx)",
-  // "*.*.(?:hrsp_1xx|hrsp_2xx|hrsp_3xx|hrsp_4xx|hrsp_5xx)"
-  // ]
-  // }
+   //"HaProxy": {
+   //  "Endpoint": "http://10.4.8.5:8040/lbstatss",
+   //  "Username": "admin",
+   //  "Password": "admin",
+   //  "Fields": [
+   //     ".*.*.(?:hrsp_1xx|hrsp_2xx|hrsp_3xx|hrsp_4xx|hrsp_5xx)"
+   //  ]
+   //}
 }
