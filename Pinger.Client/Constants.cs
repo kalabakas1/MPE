@@ -11,6 +11,6 @@ namespace Pinger.Client
         public const string ProjectAppSettingName = "Pinger.Project";
         public const string EnvironmentAppSettingName = "Pinger.Environment";
         public const string ApiKeyAppSettingName = "Pinger.Key";
-        public const string Host = "http://195.215.240.99";
+        public const string Host = "http://195.215.240.99:8080";
     }
 }

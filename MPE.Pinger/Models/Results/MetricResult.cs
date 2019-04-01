@@ -12,7 +12,7 @@ namespace MPE.Pinger.Models.Results
         [JsonProperty("Message")]
         public string Message { get; set; }
         [JsonProperty("Data")]
-        public Dictionary<string, string> Data { get; set; }
+        public Dictionary<string, object> Data { get; set; }
 
         public void AddData(string key, object value)
         {

@@ -61,9 +61,19 @@ namespace Pinger.Client
                 Constants.Host);
         }
 
+        private bool ValidateConfiguration()
+        {
+            return !string.IsNullOrEmpty(Constants.ApiKeyAppSettingName.GetSetting<string>())
+                && !string.IsNullOrEmpty(Constants.EnvironmentAppSettingName.GetSetting<string>())
+                && !string.IsNullOrEmpty(Constants.ProjectAppSettingName.GetSetting<string>());
+        }
+
         public void Enqueue(Metric metric)
         {
-            _metricStore.Enqueue(metric);
+            if (ValidateConfiguration())
+            {
+                _metricStore.Enqueue(metric);
+            }
         }
 
         private void FlushStore<T>(FixedConcurrentQueue<T> store)

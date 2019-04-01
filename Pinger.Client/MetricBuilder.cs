@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace Pinger.Client
 {
     public class MetricBuilder
     {
+        private Stopwatch _timer;
         private Metric _metric;
         public MetricBuilder()
         {
@@ -50,10 +52,25 @@ namespace Pinger.Client
             return this;
         }
 
-        public MetricBuilder WithData(string key, string value)
+        public MetricBuilder WithData(string key, object value)
         {
             _metric.AddData(key, value);
             return this;
+        }
+
+        public void StartTimer()
+        {
+            _timer = new Stopwatch();
+            _timer.Start();
+        }
+
+        public void StopAndSetValue()
+        {
+            if (_timer != null && _timer.IsRunning)
+            {
+                _timer.Stop();
+                WithValue(_timer.ElapsedMilliseconds);
+            }
         }
     }
 }

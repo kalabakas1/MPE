@@ -45,7 +45,7 @@ namespace MPE.Pinger.Helpers
                         throw new Exception("Could not read configuration file", e);
                     }
 
-                    var newConfiguration = restConfigRepository.RequestConfiguration(_configuration, 
+                    var newConfiguration = restConfigRepository.RequestConfiguration(
                         Get<string>(Constants.RestEndpoint), 
                         Get<string>(Constants.ClientHost), 
                         Get<string>(Constants.ClientApiKey));

@@ -61,6 +61,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPE.Api.Swagger", "MPE.Api.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pinger.Client", "Pinger.Client\Pinger.Client.csproj", "{A4EF8D69-F419-4B9A-84F8-3694BD7EF6FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pinger.Client.App", "Pinger.Client.App\Pinger.Client.App.csproj", "{0639D32A-EBC6-434D-9B0D-F5CCE5501932}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +117,10 @@ Global
 		{A4EF8D69-F419-4B9A-84F8-3694BD7EF6FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4EF8D69-F419-4B9A-84F8-3694BD7EF6FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4EF8D69-F419-4B9A-84F8-3694BD7EF6FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0639D32A-EBC6-434D-9B0D-F5CCE5501932}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0639D32A-EBC6-434D-9B0D-F5CCE5501932}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0639D32A-EBC6-434D-9B0D-F5CCE5501932}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0639D32A-EBC6-434D-9B0D-F5CCE5501932}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

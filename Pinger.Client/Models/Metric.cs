@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,8 +8,14 @@ using Newtonsoft.Json;
 
 namespace Pinger.Client.Models
 {
+    [Description("MetricResult")]
     public class Metric
     {
+        public Metric()
+        {
+            Data = new Dictionary<string, object>();
+        }
+
         [JsonProperty("Timestamp")]
         public DateTime Timestamp { get; set; }
         [JsonProperty("Path")]
@@ -20,7 +27,7 @@ namespace Pinger.Client.Models
         [JsonProperty("Message")]
         public string Message { get; set; }
         [JsonProperty("Data")]
-        public Dictionary<string, string> Data { get; set; }
+        public Dictionary<string, object> Data { get; set; }
 
         public void AddData(string key, object value)
         {

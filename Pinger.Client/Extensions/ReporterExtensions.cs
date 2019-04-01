@@ -31,14 +31,11 @@ namespace Pinger.Client.Extensions
             reporter.Enqueue(metric);
         }
 
-        public static void Enqueue(this Reporter reporter, string alias, long value, string message,
-            Dictionary<string, string> data = null)
+        public static void Enqueue(this Reporter reporter, string alias, Dictionary<string, string> data = null)
         {
             var builder = new MetricBuilder();
             builder.WithTimestamp()
-                .WithValue(value)
                 .WithAlias(alias)
-                .WithMessage(message)
                 .WithPath(GeneratePath(alias));
 
             if (data != null && data.Any())
@@ -52,10 +49,12 @@ namespace Pinger.Client.Extensions
             reporter.Enqueue(builder.Build());
         }
 
-        public static MetricBuilder GetBuilder(this Reporter reporter)
+        public static MetricBuilder GetBuilder(this Reporter reporter, string alias)
         {
             var builder = new MetricBuilder();
-            builder.WithTimestamp();
+            builder.WithTimestamp()
+                .WithPath(GeneratePath(alias))
+                .WithAlias(alias);
 
             return builder;
         }
