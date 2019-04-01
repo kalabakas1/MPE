@@ -33,11 +33,11 @@ namespace Pinger.Client.Models
         {
             if (Data.ContainsKey(key))
             {
-                Data[key] = value?.ToString();
+                Data[key] = value;
             }
             else
             {
-                Data.Add(key, value?.ToString());
+                Data.Add(key, value);
             }
         }
     }
