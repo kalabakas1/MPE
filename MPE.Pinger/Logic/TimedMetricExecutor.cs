@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using MPE.Logging;
 using MPE.Pinger.Helpers;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
@@ -26,6 +27,7 @@ namespace MPE.Pinger.Logic
             _timer = new Timer(Configuration.Get<int>(Constants.MetricIntevalSec) * 1000);
 
             _timer.Elapsed += (sender, args) => Execute();
+            _timer.AutoReset = false;
         }
 
         private void Execute()
@@ -35,7 +37,15 @@ namespace MPE.Pinger.Logic
             {
                 var task = Task<List<MetricResult>>.Factory.StartNew(() =>
                 {
-                    return collector.Collect();
+                    try
+                    {
+                        return collector.Collect();
+                    }
+                    catch (Exception e)
+                    {
+                        LoggerFactory.Instance.Debug($"Collector failed: {collector.GetType().Name} - {e.Message}");
+                        return new List<MetricResult>();
+                    }
                 });
 
                 tasks.Add(task);
@@ -45,6 +55,7 @@ namespace MPE.Pinger.Logic
 
             var results = tasks.SelectMany(x => x.Result);
             _repository.Write(results.ToList());
+            _timer.Start();
         }
 
         public void Start()
