@@ -31,7 +31,7 @@ namespace Pinger.Client.Extensions
             reporter.Enqueue(metric);
         }
 
-        public static void Enqueue(this Reporter reporter, string alias, Dictionary<string, string> data = null)
+        public static void Enqueue(this Reporter reporter, string alias, Dictionary<string, object> data = null)
         {
             var builder = new MetricBuilder();
             builder.WithTimestamp()

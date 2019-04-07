@@ -32,6 +32,14 @@ namespace MPE.Pinger.Logic
                 instance.Invoke();
 
                 LoggerFactory.Instance.Debug($"Healing of {connection.Alias} finished... with errors: {instance.HadErrors}");
+
+                if (instance.HadErrors)
+                {
+                    foreach (ErrorRecord record in instance.Streams.Error)
+                    {
+                        Console.WriteLine(record.ToString());
+                    }
+                }
             }
         }
     }

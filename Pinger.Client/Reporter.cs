@@ -14,35 +14,15 @@ namespace Pinger.Client
 {
     public class Reporter
     {
-        private static Reporter _instance;
-        private static object _lock = new object();
         private static Timer _timer;
 
         private static FixedConcurrentQueue<Metric> _metricStore;
         private static RestPersistanceService _restService;
 
-        private const string IgnoreEnvironmentAppSettingsName = "Pinger.Client.IgnoreEnvironmentsCsv";
-
         private const int DefaultTimerIntevalSec = 15;
         private const int DefaultMaxLocalItems = 1000000;
         private const int BulkSize = 256;
-
-        public static Reporter Instance
-        {
-            get
-            {
-                lock (_lock)
-                {
-                    if (_instance == null)
-                    {
-                        _instance = new Reporter();
-                    }
-
-                    return _instance;
-                }
-            }
-        }
-
+        
         private Reporter()
         {
             _metricStore = new FixedConcurrentQueue<Metric>(DefaultMaxLocalItems);
