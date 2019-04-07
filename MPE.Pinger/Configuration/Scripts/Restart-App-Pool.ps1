@@ -4,8 +4,11 @@
 
 Import-Module WebAdministration
 
-Try{
-	Restart-WebAppPool $pool
-}catch{
+if((Get-WebAppPoolState -Name $pool).Value -eq 'Stopped')
+{
 	Start-WebAppPool $pool
+}
+else
+{
+	Restart-WebAppPool $pool
 }
