@@ -21,10 +21,10 @@ namespace MPE.Pinger.Repositories
             request.AddHeader(Constants.AuthenticationHeaderName, apiKey);
             request.Method = Method.GET;
 
-            var result = restClient.Execute<ConfigurationFile>(request);
+            var result = restClient.Execute(request);
             if (result.StatusCode == HttpStatusCode.OK)
             {
-                return result.Data;
+                return JsonConvert.DeserializeObject<ConfigurationFile>(result.Content);
             }
 
             return null;

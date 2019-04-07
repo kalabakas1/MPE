@@ -171,6 +171,7 @@
     <None Include="Configuration\Scripts\LastExecutedScheduledTask.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Configuration\Scripts\Restart-App-Pool.ps1" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
