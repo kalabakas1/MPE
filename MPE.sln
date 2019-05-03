@@ -16,6 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Professional", "Professiona
 		Documentation\DealingWithSlowDataproviders.md = Documentation\DealingWithSlowDataproviders.md
 		Documentation\DevelopersGuide.md = Documentation\DevelopersGuide.md
 		Documentation\Life as a developer.md = Documentation\Life as a developer.md
+		Documentation\PreperationForFestivals.md = Documentation\PreperationForFestivals.md
 		Documentation\SoftwareProjects.md = Documentation\SoftwareProjects.md
 		Documentation\Subject list.md = Documentation\Subject list.md
 		Documentation\TheSelfServicePortal.md = Documentation\TheSelfServicePortal.md

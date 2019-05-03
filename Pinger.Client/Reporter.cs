@@ -14,6 +14,9 @@ namespace Pinger.Client
 {
     public class Reporter
     {
+        private static Reporter _instance;
+        private static object _lock = new object();
+
         private static Timer _timer;
 
         private static FixedConcurrentQueue<Metric> _metricStore;
@@ -41,6 +44,22 @@ namespace Pinger.Client
                 Constants.Host);
         }
 
+        public static Reporter Instance
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new Reporter();
+                    }
+
+                    return _instance;
+                }
+            }
+        }
+
         private bool ValidateConfiguration()
         {
             return !string.IsNullOrEmpty(Constants.ApiKeyAppSettingName.GetSetting<string>())
@@ -54,6 +73,11 @@ namespace Pinger.Client
             {
                 _metricStore.Enqueue(metric);
             }
+        }
+
+        public bool IsStoreEmpty()
+        {
+            return _metricStore.IsEmpty;
         }
 
         private void FlushStore<T>(FixedConcurrentQueue<T> store)

@@ -12,3 +12,7 @@ else
 {
 	Restart-WebAppPool $pool
 }
+
+Invoke-WebRequest $pool
+
+Start-Sleep -Seconds
