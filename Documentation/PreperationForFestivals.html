@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link href="prism/prism.css" rel="stylesheet" />
+    <script src="prism/prism.js"></script>
+
+    <title>Preparation for festivals</title>
+
+    <style>
+        @media print {
+            .panel-heading, .panel-footer, pre {
+                background-color: #e6e6e6 !important;
+            }
+
+            pre>code {
+                 white-space: pre-line !important;
+            }
+            
+            pre {
+              page-break-inside: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container panel panel-default">
+        <div class="row panel-heading">
+            <div class="col-xs-12 col-md-12">
+                <h1>MPE</h1>
+            </div>
+        </div>
+        <div class="row panel-body">
+            <div class="col-xs-12 col-md-12">
+                <h1 id="preparation-for-festivals">Preparation for festivals</h1>
+<p>Spoiler alert, this is not a text regarding how much beer and how many bags of chips you should buy if you are going to a music festival. This is more a collection of observations and stories regarding the technical preparations that happends to make a musical festival a reality.</p>
+<h2 id="motivation">Motivation</h2>
+<p>So why do I write this? Actually, to be honest, at the current moment I have been drinking a bit too much coffee (provided by my project manager - self rosted), and I can't really sleep. Byt it have been something I really have been wanting to write. I think that some of these small exeperiences can be used in the future to avoid having to refactore, and perhaps avoid having to work odd hours to make your deadlines. Along with that I belive that it's a important aspect of the live of a developer to actually be allowed to write his perspective of a situation.</p>
+<h2 id="setting-the-stage">Setting the stage</h2>
+<p>I have been doing a bit of different software development that range from small to rather large projects. All exposed by some sort of web based frontend that. But every year at summer time my professional time have always ended up being used on preparing and perfecting systems for festivals.</p>
+<p>There are a lot of different aspects in that venue of softwaresystems. The ones I had to support were rather limited and included:</p>
+<ul>
+<li>Volunteer data management system</li>
+<li>Guest and performer data registry</li>
+<li>Support platform exposing all possible data that could be used to solve problems.</li>
+<li>Distribution of electronic products to volunteers, guests and performers</li>
+<li>Integration to physical gates</li>
+<li>Internal monitoring of data providers state of service and performance</li>
+<li>Automated beverage system integration</li>
+</ul>
+<p>So to make things clear, my role was not big, the systems were'nt large like Amazone and Google - but they needed to be online and responding 24/7.</p>
+<h2 id="getting-the-ducks-in-a-row">Getting the ducks in a row</h2>
+<p>As I stated I am actually only employeed as any other developer, and that suits me pretty well. But one of my downsides are that I can take any role that is needed to make the process work. This were sort of needed this year. The reason were that the company I worked for had added a lot of new people to the team I were a part of, both projectmanagers and developers. The issue lie in the responsibilities of the new projectmanager that were added to the project. He had'nt experienced the flow of a season with the festivals, and at that time were already overworked with other customers.</p>
+<p>So someone with the experience had to partly be the projectmanager - and surprise, the only one that could do that were me. But I did'nt know anything about projectmanagement besides my common sense.</p>
+<p>But common sense tends to be enough most of the time. So what I did was to make a plan, like any other bank-robber. Find out the different deliveries from the different data providers, make the timeline and make sure that people stick with it - and make sure that you know who those people are. Make a contact table containing all the needed data so you know who the players are.</p>
+<p>By doing that I now had a perfect idea of how and when the systems were ready for production. Who delivers the next thing to act on, and who should we contact if the deadline were passed.</p>
+<p>Along with that, strict meetings made sure that all were on the same page. So in the case you had multiple providers of different services that might interact, make sure to have regular meetings with all of them at once. Make it possible to share issues and broken deadlines before it is to late. Make sure the right people talk together.</p>
+<p><strong>Advice:</strong> Make a plan, stick to it, and request statuses at broken deadlines, and make sure that you communicate that it is all for the greater good.</p>
+<h2 id="distribution-tool-reworked">Distribution tool reworked</h2>
+<p><strong>Advice:</strong> Communicate REST through a standard format e.g. Swagger.</p>
+<h2 id="support-tool-reworked">Support tool reworked</h2>
+<p>One of the central tools at the festival were the supporting platform. It were the one way into all data needed to solve any situation that a guest could have. And the questions were vivid:</p>
+<ul>
+<li>I have payed my subscription but checkin says otherwise, why?</li>
+<li>I have bouhght a wristband/ticket from a random dude at the corner - but checkin says it is invalid?</li>
+<li>I havn't got all my vouchers distributed to my wristband, as I were promised?</li>
+<li>All my money is gone, were are they?</li>
+</ul>
+<p>And these were just some of the random questions drunk festival guests can come up with.</p>
+<p>The main goal for this tool were to give the support staf a one way visualization of the data so they could give the guest a proper answer or at least create a case for second level support.</p>
+<h3 id="first-issue-external-providers">First issue - external providers</h3>
+<p>The main issue with this tool were the response time. A search for a guest could take 20 seconds or minutes before the response were rendered. It were a test of pation to use it - and when ever you had the list or results, when ever you selected a specific person, you had to wait again. It had to search three systems by calling REST endpoints before it could actually render the result. So see it as a centralized search &quot;engine&quot;. But this could not go on. So last year, me and another developer, sat down and analyzed the support tool to get some sort of idea of the &quot;root&quot;-cause. By throwing some tools at the problem we found out that one of the external data providers had a very long response time before we actually got the result. At the time, the data provider could not implement some sort of indexing strategy, because this were during the execution of the event - but we actually found the culprit. Well... one of them.</p>
+<p><strong>Advice:</strong> Never trust external dependencies. Always debug by looking at the outer-most layer of the application. Not likely to be the kernal that is faulty every time.</p>
+<h3 id="second-issue-flow-of-execution">Second issue - flow of execution</h3>
+<p>But it didn't stop there. A year later I found some time to actually look at the way the code were structured and what happend internally in the support tool. The search logic were pretty straight forward.</p>
+<ol>
+<li>if volunteer data provider is selected, search in that system and wait for response</li>
+<li>if guest data provider is selected, search in that system and wait for resonse</li>
+<li>if visitors provider is selected, search in that system and wait for response.</li>
+<li>When all results have been recieved, merge them, and render it in the frontend.</li>
+</ol>
+<p>Fair enough, it's pretty straight forward how to speed this up. Lets just make it run in parallel. Start each of the searches and wait on all of them to finish. The total time spent is equal the slowes search endpoint. A valid way to &quot;quick&quot;-fix the problem.</p>
+<p>But there is a catch. All the integrations depend on the HTTP context that contains data needed to send to the providers. Some specific session variables value needed to be added to the requests. So not that easy to wrap the search functions in threads, because the lowest layer of code depended on the HTTP context - not cool.</p>
+<p><strong>Advice:</strong> Don't make integrations components dependt on the web context</p>
+<p><strong>Advice:</strong> Asyc is sometimes the way to go to make work done multiple places at once.</p>
+<p>A bit of work fixed this issue and we were up and running with a new flow of execution that actually gave a big bit of performance. But lets go deeper...</p>
+<h3 id="third-issue-ddosing-yourself">Third issue - DDOSing yourself</h3>
+<p>So now the flow were more or less optimized to a better state. But something were still killing the API's. Every time a search were performed, it seemed like one aditional request per result-item were executed against the data providers API.</p>
+<p>So if the search result were containing 50 items, to render the result the API recieved 51 requests.</p>
+<p>By the way, there were ten computers running this support tool all the time. So if every computer performing a search at the same time, the API should handle 510 requests. And these people were constantly working with the system.</p>
+<p>By hooking up the cool Prefix we got an insight into what were actually happening at the execution of a search. To my surprise the results received from one of the providers iterated all of the results and called a method to get the UID of the wristband the person had been assigned. One issue, this method executed a REST request against the API, and it were taking forever. So what to do? Well why not just request all the data at once instead of seperate call for each item? That sort of fixed the problem. Expose API endpoint taking a list of IDs, instead of just one.</p>
+<p>The initial issue were actually recorded on a graph representing the amount of API calls per minut. After the fix, compared with before, you could'nt see any sort of activity comming from the support tool. Small things, little time spent, a hurge difference.</p>
+<p>Total response time for a search came down to max three seconds from at least ten.</p>
+<p><strong>Advice:</strong> It might be clear, but dont DDOS your own applications.</p>
+<p><strong>Advice:</strong> Don't call REST in a loop if you can avoid it - limit total calls if possible.</p>
+<h2 id="monitor-monitor-monitor">Monitor, monitor, monitor</h2>
+<p><strong>Advice:</strong> Don't trust the users of your own API's - they may break you entire platform if not controlled.</p>
+<p><strong>Advice:</strong> Know your organizations importent performance/satisfactory indicators, and monitor them.</p>
+<p><strong>Advice:</strong> Communicate when stuff breaks, and stick with it.</p>
+<p><strong>Advice:</strong> Don't get alerted unless the world can't fix itself</p>
+<h2 id="onboarding-is-a-bitch">Onboarding is a bitch</h2>
+<p>I were once told that if a software system passed the age of five in production it would be considered as being old. So at this moment we have concluded that these systemes should be considered as being old. I guess they have six years experience in production, and have been an idea two years prior of production.</p>
+<p>The system started as a proff of concept to make a working example of a CMS running with MVC as a frontend. It seem to be a pretty straight forward project, the issue is that it have never been cleaned up, undergone code-review, have no unit-tests, and documentation of code or processes are non-existing. It have spanded 30 solutions containing three coding projects in each, integrated over time into one solution - so when everything builds it should work.</p>
+<p>How would you ever sell that in a job proposal?</p>
+<blockquote>
+<p>Open position for developer formerly educated as detective, working best knowing that when ever you fix an issue, you might have introduced three others - you just don't know where.</p>
+</blockquote>
+<p>As meantioned before the team I were a part of had just hirred a lot of new developers, so it would be easy to just tell them to work on that/those project(s). Right? I have not yet solved this issue. But I think I got a list of different things I think would be important for the developer to have:</p>
+<ul>
+<li>Curiousity:
+<ul>
+<li>for understanding how things work</li>
+<li>for understanding how the festivals work, and what drives volunteers</li>
+</ul>
+</li>
+<li>Working independently and are selfdriven</li>
+<li>Have a high level of professionalism</li>
+<li>Service minded</li>
+<li>Cares for his/hers privatelife</li>
+</ul>
+<p>We might have that person on the team, but how would you onboard him onto the project? Would you give him a introduction to the overall system first, and then a more deep introduction to the central sub-systems? Whould you start giving him small bug-fix cases so he get a feel of different parts of the system?</p>
+<p>But by asking these questions I think I know what to do first. The main thing the new guy should be introduced to is the central workings of a festival. He have to be introduced to an actual physical festival. He need to see what the systems we support actually do, and what value they give our customers. He have to know what happens when a system goes down. He need to see what the physical implications are if the checkin sub-system goes offline - how the lines of people just gets longer, how people gets more irritated.</p>
+<p>This will first scare him, but we need to show what it is all about. It is about people and value, which both are scary to deal with. It is important to give him an impression of how important his job actually are to a lot of people once every year to the annual music festival. A few days were your software systems need to run without issues.</p>
+<p>By giving him this insight, without looking at code, you can see if he is the person. If he is the developer who get scared at a stressfull time, or he will help make the problems go away with all in his power. It is important to show him the goal, and the people that we effect with our work - even though it is not even close to rocket-science.</p>
+<p>If it seems like he is the latter developer, he can learn any programming language needed without a problem, just because he knows the overall goal.</p>
+<p><strong>Advice:</strong> Make sure people knows the goal, have an idea of the effect of the systems, knows what happens if things does'nt work 100%.</p>
+<h1 id="conclusion">Conclusion</h1>
+
+            </div>
+        </div>
+        <div class="row panel-footer">
+        </div>
+    </div>
+</body>
+</html>

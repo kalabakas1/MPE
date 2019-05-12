@@ -37,6 +37,8 @@ namespace Pinger.Client.Persistance
             request.AddParameter("application/json", JsonConvert.SerializeObject(metrics), ParameterType.RequestBody);
 
             var response = _client.Execute(request);
+
+            Console.WriteLine($"Persistance response: " +response.StatusCode);
         }
     }
 }
