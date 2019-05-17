@@ -41,6 +41,8 @@ namespace MPE.Pinger.Repositories
                 LoggerFactory.Instance.Debug(response.ErrorMessage);
                 throw new Exception(response.ErrorMessage);
             }
+
+
         }
 
         public void Write(T result)

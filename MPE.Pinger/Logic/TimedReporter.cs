@@ -68,7 +68,14 @@ namespace MPE.Pinger.Logic
                     run = false;
                 }
 
+                for (int i = 0; i < metrics.Count; i++)
+                {
+                    metrics[i] = default(T);
+                }
+
                 metrics = new List<T>();
+
+                GC.Collect();
 
                 count = 0;
             }
