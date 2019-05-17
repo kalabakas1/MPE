@@ -48,6 +48,8 @@ namespace MPE.Pinger.Logic.Listeners
                         var result = ConvertToResult(eventArgs.Entry);
                         _tmpRepository.Write(result);
                     }
+
+                    eventArgs.Entry.Dispose();
                 };
 
                 _eventLogs.Add(eventLog);
