@@ -1,21 +1,21 @@
 ﻿{
   "Logging.MinimumLevel": "Debug",
-  "Logging.File.MinimumLevel" :"Warning",
+  "Logging.File.MinimumLevel": "Warning",
   "Logging.Console.MinimumLevel": "Verbose",
-	
+
   "Logging.Elastic.MinimumLevel": "Debug",
   "Logging.Elastic.Url": "http://localhost:9200",
   "Logging.Elastic.IndexFormat": "customername_log_{0:yyyy.MM}",
-	
+
   "Logging.Slack.MinimumLevel": "Error",
   "Logging.Slack.Url": "",
-	
+
   "Logging.Sentry.Dsn": "",
-	
+
   "Logging.CoolSms.Key": "",
   "Logging.CoolSms.FromName": "",
   "Logging.CoolSms.Phonenumbers": "",
-	
+
   "MPE.Pinger.Configuration.Path": "./Configuration/connections.json",
   "MPE.Pinger.Fail1.Pause.Secs": "5",
   "MPE.Pinger.Fail2.Pause.Secs": "10",
@@ -25,8 +25,14 @@
   "MPE.Pinger.Metric.Inteval.Sec": "10",
   "MPE.Pinger.TimeSpan.From": "00:01",
   "MPE.Pinger.TimeSpan.To": "23:59",
+
+  "MPE.Pinger.Client.Host": "MpeLocal",
+  "MPE.Pinger.Client.ApiKey": "7dcb7c7a-8d9f-4b56-9ce0-52fa40085b35",
+  "MPE.Pinger.RestEndpoint":  "http://localhost:8080",   
+
   "MPE.Pinger.ApiKeys.Path": "./Configuration/keys.txt",
   "MPE.Pinger.Server.Host": "localhost",
   "MPE.Pinger.Server.Port": "8080",
-  "MPE.Pinger.RetentionInDays": "5"
+  "MPE.Pinger.RetentionInDays": "5",
+  "MPE.Pinger.ConfigurationFolder": "./Configuration/Configs/"
 }

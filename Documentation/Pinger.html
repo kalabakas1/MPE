@@ -386,15 +386,13 @@ So this is the more business aspect of the project. This is now possible to defi
     private static Reporter _instance;
     private static object _lock = new object();
     private static Timer _timer;
-    private static FixedConcurrentQueue&lt;Metric&gt; _metricStore;
-    private static FixedConcurrentQueue&lt;LogEvent&gt; _logEventStore;
-    private static RestService _restService;
+    private static FixedConcurrentQueue&lt;Metric&gt; _store;
+    private static MetricRestService _metricRestService;
     private static List&lt;string&gt; _ignoreEnvironments;
 
     private const string TimerIntevalSecAppSettingsName = &quot;Pinger.Client.TimerIntevalSec&quot;;
     private const string MaxLocalItemsAppSettingsName = &quot;Pinger.Client.MaxLocalItems&quot;;
     private const string IgnoreEnvironmentAppSettingsName = &quot;Pinger.Client.IgnoreEnvironmentsCsv&quot;;
-    private const string ProjectAppSettingName = &quot;Pinger.Project&quot;;
     private const string HostAppSettingsName = &quot;Pinger.Host&quot;;
     private const string ApiKeyAppSettingsName = &quot;Pinger.Key&quot;;
 
@@ -420,32 +418,25 @@ So this is the more business aspect of the project. This is now possible to defi
 
     private Reporter()
     {
-        var storeMax = GetAppSettingOrDefault(MaxLocalItemsAppSettingsName, DefaultMaxLocalItems);
-        _metricStore = new FixedConcurrentQueue&lt;Metric&gt;(storeMax);
-        _logEventStore = new FixedConcurrentQueue&lt;LogEvent&gt;(storeMax);
+        _store = new FixedConcurrentQueue&lt;Metric&gt;(GetAppSettingOrDefault(MaxLocalItemsAppSettingsName, DefaultMaxLocalItems));
 
         _timer = new Timer(GetAppSettingOrDefault(TimerIntevalSecAppSettingsName, DefaultTimerIntevalSec) * 1000);
-        _timer.Elapsed += (sender, args) =&gt;
-        {
-            FlushStore(_metricStore);
-            FlushStore(_logEventStore);
-                _timer.Start();
-        };
+        _timer.Elapsed += (sender, args) =&gt; FlushStore();
         _timer.AutoReset = false;
         _timer.Start();
 
-        _restService = new RestService(
+        _metricRestService = new MetricRestService(
             ConfigurationManager.AppSettings[ApiKeyAppSettingsName],
             ConfigurationManager.AppSettings[HostAppSettingsName]);
 
         _ignoreEnvironments = GetAppSettingOrDefault(IgnoreEnvironmentAppSettingsName, string.Empty).Split(',').ToList();
     }
 
-    public void EnqueueMetric(long elapsed, string prefix, string endpoint, string responseCode)
+    public void Enqueue(long elapsed, string prefix, string endpoint, string responseCode)
     {
         var environment = CalculateEnvironment();
 
-        if (_ignoreEnvironments?.Contains(environment) ?? false)
+        if (_ignoreEnvironments.Contains(environment))
         {
             return;
         }
@@ -460,36 +451,18 @@ So this is the more business aspect of the project. This is now possible to defi
         {
             Timestamp = DateTime.Now,
             Value = elapsed,
-            Path = $&quot;{GetAppSettingOrDefault(ProjectAppSettingName, &quot;FooBar&quot;)}.{RemoveSpecialCharacters(environment)}.Response.{itemName}&quot;,
+            Path = $&quot;FooBar.{RemoveSpecialCharacters(environment)}.Response.{itemName}&quot;,
             Alias = itemName,
             Message = responseCode
         };
 
-        _metricStore.Enqueue(metric);
+        _store.Enqueue(metric);
     }
 
-    public void EnqueueLogEvent(string type, string message)
-    {
-        var environment = CalculateEnvironment();
-            
-        var logEvent = new LogEvent
-        {
-            Type = type,
-            Path = $&quot;{GetAppSettingOrDefault(ProjectAppSettingName, &quot;FooBar&quot;)}.{RemoveSpecialCharacters(environment)}.Log&quot;,
-            Message = message,
-            Timestamp = DateTime.Now,
-            Machine = Environment.MachineName,
-            Source = Process.GetCurrentProcess().ProcessName,
-            Username = Environment.UserName
-        };
-
-        _logEventStore.Enqueue(logEvent);
-    }
-
-    private void FlushStore&lt;T&gt;(FixedConcurrentQueue&lt;T&gt; store)
+    private void FlushStore()
     {
         var run = true;
-        var records = new List&lt;T&gt;();
+        var metrics = new List&lt;Metric&gt;();
 
         var count = 0;
         while (run)
@@ -498,13 +471,10 @@ So this is the more business aspect of the project. This is now possible to defi
             {
                 try
                 {
-                    T item;
-                    if (store.TryDequeue(out item))
+                    Metric item;
+                    if (_store.TryDequeue(out item))
                     {
-                        records.Add(item);
-                    }else if (store.Count == 0)
-                    {
-                        run = false;
+                        metrics.Add(item);
                     }
                 }
                 catch
@@ -516,25 +486,20 @@ So this is the more business aspect of the project. This is now possible to defi
 
             try
             {
-                if (records.Any())
-                {
-                    _restService.Persist(records);
-                }
-                else
-                {
-                    run = false;
-                }
+                _metricRestService.Persist(metrics);
             }
             catch
             {
-                records.ForEach(store.Enqueue);
+                metrics.ForEach(x =&gt; _store.Enqueue(x));
                 run = false;
             }
 
-            records = new List&lt;T&gt;();
+            metrics = new List&lt;Metric&gt;();
 
             count = 0;
         }
+
+        _timer.Start();
     }
 
     private static string CalculateEnvironment()
@@ -569,18 +534,18 @@ So this is the more business aspect of the project. This is now possible to defi
         return result;
     }
 
-    public static string RemoveSpecialCharacters(string str)
+    private static string RemoveSpecialCharacters(string str)
     {
         return Regex.Replace(str, &quot;[^a-zA-Z0-9_.]+&quot;, &quot;&quot;, RegexOptions.Compiled);
     }
 
-    private class RestService
+    private class MetricRestService
     {
         private string _apiKey;
         private string _host;
 
         private RestClient _client;
-        public RestService(
+        public MetricRestService(
             string apiKey,
             string host)
         {
@@ -590,11 +555,9 @@ So this is the more business aspect of the project. This is now possible to defi
             _client = new RestClient($&quot;{_host}&quot;);
         }
 
-        public void Persist&lt;T&gt;(List&lt;T&gt; metrics)
+        public void Persist(List&lt;Metric&gt; metrics)
         {
-            var endpoint = typeof(T).GetAttribute&lt;DescriptionAttribute&gt;().Description;
-
-            var request = new RestRequest($&quot;/api/{endpoint}&quot;);
+            var request = new RestRequest(&quot;/api/MetricResult&quot;);
             request.Method = Method.POST;
             request.AddHeader(&quot;Authorization&quot;, _apiKey);
             request.Timeout = 2000;
@@ -625,7 +588,6 @@ So this is the more business aspect of the project. This is now possible to defi
         }
     }
 
-    [Description(&quot;MetricResult&quot;)]
     private class Metric
     {
         [JsonProperty(&quot;Timestamp&quot;)]
@@ -639,28 +601,9 @@ So this is the more business aspect of the project. This is now possible to defi
         [JsonProperty(&quot;Message&quot;)]
         public string Message { get; set; }
     }
-
-    [Description(&quot;EventLogResult&quot;)]
-    private class LogEvent
-    {
-        [JsonProperty(&quot;Timestamp&quot;)]
-        public DateTime Timestamp { get; set; }
-        [JsonProperty(&quot;Path&quot;)]
-        public string Path { get; set; }
-        [JsonProperty(&quot;Type&quot;)]
-        public string Type { get; set; }
-        [JsonProperty(&quot;Source&quot;)]
-        public string Source { get; set; }
-        [JsonProperty(&quot;Message&quot;)]
-        public string Message { get; set; }
-        [JsonProperty(&quot;Machine&quot;)]
-        public string Machine { get; set; }
-        [JsonProperty(&quot;Username&quot;)]
-        public string Username { get; set; }
-    }
 }
 </code></pre>
-<h3 id="web-api-attributes">Web API attributes</h3>
+<h3 id="web-api-attribute">Web API attribute</h3>
 <p>Well the implementation above can be used to track all kind of different things. The real usage for me was to track the execution time for my API methods. By implementing this ActionFilterAttribute (i used some inspiration from a StackOverflow post that showed how to track the execution by a stopwatch) I ended up by being able to get the execution time for my API methods, by controller or on specific action methods.</p>
 <pre><code class="language-csharp">public class StopwatchAttribute : ActionFilterAttribute
 {
@@ -687,16 +630,6 @@ So this is the more business aspect of the project. This is now possible to defi
                 actionExecutedContext.Request.RequestUri.LocalPath);
         }
         catch { }
-    }
-}
-
-public class ExceptionReportingAttribute : ExceptionFilterAttribute
-{
-    public override void OnException(HttpActionExecutedContext context)
-    {
-        Reporter.Instance.EnqueueLogEvent(&quot;Error&quot;, $&quot;URI: {context.Request.RequestUri}{Environment.NewLine}&quot; +
-                                                    $&quot;MESSAGE: {context.Exception.Message}{Environment.NewLine}&quot; +
-                                                    $&quot;STACKTRACE: {context.Exception.StackTrace}&quot;);
     }
 }
 </code></pre>

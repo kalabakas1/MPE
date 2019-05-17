@@ -2,7 +2,7 @@
 
 namespace MPE.Pinger.Models.Configurations
 {
-    internal class Connection
+    public class Connection
     {
         [JsonProperty("Alias")]
         public string Alias { get; set; }

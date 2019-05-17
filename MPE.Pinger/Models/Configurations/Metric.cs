@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace MPE.Pinger.Models.Configurations
 {
-    internal class Metric
+    public class Metric
     {
         public Metric()
         {

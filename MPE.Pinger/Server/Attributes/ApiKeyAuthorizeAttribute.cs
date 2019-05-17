@@ -12,8 +12,6 @@ namespace MPE.Pinger.Server.Attributes
 {
     internal class ApiKeyAuthorizeAttribute : AuthorizeAttribute
     {
-        private const string AuthenticationHeaderName = "Authorization";
-
         private ApiKeyRepository _apiKeyRepository;
 
         public ApiKeyAuthorizeAttribute()
@@ -23,9 +21,9 @@ namespace MPE.Pinger.Server.Attributes
 
         public override void OnAuthorization(HttpActionContext actionContext)
         {
-            if (actionContext.Request.Headers.Contains(AuthenticationHeaderName))
+            if (actionContext.Request.Headers.Contains(Constants.AuthenticationHeaderName))
             {
-                var maybeApiKey = actionContext.Request.Headers.GetValues(AuthenticationHeaderName).ToList();
+                var maybeApiKey = actionContext.Request.Headers.GetValues(Constants.AuthenticationHeaderName).ToList();
                 if (maybeApiKey.Count() != 1)
                 {
                     actionContext.Response =

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace MPE.Pinger.Models.Configurations
 {
-    internal class ConfigurationFile
+    public class ConfigurationFile
     {
         [JsonProperty("Host")]
         public string Host { get; set; }

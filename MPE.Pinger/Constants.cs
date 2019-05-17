@@ -16,9 +16,15 @@ namespace MPE.Pinger
         public const string TestEnableFromTime = "MPE.Pinger.TimeSpan.From";
         public const string TestEnableToTime = "MPE.Pinger.TimeSpan.To";
         public const string ApiKeysPath = "MPE.Pinger.ApiKeys.Path";
+        public const string ConfigurationFolder = "MPE.Pinger.ConfigurationFolder";
         public const string ServerPort = "MPE.Pinger.Server.Port";
         public const string ServerHost = "MPE.Pinger.Server.Host";
         public const string RetentionInDays = "MPE.Pinger.RetentionInDays";
         public const string SlackToken = "MPE.Pinger.SlackToken";
+        public const string ClientHost = "MPE.Pinger.Client.Host";
+        public const string ClientApiKey = "MPE.Pinger.Client.ApiKey";
+        public const string RestEndpoint = "MPE.Pinger.RestEndpoint";
+
+        public const string AuthenticationHeaderName = "Authorization";
     }
 }

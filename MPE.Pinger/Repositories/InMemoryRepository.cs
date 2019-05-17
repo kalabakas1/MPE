@@ -9,7 +9,7 @@ namespace MPE.Pinger.Repositories
 {
     internal class InMemoryRepository<T> : IRepository<T>
     {
-        private static ConcurrentQueue<T> _dataStore = new ConcurrentQueue<T>();
+        private ConcurrentQueue<T> _dataStore = new ConcurrentQueue<T>();
 
         public void Write(List<T> results)
         {

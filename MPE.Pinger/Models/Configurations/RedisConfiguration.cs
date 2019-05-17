@@ -2,7 +2,7 @@
 
 namespace MPE.Pinger.Models.Configurations
 {
-    internal class RedisConfiguration
+    public class RedisConfiguration
     {
         [JsonProperty("Host")]
         public string Host { get; set; }
