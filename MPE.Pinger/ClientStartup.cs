@@ -16,7 +16,6 @@ namespace MPE.Pinger
         private readonly TimedMetricExecutor _metricCollector;
         private readonly TimedReporter<MetricResult> _metricTimedReporter;
 
-        private readonly TimedReporter<EventLogResult> _eventLogTimedReporter;
         private readonly EventLogListener _eventLogListener;
 
         public ClientStartup()
@@ -49,12 +48,8 @@ namespace MPE.Pinger
             var restMetricRepository = new RestRepository<MetricResult>();
             _metricTimedReporter = new TimedReporter<MetricResult>(metricMemoryRepository, restMetricRepository);
 
-            var eventMemoryRepository = new InMemoryRepository<EventLogResult>();
-            _eventLogListener = new EventLogListener(eventMemoryRepository);
+            _eventLogListener = new EventLogListener(metricMemoryRepository);
             _eventLogListener.Init();
-            
-            var restEventLogRepository = new RestRepository<EventLogResult>();
-            _eventLogTimedReporter = new TimedReporter<EventLogResult>(eventMemoryRepository, restEventLogRepository);
         }
 
         public void Start()
@@ -62,7 +57,6 @@ namespace MPE.Pinger
             _metricCollector.Start();
             _testExecutor.Start();
             _metricTimedReporter.Start();
-            _eventLogTimedReporter.Start();
         }
 
         public void Stop()
@@ -70,7 +64,6 @@ namespace MPE.Pinger
             _metricCollector.Stop();
             _testExecutor.Stop();
             _metricTimedReporter.Stop();
-            _eventLogTimedReporter.Stop();
         }
     }
 }

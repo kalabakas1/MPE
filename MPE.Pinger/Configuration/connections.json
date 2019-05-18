@@ -80,13 +80,13 @@
     //  "Instance": "__Total__"
     //}
   ],
-  //"EventLogging": {
-  //  "MinimumLevel": "Information",
-  //  "Categories": [
-  //    "Application",
-  //    "System"
-  //  ]
-  //},
+  "EventLogging": {
+    "MinimumLevel": "Information",
+    "Categories": [
+      "Application",
+      "System"
+    ]
+  },
   "Connections": [
     //{
     //  "Alias": "RabbitMQ-Connect",
