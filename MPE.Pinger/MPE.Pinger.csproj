@@ -95,7 +95,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Helpers\Configuration.cs" />
+    <Compile Include="Helpers\ConfigurationService.cs" />
     <Compile Include="Helpers\JsonObjectHelper.cs" />
     <Compile Include="Helpers\MetricResultHelper.cs" />
     <Compile Include="Interfaces\ICollector.cs" />

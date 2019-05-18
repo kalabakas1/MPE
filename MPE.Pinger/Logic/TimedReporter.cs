@@ -29,7 +29,7 @@ namespace MPE.Pinger.Logic
             _tempRepository = tempRepository;
             _persitanceRepository = persitanceRepository;
             _type = typeof(T).Name;
-            _timer = new Timer(Configuration.Get<int>(Constants.ReportIntevalSec) * 1000);
+            _timer = new Timer(ConfigurationService.Instance.Get<int>(Constants.ReportIntevalSec) * 1000);
             _timer.Elapsed += (sender, args) => ReportMetrics();
             _timer.AutoReset = false;
         }

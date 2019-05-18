@@ -13,21 +13,45 @@ using Newtonsoft.Json;
 
 namespace MPE.Pinger.Helpers
 {
-    internal class Configuration
+    internal class ConfigurationService
     {
         private const int DefaultUpdateInMinutes = 10;
 
-        private static ConfigurationFile _configuration;
+        private ConfigurationFile _configuration;
         private static readonly object _lock = new object();
-        private static DateTime _nextUpdate = DateTime.MinValue;
+        private DateTime _nextUpdate = DateTime.MinValue;
 
-        public static T Get<T>(string key)
+        private static ConfigurationService _instance;
+
+        private SettingsRepository _settingsRepository;
+
+        private ConfigurationService(SettingsRepository settingsRepository)
         {
-            var appSettingRepository = new SettingsRepository();
-            return appSettingRepository.Get<T>(key);
+            _settingsRepository = settingsRepository;
         }
 
-        public static ConfigurationFile ReadConfigurationFile()
+        public static ConfigurationService Instance
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new ConfigurationService(new SettingsRepository());
+                    }
+                }
+
+                return _instance;
+            }
+        }
+
+        public T Get<T>(string key)
+        {
+            return _settingsRepository.Get<T>(key);
+        }
+
+        public ConfigurationFile ReadConfigurationFile()
         {
             lock (_lock)
             {

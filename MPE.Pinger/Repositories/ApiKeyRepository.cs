@@ -18,7 +18,7 @@ namespace MPE.Pinger.Repositories
             {
                 if (_apiKeys == null)
                 {
-                    var apiKeyPath = Configuration.Get<string>(Constants.ApiKeysPath);
+                    var apiKeyPath = ConfigurationService.Instance.Get<string>(Constants.ApiKeysPath);
                     var keys = ReadKeys(apiKeyPath);
                     _apiKeys = new HashSet<string>(keys);
                 }

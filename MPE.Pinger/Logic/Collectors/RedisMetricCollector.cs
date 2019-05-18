@@ -21,7 +21,7 @@ namespace MPE.Pinger.Logic.Collectors
 
         public RedisMetricCollector()
         {
-            _configurationFile = Configuration.ReadConfigurationFile();
+            _configurationFile = ConfigurationService.Instance.ReadConfigurationFile();
         }
 
         public List<MetricResult> Collect()

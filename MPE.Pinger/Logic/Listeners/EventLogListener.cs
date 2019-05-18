@@ -22,7 +22,7 @@ namespace MPE.Pinger.Logic.Listeners
             IRepository<EventLogResult> tmpRepository)
         {
             _tmpRepository = tmpRepository;
-            _configurationFile = Configuration.ReadConfigurationFile();
+            _configurationFile = ConfigurationService.Instance.ReadConfigurationFile();
 
             _eventLogs = new List<EventLog>();
         }

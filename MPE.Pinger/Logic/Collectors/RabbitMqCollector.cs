@@ -23,7 +23,7 @@ namespace MPE.Pinger.Logic.Collectors
         private bool _isEnabled;
         public RabbitMqCollector()
         {
-            _configurationFile = Configuration.ReadConfigurationFile();
+            _configurationFile = ConfigurationService.Instance.ReadConfigurationFile();
             _isEnabled = _configurationFile.RabbitMq != null
                          && (_configurationFile.RabbitMq.Fields?.Any() ?? false);
         }

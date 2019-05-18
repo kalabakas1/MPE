@@ -32,7 +32,7 @@ namespace MPE.Pinger.Logic.Collectors
                 return;
             }
 
-            _configurationFile = Configuration.ReadConfigurationFile();
+            _configurationFile = ConfigurationService.Instance.ReadConfigurationFile();
 
             foreach (var metric in _configurationFile.Metrics)
             {

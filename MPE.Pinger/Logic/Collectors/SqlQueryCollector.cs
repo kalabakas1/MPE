@@ -28,7 +28,7 @@ namespace MPE.Pinger.Logic.Collectors
             IRepository<MetricResult> repository)
         {
             _repository = repository;
-            _configurationFile = Configuration.ReadConfigurationFile();
+            _configurationFile = ConfigurationService.Instance.ReadConfigurationFile();
             _isEnabled = _configurationFile.SqlConfiguration != null
                          && (_configurationFile.SqlConfiguration.SqlQueries?.Any() ?? false)
                          && (_configurationFile.SqlConfiguration.ConnectionStrings?.Any() ?? false);

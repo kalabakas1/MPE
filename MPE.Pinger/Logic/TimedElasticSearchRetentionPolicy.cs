@@ -18,7 +18,7 @@ namespace MPE.Pinger.Logic
         public TimedElasticSearchRetentionPolicy()
         {
             _elasticRestRepository = new ElasticRestRepository<T>(new InMemoryRepository<T>());
-            _retentionInDays = Configuration.Get<int>(Constants.RetentionInDays);
+            _retentionInDays = ConfigurationService.Instance.Get<int>(Constants.RetentionInDays);
             _timer = new Timer(60 * 60 * 1000);
             _timer.Elapsed += (sender, args) =>
                 _elasticRestRepository.DeleteIndex(DateTime.Now.AddDays(_retentionInDays * -1));

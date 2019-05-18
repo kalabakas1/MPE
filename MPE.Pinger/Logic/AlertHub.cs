@@ -10,8 +10,8 @@ namespace MPE.Pinger.Logic
 {
     public class AlertHub
     {
-        private static object _lock = new object();
-        private static HashSet<string> _alerts;
+        private object _lock = new object();
+        private HashSet<string> _alerts;
         public AlertHub()
         {
             lock (_lock)

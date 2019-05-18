@@ -18,7 +18,7 @@ namespace MPE.Pinger.Logic.Collectors
         private bool _isEnabled;
         public ElasticSearchCollector()
         {
-            _configurationFile = Configuration.ReadConfigurationFile();
+            _configurationFile = ConfigurationService.Instance.ReadConfigurationFile();
             _isEnabled = _configurationFile.ElasticSearch != null &&
                          (_configurationFile.ElasticSearch.Fields?.Any() ?? false);
         }

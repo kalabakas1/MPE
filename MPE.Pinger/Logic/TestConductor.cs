@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MPE.Logging;
+using MPE.Pinger.Helpers;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
 using MPE.Pinger.Models.Results;
@@ -13,7 +14,6 @@ using Newtonsoft.Json;
 using Polly;
 using Polly.Retry;
 using Serilog;
-using Configuration = MPE.Pinger.Helpers.Configuration;
 
 namespace MPE.Pinger.Logic
 {
@@ -52,7 +52,7 @@ namespace MPE.Pinger.Logic
 
             var results = new List<MetricResult>();
 
-            var configuration = Configuration.ReadConfigurationFile();
+            var configuration = ConfigurationService.Instance.ReadConfigurationFile();
             foreach (var connection in configuration.Connections)
             {
                 var task = Task<MetricResult>.Factory.StartNew(() =>
@@ -131,7 +131,7 @@ namespace MPE.Pinger.Logic
 
         private int GetFailWaitInSec(int failNumber)
         {
-            return int.Parse(Configuration.Get<string>(string.Format(Constants.FailedPauseTemplate, failNumber)));
+            return int.Parse(ConfigurationService.Instance.Get<string>(string.Format(Constants.FailedPauseTemplate, failNumber)));
         }
     }
 }

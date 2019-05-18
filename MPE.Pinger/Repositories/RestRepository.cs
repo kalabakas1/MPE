@@ -19,7 +19,7 @@ namespace MPE.Pinger.Repositories
         private ConfigurationFile _configurationFile;
         public RestRepository()
         {
-            _configurationFile = Configuration.ReadConfigurationFile();
+            _configurationFile = ConfigurationService.Instance.ReadConfigurationFile();
         }
 
         public void Write(List<T> results)

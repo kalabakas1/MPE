@@ -48,7 +48,7 @@ namespace MPE.Pinger.Repositories
         private string GeneratePath(string host, string key)
         {
             var name = GenerateName(host, key);
-            var configurationFolder = Configuration.Get<string>(Constants.ConfigurationFolder);
+            var configurationFolder = ConfigurationService.Instance.Get<string>(Constants.ConfigurationFolder);
 
             var path = Path.Combine(configurationFolder, name);
 

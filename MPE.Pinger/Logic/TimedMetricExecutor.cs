@@ -24,7 +24,7 @@ namespace MPE.Pinger.Logic
         {
             _repository = repository;
             _collectors = collectors;
-            _timer = new Timer(Configuration.Get<int>(Constants.MetricIntevalSec) * 1000);
+            _timer = new Timer(ConfigurationService.Instance.Get<int>(Constants.MetricIntevalSec) * 1000);
 
             _timer.Elapsed += (sender, args) => Execute();
             _timer.AutoReset = false;

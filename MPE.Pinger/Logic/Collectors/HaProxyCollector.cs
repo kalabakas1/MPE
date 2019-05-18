@@ -22,7 +22,7 @@ namespace MPE.Pinger.Logic.Collectors
         private bool _isEnabled;
         public HaProxyCollector()
         {
-            _configurationFile = Configuration.ReadConfigurationFile();
+            _configurationFile = ConfigurationService.Instance.ReadConfigurationFile();
             _isEnabled = _configurationFile.HaProxy != null &&
                          !string.IsNullOrEmpty(_configurationFile.HaProxy.Endpoint) &&
                          !string.IsNullOrEmpty(_configurationFile.HaProxy.Username) &&

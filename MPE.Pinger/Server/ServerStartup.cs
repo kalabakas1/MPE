@@ -29,7 +29,7 @@ namespace MPE.Pinger.Server
 
         public ServerStartup()
         {
-            var config = new HttpSelfHostConfiguration($"http://{Configuration.Get<string>(Constants.ServerHost)}:{Configuration.Get<string>(Constants.ServerPort)}");
+            var config = new HttpSelfHostConfiguration($"http://{ConfigurationService.Instance.Get<string>(Constants.ServerHost)}:{ConfigurationService.Instance.Get<string>(Constants.ServerPort)}");
             config.Routes.MapHttpRoute(
                 "API Default", "api/{controller}/{id}",
                 new { id = RouteParameter.Optional });

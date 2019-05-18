@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using MPE.Pinger.Helpers;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
 using MPE.Pinger.Models.Results;
-using Configuration = MPE.Pinger.Helpers.Configuration;
 
 namespace MPE.Pinger.Logic
 {
@@ -30,15 +30,15 @@ namespace MPE.Pinger.Logic
             _repository = repository;
             _alertHub = alertHub;
             _healingExecutor = healingExecutor;
-            _timer = new Timer(Configuration.Get<int>(Constants.WaitBetweenTestsSec) * 1000);
+            _timer = new Timer(ConfigurationService.Instance.Get<int>(Constants.WaitBetweenTestsSec) * 1000);
             _timer.Elapsed += (sender, args) => Execute();
             _timer.AutoReset = false;
         }
 
         private void Execute()
         {
-            var fromTime = TimeSpan.Parse(Configuration.Get<string>(Constants.TestEnableFromTime));
-            var toTime = TimeSpan.Parse(Configuration.Get<string>(Constants.TestEnableToTime));
+            var fromTime = TimeSpan.Parse(ConfigurationService.Instance.Get<string>(Constants.TestEnableFromTime));
+            var toTime = TimeSpan.Parse(ConfigurationService.Instance.Get<string>(Constants.TestEnableToTime));
             var now = DateTime.Now.TimeOfDay;
             if (fromTime <= now && toTime >= now)
             {
