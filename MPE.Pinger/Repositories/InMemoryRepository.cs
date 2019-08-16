@@ -9,7 +9,7 @@ namespace MPE.Pinger.Repositories
 {
     internal class InMemoryRepository<T> : IRepository<T>
     {
-        private ConcurrentQueue<T> _dataStore = new ConcurrentQueue<T>();
+        private static ConcurrentQueue<T> _dataStore = new ConcurrentQueue<T>();
 
         public void Write(List<T> results)
         {
@@ -18,15 +18,15 @@ namespace MPE.Pinger.Repositories
                 return;
             }
 
-            foreach (var metricResult in results)
+            for (int i = 0; i < results.Count; i++)
             {
-                Write(metricResult);
+                Write(results[i]);
             }
         }
 
         public void Write(T result)
         {
-            if (result == null)
+            if (result == null) 
             {
                 return;
             }

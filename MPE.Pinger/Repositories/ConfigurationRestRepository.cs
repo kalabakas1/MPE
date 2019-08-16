@@ -20,6 +20,7 @@ namespace MPE.Pinger.Repositories
             request.AddQueryParameter("host", host);
             request.AddHeader(Constants.AuthenticationHeaderName, apiKey);
             request.Method = Method.GET;
+            request.Timeout = 5000;
 
             var result = restClient.Execute(request);
             if (result.StatusCode == HttpStatusCode.OK)
@@ -37,6 +38,7 @@ namespace MPE.Pinger.Repositories
             request.AddHeader(Constants.AuthenticationHeaderName, configuration.ApiKey);
             request.AddParameter("application/json", JsonConvert.SerializeObject(configuration), ParameterType.RequestBody);
             request.Method = Method.POST;
+            request.Timeout = 5000;
 
             var result = restClient.Execute(request);
         }

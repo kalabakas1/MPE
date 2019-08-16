@@ -133,9 +133,7 @@
     <Compile Include="Repositories\RestRepository.cs" />
     <Compile Include="Server\Attributes\ApiKeyAuthorizeAttribute.cs" />
     <Compile Include="Server\Controllers\ConfigurationController.cs" />
-    <Compile Include="Server\Controllers\EventLogResultController.cs" />
     <Compile Include="Server\Controllers\MetricResultController.cs" />
-    <Compile Include="Server\Controllers\RequestLogResultController.cs" />
     <Compile Include="Server\Controllers\StoryController.cs" />
     <Compile Include="Server\ServerStartup.cs" />
     <Compile Include="ClientStartup.cs" />

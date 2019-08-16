@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Logic;
 using MPE.Pinger.Logic.Collectors;

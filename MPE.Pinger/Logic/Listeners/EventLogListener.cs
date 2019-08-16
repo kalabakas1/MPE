@@ -5,6 +5,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MPE.Logging;
 using MPE.Pinger.Helpers;
 using MPE.Pinger.Interfaces;
 using MPE.Pinger.Models;
@@ -45,23 +46,32 @@ namespace MPE.Pinger.Logic.Listeners
                 var watcher = new EventLogWatcher(query);
                 watcher.EventRecordWritten += (sender, args) =>
                 {
-                    if (GetMinimumType(args.EventRecord.LevelDisplayName) <= type)
+                    try
                     {
-                        var result = new MetricResult
+                        if (args.EventRecord != null
+                            && GetMinimumType(args.EventRecord.LevelDisplayName) <= type)
                         {
-                            Path = $"{_configurationFile.Host}.Log",
-                            Timestamp = args.EventRecord.TimeCreated ?? DateTime.Now,
-                            Alias = $"Log.{args.EventRecord.LevelDisplayName}",
-                            Message = JsonConvert.SerializeObject(args.EventRecord)
-                        };
+                            var result = new MetricResult
+                            {
+                                Path = $"{_configurationFile.Host}.Log",
+                                Timestamp = args.EventRecord.TimeCreated ?? DateTime.Now,
+                                Alias = $"Log.{args.EventRecord.LevelDisplayName}",
+                                Message = JsonConvert.SerializeObject(args.EventRecord)
+                            };
 
-                        result.Data = new Dictionary<string, object>();
-                        result.AddData("Level", args.EventRecord.LevelDisplayName);
+                            result.Data = new Dictionary<string, object>();
+                            result.AddData("Level", args.EventRecord.LevelDisplayName);
 
-                        _tmpRepository.Write(result);
+                            _tmpRepository.Write(result);
+
+                            args.EventRecord.Dispose();
+                        }
                     }
-
-                    args.EventRecord.Dispose();
+                    catch (Exception e)
+                    {
+                        LoggerFactory.Instance.Debug(
+                            $"EventLogListener - {e.Message}");
+                    }
                 };
 
                 watcher.Enabled = true;

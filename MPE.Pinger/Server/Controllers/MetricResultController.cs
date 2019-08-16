@@ -23,7 +23,10 @@ namespace MPE.Pinger.Server.Controllers
         [ApiKeyAuthorize]
         public HttpResponseMessage Post(List<MetricResult> results)
         {
-            _tempRepository.Write(results);
+            if (results.Any())
+            {
+                _tempRepository.Write(results);
+            }
 
             return Request.CreateResponse(HttpStatusCode.OK);
         }

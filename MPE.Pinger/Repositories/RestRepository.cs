@@ -39,10 +39,8 @@ namespace MPE.Pinger.Repositories
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 LoggerFactory.Instance.Debug(response.ErrorMessage);
-                throw new Exception(response.ErrorMessage);
+                throw new Exception($"{response.ErrorMessage} {response.StatusCode} {response.Content}");
             }
-
-
         }
 
         public void Write(T result)

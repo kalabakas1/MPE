@@ -21,7 +21,7 @@
   "MPE.Pinger.Fail2.Pause.Secs": "10",
   "MPE.Pinger.Fail3.Pause.Secs": "30",
   "MPE.Pinger.WaitBetweenTest.Secs": "30",
-  "MPE.Pinger.Report.Inteval.Sec": "60",
+  "MPE.Pinger.Report.Inteval.Sec": "15",
   "MPE.Pinger.Metric.Inteval.Sec": "10",
   "MPE.Pinger.TimeSpan.From": "00:01",
   "MPE.Pinger.TimeSpan.To": "23:59",

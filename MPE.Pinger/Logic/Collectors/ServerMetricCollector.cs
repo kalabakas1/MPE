@@ -18,18 +18,45 @@ namespace MPE.Pinger.Logic.Collectors
         private readonly List<Metric> _counters;
         private ILogger _logger = new LoggerFactory().Generate();
         private ConfigurationFile _configurationFile;
-        private bool _isEnabled;
+        private DateTime _renew;
 
         public ServerMetricCollector()
         {
             _counters = new List<Metric>();
+            _renew = DateTime.MinValue;
         }
 
         private void InitCounters()
         {
-            if (_isEnabled)
+            if (_renew > DateTime.Now)
             {
                 return;
+            }
+
+            foreach (var counter in _counters)
+            {
+                if (counter?.Counters == null
+                    || !counter.Counters.Any())
+                {
+                    continue;
+                }
+
+                for(int i = 0; i < counter.Counters.Count;i++)
+                {
+                    var performanceCounter = counter.Counters[i];
+                    try
+                    {
+                        performanceCounter.Dispose();
+                        counter.Counters.Remove(performanceCounter);
+                        performanceCounter = null;
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+
+                counter.Counters.Clear();
             }
 
             _configurationFile = ConfigurationService.Instance.ReadConfigurationFile();
@@ -67,7 +94,7 @@ namespace MPE.Pinger.Logic.Collectors
                 }
             }
 
-            _isEnabled = true;
+            _renew = DateTime.Now.AddMinutes(5);
         }
 
         public List<MetricResult> Collect()

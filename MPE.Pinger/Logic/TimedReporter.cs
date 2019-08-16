@@ -15,7 +15,7 @@ namespace MPE.Pinger.Logic
 
     internal class TimedReporter<T> : IProcess
     {
-        private const int BulkSize = 256;
+        private const int BulkSize = 200;
         private bool IsRunning = false;
         private readonly IRepository<T> _tempRepository;
         private readonly IRepository<T> _persitanceRepository;
@@ -39,11 +39,11 @@ namespace MPE.Pinger.Logic
             LoggerFactory.Instance.Debug($"Reporting stating - {_type}...");
 
             var run = true;
-            var metrics = new List<T>();
 
             var count = 0;
             while (run)
             {
+                var metrics = new List<T>();
                 while (run && count < BulkSize)
                 {
                     try
@@ -63,19 +63,10 @@ namespace MPE.Pinger.Logic
                 }
                 catch (Exception e)
                 {
-                    LoggerFactory.Instance.Debug($"Failed to write to storage - {_type}", e);
+                    LoggerFactory.Instance.Debug($"Failed to write to storage - {_type} - {e.Message}", e);
                     _tempRepository.Write(metrics);
                     run = false;
                 }
-
-                for (int i = 0; i < metrics.Count; i++)
-                {
-                    metrics[i] = default(T);
-                }
-
-                metrics = new List<T>();
-
-                GC.Collect();
 
                 count = 0;
             }
