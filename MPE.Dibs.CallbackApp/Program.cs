@@ -58,7 +58,7 @@ namespace MPE.Dibs.CallbackApp
                     oldHash = data["MAC"];
                     data.Remove("MAC");
 
-                    calcVal = CalculateMac(data, HexToString(config.Hmac)).ToLower();
+                    calcVal = CalculateMac(data, config.Hmac).ToLower();
                     data.Add("MAC", calcVal);
                 }
                 else if (data.ContainsKey("md5key"))
@@ -94,8 +94,10 @@ namespace MPE.Dibs.CallbackApp
                 var callbackResponse = venmaClient.Execute(venmaRequest);
 
                 Console.WriteLine(callbackResponse.Content);
-                Console.ReadLine();
             }
+
+            Console.WriteLine("DONE...");
+            Console.ReadLine();
         }
 
         private static ConfigurationFile ReadConfig(out List<string> transactions)
@@ -155,20 +157,32 @@ namespace MPE.Dibs.CallbackApp
 
         public static string CalculateMac(Dictionary<string, string> formFields, string macKey)
         {
-            var encoding = new UTF8Encoding();
-            byte[] keyByte = encoding.GetBytes(macKey);
-            byte[] messageBytes = encoding.GetBytes(GetFormString(formFields));
-
-            var hmacsha256 = new HMACSHA256(keyByte);
-            var hashmessage = hmacsha256.ComputeHash(messageBytes);
-            string sbinary = "";
-
-            for (int i = 0; i < hashmessage.Length; i++)
+            var keys = formFields.Keys.ToList();
+            keys.Sort(StringComparer.Ordinal);
+            string msg = "";
+            foreach (var key in keys)
             {
-                sbinary += hashmessage[i].ToString("X2");
+                if (key != keys[0]) msg += "&";
+                msg += key + "=" + formFields[key];
             }
 
-            return sbinary;
+            //Decoding the secret Hex encoded key and getting the bytes for MAC calculation
+            var K_bytes = new byte[macKey.Length / 2];
+            for (int i = 0; i < K_bytes.Length; i++)
+            {
+                K_bytes[i] = byte.Parse(macKey.Substring(i * 2, 2), NumberStyles.HexNumber);
+            }
+
+            //Getting bytes from message
+            var encoding = new UTF8Encoding();
+            byte[] msg_bytes = encoding.GetBytes(msg);
+
+            //Calculate MAC key
+            var hash = new HMACSHA256(K_bytes);
+            byte[] mac_bytes = hash.ComputeHash(msg_bytes);
+            string mac = BitConverter.ToString(mac_bytes).Replace("-", "").ToLower();
+
+            return mac;
         }
 
         public static string GetFormString(Dictionary<string, string> dic)
