@@ -1,14 +1,18 @@
 # Black Friday 2019
-
 So the famous day has come yet again and I have to admit - I have never actually worked with a project  that should perform for Black Friday sales. I was told that it was a big thing with a lot of money in play - but personally I'm not a huge fan of all this spending. Non the less, lets start this small story of bad vibes, great visions, bad start and a great ending.
 
-Spoiler alert - a lot of semi old references to random things hides in this wall of text. 
+![Black friday orders](./dumps/2019-11-30_1421.png)
+
+The graph display the orders created from Thursday till mid Saturday withe big Black Friday in the middle. So this were actually a big deal for a lot of people - not just our customer.
 
 __Teasers:__
 * Story about refactoring infrastructure
 * Isolate the backbone of you business
 * Caching still suck
-* Time and deadlines should be defined by the tasks estimated.
+* Time and deadlines should be defined by the estimated task.
+* Acceptance of cutting corners to achieve goals
+
+Spoiler alert - a lot of semi old references to random things hides in this wall of text. 
 
 ## Setting the stage
 This story is all about a relative large commerce system that was minded on only one company with a handful of different brands that sold physical products. No developer in our team had been a part of the initial development team. It was one of those projects that had changed development teams a few times, with no documentation, no hand-off meetings or any thing. You could open a file in source control and based on the indentation of the code could define the time and team that had developed it. It was a patchwork of code with very different styles. It were gonna be a challenge.
@@ -36,6 +40,7 @@ The web-server were a janitor or a wizard. It were responsible for anything, eve
 * Static files - scripts, stylesheets, icons etc.
 * Execute product import flow (not a small flow btw.)
 * Return responses for about ten different web-sites and APIs
+* Misuse the SQL database while doing all the other stuff
 
 It had to do it all, and then some (I didn't even map all its responsibilities). But this were one of the things that needed to change - it should only be responsible for serving calculated requests to the client. Not dealing with tons of stuff that takes resources away from serving the visitor.
 
@@ -57,7 +62,13 @@ To get here we had to get some data that supported our decision regarding gettin
 
 Now the data were in place, then we could order a new server that could take care of all the important stuff like dealing with callbacks from payment providers, sending orders to the ERP system, handling the product import flow etc. This site were the administration server, responsible for the heart of the business - If this went down we had a totally different problem. But by introducing this, the web-server could go down and we would still be able to get the callbacks from the payment gateway and push it to the ERP system.
 
-This removed some of all the spikes going on from time to time regarding the web-servers resources. But it does not stop here. We had to move on to figure out why the server still used from 50-75% of CPU with out having that many visitors.
+This removed some of all the spikes going on from time to time regarding the web-servers resources. But it does not stop here. Because like every other story or adventure, everything escalated when we performed the migration to the new server. Apparently the product import flow generated configuration files that needed to be on the web-server, if not updated it would show old data to the visitors with old prices etc. The customer sort of defined this as a no-go and a big problem. So we had to check our possible solutions: introducing a central configuration store, re-writing the websites to access a network share to get the file, or make a distributed filesystem (DFS) solution? So at that moment we didn't really have time to do anything, so it had to be the solution that required the least amount of non-existing time. Lets do a DFS for sharing the configuration files. 
+
+We sent a main to the hosting company that defined that it was not gonna be possible, but we could get a file-share - which would have resulting in a lot of rewriting and testing. So a Windows DFS were not possible. Screw it - do a RoboCopy implementation that runs at a scheduled interval - and done. The configuration files got updated on the web-server when the product import had run
+
+> Don't deny the easy solutions when there isn't time to do the 100% correct one.
+
+ While having somewhat an idea of the infrastructure, we had to move on to figure out why the server still used from 50-75% of CPU without having that many visitors.
 
 ## Don't hate your web-server
 But I needed to get a deeper understanding of what were having the most impact on it, so why not just access the site and open the development-tool in the browser to poke a bit around to find the low hanging fruits.
@@ -70,6 +81,12 @@ I was almost in some sort of shock - this were the same amount as 10 MP3 songs (
 
 This were the first thing that needs to change. So we have to deal with the amount of requests for images and medias the web-server servers to the client browser, along with finding someway to save some network to the rest of the visitors. We were literally talking about millions of requests to images of the size of 150kB each over the network - no wonder the server were having a bad time.
 
+It resulted in a multiple step task. First I needed to track what sort of images there were used and why they needed to be this big to do the job. It seemed that the customer exported all images to a PNG format with a very good quality and this could off-cause not change. This were pretty much stated by the customer. Then what do you do when you have to convince a customer that what they say is wrong and not doing any good for the site? 
+
+The result were to create a small page with three rows: one where the very big PNG image were displayed, another one where it where a JPEG, and the last containing the same JPEG but in 80% quality. I actually sent this sheet to the customer requiring them to tell me the difference, and they couldn't do that with the naked eye. So... Great, one human obstacle removed, and they started to use a proper format for web usage.
+
+But we weren't done yet:
+
 > If you don't want to put hate on your own server - then pay some money to put the hate on someone else's servers
 
 And that is what we suggested the customer. Just find your wallet and give us access to a CDN that can deal with all this stuff. I am not stating that this is the correct approach, but see it like CPR to stabilizing a system to something that seems a bit better.
@@ -80,7 +97,7 @@ For starters I had no idea of the gain we would get. My main focus were to remov
 * Minification of everything parsed through it
 * Enabled compression of static files using Brotli compression
 
-We were gaining so many things just by investing a bit of time and money in the CDN - and we could see it instantly on the web-server. It all went silent and only the requests that needed CPU rendering resources got displayed - not all the images and the heavy script files. 80-90% of all requests got cashed in the CDN
+We were gaining so many things just by investing a bit of time and money in the CDN - and we could see it instantly on the web-server. It all went silent and only the requests that needed CPU rendering resources got displayed - not all the images and the heavy script files. 80-90% of all requests got cashed in the CDN, removing about 1TB of traffic from the network.
 
 > Just explain the customers the gain for their company and they will pay the cost.
 > Have data ready for the customers to see to validate your performance gain.
@@ -100,7 +117,7 @@ The good thing were, that making it load-balanced, just required it to have a se
 
 > Use CI/CD in some format. When thats running you should be able to configure new frontend web-servers within hours.
 
-And... thats sort of a lie. Because we are dealing with a customer that likes images to create their content, and that is actually okay - but if you access the CMS administration directly through the proxy and uploads the images to a random web-server, then you are not guaranteed to hit that server when a client request the server. 
+And... thats sort of a lie. Because we are dealing with a customer that likes images to create their content, and that is actually okay - but if you access the CMS administration directly through the proxy and uploads the images to a random web-server, then you are not guaranteed to hit that server when a client request the image for rendering. 
 
 So the task were defined, setup a dedicated content domain the editors can access on the worker server. Here they should upload the images. After that create a separate image domain site serving all these content images piped through the CDN to make sure it is cached properly. When that is done, we should just convert all the existing content data to reference the new domain - which were by the way stored in different formats... Happy times... SQL FTW...
 
@@ -109,7 +126,7 @@ So the former sections described some of the tasks currently into play. This had
 
 ![The Plan](./dumps/2019-11-29_2105.png)
 
-At this point in time one man had worked for two weeks on a project I had no experience in, and already now it started to look a bit more serious than before. At this time we had reduced the response time on the website by 76% and could handle a lot more users at the same time. 
+At this point in time I had worked for two weeks on a project I had no experience in, and already now it started to look a bit more serious than before. At this time we had reduced the response time on the website by 76% and could handle a lot more users at the same time. 
 
 A note to bear in mind is that to limit this story I needed to remove a lot of details regarding the implementation of the commerce solution - auto-generation and distribution of configuration files, just the fact that the solution integrated into around 15-20 external providers of different sorts along with hosting a SSO service. So what you see here is a limited view of the entire system... Sorry...
 
@@ -127,13 +144,15 @@ And boy I were surprised... again... When you run a website with a production co
 
 But no... no caching at all. It seemed that the output cache had been disabled. So every time a user on production rendered a product page we would render it from scratch, connecting to storage engines, external providers etc. to get the data needed. This had to stop.
 
-At that exact moment we did that analysis an email ticked in... The customer just sent a campaign offer to their entire email list and the site were starting to get more and more traffic. It were going down now. So the only meaningful thing that got to my mind were to enable output-caching directly on the production environment.
+At that exact moment we did that analysis, an email ticked in... The customer just sent a campaign offer to their entire email list and the site were starting to get more and more traffic. It were going down now. So the only meaningful thing that got to my mind were to enable output-caching directly on the production environment.
 
 I admit - this is not something I would do without testing it in a proper QA environment - but with this project there were non.
 
-So I did the thing that no developer should do - I changed the configuration directly on production without testing it first. The result were extreme, going from 80% CPU to below 30% instantly. The campaign went as the customer expected and a lot of orders were placed - hope they were happy.
+So I did the thing that no developer should do - I changed the configuration directly on production without testing it first. The result were extreme, going from 80% CPU to below 20% instantly. The campaign went as the customer expected and a lot of orders were placed - hope they were happy.
 
 After the campaign, I had to disable it again and test it locally to make sure that it didn't cache too much - and off-cause it did cache too much. But who needs to logout when your logged in, no need for that button. Jokes aside, things got fixed and the site now had an active output cache.
+
+While we now had found one problem, we still needed to find out why a fail-over SQL database setup were needed. So by digging into the path of execution we saw a clear pattern of accessing data directly from the database, instead of accessing the already cached version of the static data. This were done on all pages, multiple times. By doing this more deep analysis we could limit the database acces by almost 95%, making the fail-over setup redundant.
 
 Remember we were cutting corners here... So now we have activated output caching, caching entire pages in memory on each of the servers. Beside that we have content-editors changing content constantly and product data being updated randomly with price and stock status.
 
@@ -143,8 +162,9 @@ The proper thing could have been to implement a dual level output cache provider
 
 All these things were the result of changing deadlines and missing time and proper environments to test it on. Our own QA environment consisted of a single server shared with a handful of other customers solutions - we could not test infrastructural changes.
 
+> If you cut corners, make sure to get the time to revisit the code, fix the hacks and clean up the code
 
 ## Conclusion
-So what to conclude? Measure, monitor, change, and then repeat the entire thing. Someone said that before. These steps has been central along with having a specific goal to achieve - then you know when you are somewhat done.
+So what to conclude? Measure, monitor, change, and then repeat the entire thing. Someone said that before. These steps has been central along with having a specific goal to achieve - then you know when you are somewhat done. Don't be afraid to crash you site, as long as you learn something new that you then can optimize and change.
 
-It were a project that contained a lot of mistrust towards the developers. The customer seemed to have lost trust and positivity in the completion of the project resulting in a lot of bad motivation. It is a beautiful story about mistrust, success, curiosity, and invisible heroes.
+By going through this flow constantly you have something to show the customer when they ask about a status on the optimization. This approach helped us so much that we concluded internally that we could have gone through Black Friday with one web-server and still be able to bring the customer 60% more revenue (approx $3.8 mil.) during the 24 hours of Black Friday.
